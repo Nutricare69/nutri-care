@@ -159,9 +159,9 @@ export default function Login() {
               onClick={() => setShowPassword(!showPassword)}
               >
               {!showPassword ? (
-                <IoMdEye className="w-7 h-7 text-gray-400" />
-              ) : (
                 <IoMdEyeOff className="w-7 h-7 text-gray-400" />
+              ) : (
+                <IoMdEye className="w-7 h-7 text-gray-400" />
               )}
             </div>
               </div>
