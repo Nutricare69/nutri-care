@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@keyframes gradient-shift {
+  0% {
+    color: #667eea;
+  }
+
+  20% {
+    color: #764ba2;
+  }
+
+  40% {
+    color: #8440e9;
+  }
+  60% {
+    color: #837a16;
+  }
+  100% {
+    color: #667eea;
+  }
+}
+
+.animate-rainbow {
+  animation: gradient-shift 3s ease-in-out infinite;
+}
