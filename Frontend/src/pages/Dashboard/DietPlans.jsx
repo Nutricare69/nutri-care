@@ -47,7 +47,7 @@ export default function DietPlans() {
   //playstore star like animation component
   const PlaystoreStar = ({ number }) => {
     return (
-      <div className="relative w-14 h-14 flex items-center justify-center">
+      <div className="relative w-14 h-14 flex items-center justify-center overflow-hidden">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{
@@ -244,7 +244,7 @@ export default function DietPlans() {
                         expandedPlan === plan._id ? null : plan._id,
                       )
                     }
-                    className="flex items-center justify-between p-6 cursor-pointer"
+                    className="flex items-center justify-between p-6 cursor-pointer overflow-hidden"
                   >
                     <div className="flex items-center gap-4">
                       <PlaystoreStar number={plan.planNumber} />
@@ -504,7 +504,7 @@ export default function DietPlans() {
               className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white dark:bg-[#0c130d] border-b border-gray-200 dark:border-green-950/20 px-8 py-6 flex items-center justify-between rounded-t-3xl">
+              <div className="sticky top-0 z-10 bg-white dark:bg-[#0c130d] border-b border-gray-200 dark:border-green-950/20 px-8 py-6 flex items-center justify-between rounded-t-3xl">
                 <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
                   Create New Diet Plan
                 </h3>

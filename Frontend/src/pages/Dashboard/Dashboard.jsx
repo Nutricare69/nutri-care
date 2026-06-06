@@ -135,7 +135,7 @@ export default function Dashboard() {
             <motion.header
               initial={{ y: -100 }}
               animate={{ y: 0 }}
-              className="bg-white dark:bg-[#0c130d] border-b dark:border-green-950/20 shadow-md dark:shadow-green-950/10 px-8 py-4 flex items-center justify-between sticky top-0 z-10 w-full"
+              className="bg-white dark:bg-[#0c130d] border-b dark:border-green-950/20 shadow-md dark:shadow-green-950/10 px-8 py-4 flex items-center justify-between sticky top-0 z-20 w-full"
             >
               <div>
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
