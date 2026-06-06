@@ -22,9 +22,11 @@ import SuvajitImg from "../../assets/team/SuvajitRoy.jpg";
 import RajaniImg from "../../assets/team/RajaniGiri.jpeg";
 import SambitImg from "../../assets/team/SambitMondal.jpg";
 import {  useNavigate } from "react-router-dom";
+import { useTheme } from "../../components/theme.js";
 
 export default function About() {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const team = [
     {
       name: "Arnab Jana",
@@ -160,7 +162,7 @@ export default function About() {
   };
 
   return (
-    <div className="w-full h-full bg-[#A6D4AC]/40">
+    <div className="w-full h-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 transition-colors duration-300">
       {/* Navbar */}
       <Navbar />
 
@@ -182,7 +184,7 @@ export default function About() {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute top-20 right-10 w-64 h-64 bg-green-200/30 rounded-full blur-3xl"
+          className="absolute top-20 right-10 w-64 h-64 bg-green-200/30 dark:bg-green-800/10 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -194,7 +196,7 @@ export default function About() {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute bottom-20 left-10 w-72 h-72 bg-yellow-200/30 rounded-full blur-3xl"
+          className="absolute bottom-20 left-10 w-72 h-72 bg-yellow-200/30 dark:bg-yellow-800/10 rounded-full blur-3xl"
         />
 
         <div className="relative max-w-4xl mx-auto text-center">
@@ -202,10 +204,10 @@ export default function About() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full mb-6 shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-green-950/40 backdrop-blur-sm rounded-full mb-6 shadow-md border border-transparent dark:border-green-800/30"
           >
             <Sparkles className="w-5 h-5 text-yellow-500" />
-            <span className="text-sm font-semibold text-gray-700">
+            <span className="text-sm font-semibold text-gray-700 dark:text-zinc-200">
               Transforming Lives Through Nutrition
             </span>
           </motion.div>
@@ -214,7 +216,7 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-gray-800 dark:text-white"
           >
             We, <span className="text-green-500">Nutri</span>
             <span className="text-yellow-500">Care</span> AI
@@ -224,7 +226,7 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10"
+            className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-zinc-300 max-w-3xl mx-auto mb-10"
           >
             We're on a mission to transform lives through personalized
             nutrition, combining expert knowledge with cutting-edge AI
@@ -238,15 +240,15 @@ export default function About() {
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-           animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             // viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Our Purpose & <span className="text-green-500">Direction</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               Guided by a clear mission and inspired by a bold vision for the
               future
             </p>
@@ -263,18 +265,18 @@ export default function About() {
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, y: -5 }}
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-xl"
+              className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20"
               style={{
-                boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
               }}
             >
-              <div className="w-16 h-16 mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                 <Target className="w-8 h-8 text-[#10B981]" strokeWidth={1.5} />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-white">
                 Our Mission
               </h3>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 dark:text-zinc-300 text-lg leading-relaxed">
                 To empower individuals with personalized nutrition solutions
                 that are accessible, science-backed, and tailored to their
                 unique needs. We believe everyone deserves a path to better
@@ -286,18 +288,18 @@ export default function About() {
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, y: -5 }}
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-xl"
+              className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20"
               style={{
-                boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
               }}
             >
-              <div className="w-16 h-16 mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                 <Eye className="w-8 h-8 text-[#10B981]" strokeWidth={1.5} />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+              <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-white">
                 Our Vision
               </h3>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 dark:text-zinc-300 text-lg leading-relaxed">
                 To become the world's most trusted platform for personalized
                 nutrition, where AI and human expertise work together to create
                 a healthier future for all. We envision a world where optimal
@@ -309,7 +311,7 @@ export default function About() {
       </section>
 
       {/* Core Values */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-zinc-900/10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -318,10 +320,10 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Our Core <span className="text-green-500">Values</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               These principles guide everything we do and shape our commitment
               to you.
             </p>
@@ -339,19 +341,19 @@ export default function About() {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl p-8 shadow-lg text-center"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-lg text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "2px 2px 12px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
                 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                   <value.icon
                     className="w-8 h-8 text-[#10B981]"
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{value.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">{value.title}</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm leading-relaxed">
                   {value.description}
                 </p>
               </motion.div>
@@ -370,10 +372,10 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Our Development <span className="text-green-500">Journey</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               From idea to production - Follow our 12-month journey of
               innovation and growth
             </p>
@@ -387,7 +389,7 @@ export default function About() {
             className="relative"
           >
             {/* Timeline Line - Hidden on mobile */}
-            <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-green-200 via-green-400 to-green-200 transform -translate-x-1/2" />
+            <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-green-200 dark:from-green-950 via-green-400 dark:via-green-700 to-green-200 dark:to-green-950 transform -translate-x-1/2" />
 
             {/* Timeline Items */}
             <div className="space-y-12">
@@ -402,9 +404,9 @@ export default function About() {
                   {/* Content Card */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="relative w-full lg:w-5/12 bg-white rounded-3xl p-8 shadow-xl"
+                    className="relative w-full lg:w-5/12 bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-xl border border-transparent dark:border-green-800/10"
                     style={{
-                      boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                      boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                     }}
                   >
                     {/* Month Badge */}
@@ -412,10 +414,10 @@ export default function About() {
                       {item.month}
                     </div>
 
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-green-400">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-lg leading-relaxed">
+                    <p className="text-gray-600 dark:text-zinc-350 text-lg leading-relaxed">
                       {item.description}
                     </p>
                   </motion.div>
@@ -446,7 +448,7 @@ export default function About() {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-zinc-900/10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -455,10 +457,10 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Meet Our <span className="text-green-500">Expert Team</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               Our passionate team of nutrition experts and health professionals
               dedicated to your success
             </p>
@@ -476,12 +478,12 @@ export default function About() {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-lg "
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl overflow-hidden shadow-lg border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "2px 2px 12px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
                 }}
               >
-                <div className="aspect-square overflow-hidden bg-gray-100">
+                <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-[#121f14]">
                   <motion.img
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.3 }}
@@ -490,13 +492,13 @@ export default function About() {
                     className="w-full h-80 object-cover"
                     onError={(e) => {
                       e.target.style.display = "none";
-                      e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200"><Users class="w-20 h-20 text-green-500" /></div>`;
+                      e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200 dark:from-green-950 dark:to-green-900"><Users class="w-20 h-20 text-green-500" /></div>`;
                     }}
                   />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-bold mb-2">{member.name}</h3>
-                  <p className="text-sm text-gray-600 font-semibold">
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">{member.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-zinc-400 font-semibold">
                     {member.role}
                   </p>
                 </div>
@@ -556,7 +558,7 @@ export default function About() {
               transition={{ delay: 0.6 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 bg-white text-green-600 text-lg font-bold rounded-full hover:bg-gray-100 transition-colors duration-300 shadow-xl inline-flex items-center gap-3"
+              className="px-10 py-4 bg-white text-green-600 text-lg font-bold rounded-full hover:bg-gray-100 transition-colors duration-300 shadow-xl inline-flex items-center gap-3 cursor-pointer"
               onClick={() => navigate("/signup")}
             >
               Get Started Today

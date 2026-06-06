@@ -23,11 +23,13 @@ import mealPlansImg from "../../assets/getYourMealPlan.jpg";
 import TrackingVideo from "../../assets/track&Evolve.mp4";
 import demoVideo from "../../assets/howItWorks.mp4";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../components/theme.js";
 
 
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
+  const { isDark } = useTheme();
 
   const handleVideoToggle = () => {
     const video = document.getElementById("demo-video");
@@ -51,7 +53,7 @@ export default function HowItWorks() {
         "Define your wellness goals",
       ],
       color: "#10B981",
-      bgColor: "#E8F4F0",
+      bgColor: isDark ? "rgba(16, 185, 129, 0.15)" : "#E8F4F0",
       image: profileImg ,
     },
     {
@@ -66,7 +68,7 @@ export default function HowItWorks() {
         "Science-backed insights",
       ],
       color: "#8B5CF6",
-      bgColor: "#F3E8FF",
+      bgColor: isDark ? "rgba(139, 92, 246, 0.15)" : "#F3E8FF",
       video: aiAnalysisVideo ,
     },
     {
@@ -81,7 +83,7 @@ export default function HowItWorks() {
         "Smart shopping lists",
       ],
       color: "#F59E0B",
-      bgColor: "#FEF3C7",
+      bgColor: isDark ? "rgba(245, 158, 11, 0.15)" : "#FEF3C7",
       image:  mealPlansImg ,
     },
     {
@@ -96,7 +98,7 @@ export default function HowItWorks() {
         "Adaptive meal plans",
       ],
       color: "#EF4444",
-      bgColor: "#FEE2E2",
+      bgColor: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEE2E2",
       video:  TrackingVideo ,
     },
   ];
@@ -163,7 +165,7 @@ export default function HowItWorks() {
   };
 
   return (
-    <div className="w-full h-full bg-[#A6D4AC]/40">
+    <div className="w-full h-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 transition-colors duration-300">
       {/* Navbar */}
       <Navbar />
 
@@ -205,10 +207,10 @@ export default function HowItWorks() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full mb-6 shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-[#0f1d13]/80 dark:border dark:border-green-800/20 backdrop-blur-sm rounded-full mb-6 shadow-md text-gray-700 dark:text-zinc-200"
           >
             <Sparkles className="w-5 h-5 text-yellow-500" />
-            <span className="text-sm font-semibold text-gray-700">
+            <span className="text-sm font-semibold">
               Your Journey to Better Health Starts Here
             </span>
           </motion.div>
@@ -217,7 +219,7 @@ export default function HowItWorks() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-gray-800 dark:text-white"
           >
             How <span className="text-green-500">Nutri</span>
             <span className="text-yellow-500">Care</span> Works
@@ -227,7 +229,7 @@ export default function HowItWorks() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10"
+            className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-zinc-350 max-w-3xl mx-auto mb-10"
           >
             Transform your nutrition journey with our AI-powered platform in
             four simple steps
@@ -242,7 +244,7 @@ export default function HowItWorks() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-[#10B981] text-white text-lg font-semibold rounded-full hover:bg-[#059669] transition-colors duration-300 shadow-lg flex items-center gap-2"
+              className="px-8 py-4 bg-[#10B981] text-white text-lg font-semibold rounded-full hover:bg-[#059669] transition-colors duration-300 shadow-lg flex items-center gap-2 cursor-pointer"
               onClick={() => navigate("/signup")}
             >
               Get Started Now
@@ -251,7 +253,11 @@ export default function HowItWorks() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-800 text-lg font-semibold rounded-full hover:bg-white transition-colors duration-300 shadow-lg"
+              className="px-8 py-4 bg-white/80 dark:bg-[#0c130d]/80 text-gray-800 dark:text-zinc-200 border border-transparent dark:border-green-800/20 backdrop-blur-sm text-lg font-semibold rounded-full hover:bg-white dark:hover:bg-zinc-900 transition-colors duration-300 shadow-lg cursor-pointer"
+              onClick={() => {
+                const element = document.getElementById("demo-video");
+                element?.scrollIntoView({ behavior: "smooth" });
+              }}
             >
               Watch Demo Video
             </motion.button>
@@ -269,10 +275,10 @@ export default function HowItWorks() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Your Path to <span className="text-green-500">Wellness</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               Follow these simple steps to unlock personalized nutrition and
               achieve your health goals
             </p>
@@ -294,9 +300,9 @@ export default function HowItWorks() {
                 {/* Card Content */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="relative w-full lg:w-1/2 bg-white rounded-3xl p-8 md:p-10 shadow-xl"
+                  className="relative w-full lg:w-1/2 bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20 text-gray-800 dark:text-zinc-100"
                   style={{
-                    boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                    boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                   }}
                 >
                   {/* Step Number Badge */}
@@ -322,10 +328,10 @@ export default function HowItWorks() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-green-400">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                  <p className="text-gray-600 dark:text-zinc-350 text-lg mb-6 leading-relaxed">
                     {step.description}
                   </p>
 
@@ -344,7 +350,7 @@ export default function HowItWorks() {
                           className="w-5 h-5 text-green-500 flex-shrink-0"
                           strokeWidth={2}
                         />
-                        <span className="text-gray-700">{detail}</span>
+                        <span className="text-gray-700 dark:text-zinc-300">{detail}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -355,7 +361,7 @@ export default function HowItWorks() {
                   whileHover={{ scale: 1.05 }}
                   className="w-full lg:w-1/2 h-80 lg:h-96 rounded-3xl overflow-hidden shadow-xl"
                   style={{
-                    boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                    boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                   }}
                 >
                   {step.image ? (
@@ -419,7 +425,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-zinc-900/10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -428,11 +434,11 @@ export default function HowItWorks() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Why Choose <span className="text-green-500">Nutri</span>
               <span className="text-yellow-500">Care</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
               Experience the benefits of AI-powered nutrition planning
             </p>
           </motion.div>
@@ -449,19 +455,19 @@ export default function HowItWorks() {
                 key={index}
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl p-8 shadow-lg text-center"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-lg text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "2px 2px 12px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
                 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                   <benefit.icon
                     className="w-8 h-8 text-[#10B981]"
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{benefit.title}</h3>
-                <p className="text-gray-600 text-sm">{benefit.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">{benefit.title}</h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">{benefit.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -476,13 +482,13 @@ export default function HowItWorks() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-8 md:p-12 shadow-2xl"
+            className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-[#0f1d13] dark:to-[#09151c] rounded-3xl p-8 md:p-12 shadow-2xl border border-transparent dark:border-green-800/10"
           >
             <div className="text-center mb-10">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
                 See It In <span className="text-green-500">Action</span>
               </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
                 Watch how NutriCare transforms your nutrition journey
               </p>
             </div>

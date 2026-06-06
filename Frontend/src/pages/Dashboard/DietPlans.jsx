@@ -5,10 +5,13 @@ import axios from "axios";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
+import { useTheme } from "../../components/theme.js";
+import AutoSelect from "../../components/AutoSelect.jsx";
 
 export default function DietPlans() {
   const { userData } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
+  const { isDark } = useTheme();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [dietPlans, setDietPlans] = useState([]);
   const [expandedPlan, setExpandedPlan] = useState(null);
@@ -176,14 +179,14 @@ export default function DietPlans() {
           className="space-y-6"
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white">
               Your AI Generated Diet Plans
             </h3>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-semibold shadow-lg hover:bg-green-600 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-semibold shadow-lg hover:bg-green-600 transition-colors cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Create New Plan
@@ -195,16 +198,18 @@ export default function DietPlans() {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-3xl p-16 text-center shadow-lg"
+              className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-3xl p-16 text-center shadow-lg"
               style={{
-                boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                boxShadow: isDark
+                  ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                  : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
               }}
             >
-              <Plus className="w-20 h-20 mx-auto mb-4 text-gray-300" />
-              <h4 className="text-2xl font-bold text-gray-800 mb-2">
+              <Plus className="w-20 h-20 mx-auto mb-4 text-gray-300 dark:text-zinc-700" />
+              <h4 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
                 No Diet Plans Yet
               </h4>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-zinc-400 mb-6">
                 Create your first personalized diet plan to get started on your
                 health journey!
               </p>
@@ -212,7 +217,7 @@ export default function DietPlans() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowCreateModal(true)}
-                className="px-8 py-3 bg-green-500 text-white rounded-xl font-semibold shadow-lg hover:bg-green-600 transition-colors"
+                className="px-8 py-3 bg-green-500 text-white rounded-xl font-semibold shadow-lg hover:bg-green-600 transition-colors cursor-pointer"
               >
                 Create Your First Plan
               </motion.button>
@@ -224,14 +229,16 @@ export default function DietPlans() {
                   key={plan.planNumber}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-3xl overflow-hidden shadow-lg"
+                  className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-3xl overflow-hidden shadow-lg"
                   style={{
-                    boxShadow: "2px 2px 12px #8fa98f, -2px -2px 8px #8fa98f",
+                    boxShadow: isDark
+                      ? "2px 2px 12px rgba(0, 0, 0, 0.4)"
+                      : "2px 2px 12px #8fa98f, -2px -2px 8px #8fa98f",
                   }}
                 >
                   {/* Plan Header */}
                   <motion.div
-                    whileHover={{ backgroundColor: "#f9fafb" }}
+                    whileHover={{ backgroundColor: isDark ? "#121b14" : "#f9fafb" }}
                     onClick={() =>
                       setExpandedPlan(
                         expandedPlan === plan._id ? null : plan._id,
@@ -242,10 +249,10 @@ export default function DietPlans() {
                     <div className="flex items-center gap-4">
                       <PlaystoreStar number={plan.planNumber} />
                       <div>
-                        <h4 className="text-lg font-bold text-gray-800">
+                        <h4 className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                           {plan.user.name.split(" ")[0]}'s Diet Plan
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-zinc-400">
                           Created on {formatDate(plan.createdAt)}
                         </p>
                       </div>
@@ -255,7 +262,7 @@ export default function DietPlans() {
                         rotate: expandedPlan === plan._id ? 90 : 0,
                       }}
                     >
-                      <ChevronRight className="w-6 h-6 text-gray-400" />
+                      <ChevronRight className="w-6 h-6 text-gray-400 dark:text-zinc-500" />
                     </motion.div>
                   </motion.div>
 
@@ -266,40 +273,40 @@ export default function DietPlans() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="border-t border-gray-200"
+                        className="border-t border-gray-200 dark:border-green-950/20"
                       >
-                        <div className="p-6 space-y-4 bg-gray-50">
+                        <div className="p-6 space-y-4 bg-gray-50/50 dark:bg-[#0f1d13]/60">
                           {/* User Profile Info */}
                           <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-                            <div className="bg-white p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-black mb-1">Age</p>
-                              <p className="text-lg font-bold text-gray-800">
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Age</p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                                 {plan.profileSnapshot.age} yrs
                               </p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-black mb-1">Weight</p>
-                              <p className="text-lg font-bold text-gray-800">
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Weight</p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                                 {plan.profileSnapshot.weight} kg
                               </p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-black mb-1">Height</p>
-                              <p className="text-lg font-bold text-gray-800">
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Height</p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                                 {plan.profileSnapshot.height} cm
                               </p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-black mb-1">BMI</p>
-                              <p className="text-lg font-bold text-gray-800">
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">BMI</p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                                 {plan.profileSnapshot.bmi
                                   ? plan.profileSnapshot.bmi
                                   : "-"}
                               </p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-black mb-1">TDEE</p>
-                              <p className="text-lg font-bold text-gray-800">
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">TDEE</p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                                 {plan.profileSnapshot.tdee
                                   ? plan.profileSnapshot.tdee
                                   : "-"}
@@ -309,23 +316,23 @@ export default function DietPlans() {
 
                           {/* Meal Plan Days */}
                           <div className="space-y-3">
-                            <h5 className="font-bold text-gray-800">
+                            <h5 className="font-bold text-gray-800 dark:text-white">
                               Weekly Meal Plan
                             </h5>
                             {plan.days?.map((dayObj) => (
                               <div
                                 key={dayObj._id || dayObj.dayNumber}
-                                className="bg-white p-4 rounded-xl shadow-sm"
+                                className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm"
                               >
-                                <h6 className="font-bold text-green-600 mb-2">
+                                <h6 className="font-bold text-green-600 dark:text-green-400 mb-2">
                                   Day {dayObj.dayNumber}
                                 </h6>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                   <div>
-                                    <p className="text-xl font-semibold text-black mb-1">
+                                    <p className="text-xl font-semibold text-black dark:text-zinc-200 mb-1">
                                       Breakfast
                                     </p>
-                                    <ul className="text-sm text-gray-500 space-y-1">
+                                    <ul className="text-sm text-gray-500 dark:text-zinc-400 space-y-1">
                                       {dayObj.meals
                                         ?.find(
                                           (m) => m.mealType === "Breakfast",
@@ -333,34 +340,34 @@ export default function DietPlans() {
                                         ?.foods?.map((item, idx) => (
                                           <li key={idx}>
                                             •{" "}
-                                            <span className="font-semibold text-sm text-green-500 ">
+                                            <span className="font-semibold text-sm text-green-500 dark:text-green-400">
                                               {item.name}
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Calories:
                                                 </span>{" "}
                                                 {item.calories} kcal
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Protein:
                                                 </span>{" "}
                                                 {item.protein}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Carbs:
                                                 </span>{" "}
                                                 {item.carbs}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Fat:
                                                 </span>{" "}
                                                 {item.fat}g
@@ -371,43 +378,43 @@ export default function DietPlans() {
                                     </ul>
                                   </div>
                                   <div>
-                                    <p className="text-xl  font-semibold text-black  mb-1">
+                                    <p className="text-xl font-semibold text-black dark:text-zinc-200 mb-1">
                                       Lunch
                                     </p>
-                                    <ul className="text-sm text-gray-500 space-y-1">
+                                    <ul className="text-sm text-gray-500 dark:text-zinc-400 space-y-1">
                                       {dayObj.meals
                                         ?.find((m) => m.mealType === "Lunch")
                                         ?.foods?.map((item, idx) => (
                                           <li key={idx}>
                                             •{" "}
-                                            <span className=" font-semibold  text-sm text-green-500">
+                                            <span className="font-semibold text-sm text-green-500 dark:text-green-400">
                                               {item.name}
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Calories:
                                                 </span>{" "}
                                                 {item.calories} kcal
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Protein:
                                                 </span>{" "}
                                                 {item.protein}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Carbs:
                                                 </span>{" "}
                                                 {item.carbs}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Fat:
                                                 </span>{" "}
                                                 {item.fat}g
@@ -418,43 +425,43 @@ export default function DietPlans() {
                                     </ul>
                                   </div>
                                   <div>
-                                    <p className="text-xl  font-semibold text-black mb-1">
+                                    <p className="text-xl font-semibold text-black dark:text-zinc-200 mb-1">
                                       Dinner
                                     </p>
-                                    <ul className="text-sm text-gray-500 space-y-1">
+                                    <ul className="text-sm text-gray-500 dark:text-zinc-400 space-y-1">
                                       {dayObj.meals
                                         ?.find((m) => m.mealType === "Dinner")
                                         ?.foods?.map((item, idx) => (
                                           <li key={idx}>
                                             •{" "}
-                                            <span className=" font-semibold text-sm text-green-500">
+                                            <span className="font-semibold text-sm text-green-500 dark:text-green-400">
                                               {item.name}
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Calories:
                                                 </span>{" "}
                                                 {item.calories} kcal
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Protein:
                                                 </span>{" "}
                                                 {item.protein}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Carbs:
                                                 </span>{" "}
                                                 {item.carbs}g
                                               </span>{" "}
                                               ,{" "}
-                                              <span className="font-semibold">
-                                                <span className="text-gray-600 font-bold">
+                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
+                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
                                                   Fat:
                                                 </span>{" "}
                                                 {item.fat}g
@@ -494,172 +501,209 @@ export default function DietPlans() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between rounded-t-3xl">
-                <h3 className="text-2xl font-bold text-gray-800">
+              <div className="sticky top-0 bg-white dark:bg-[#0c130d] border-b border-gray-200 dark:border-green-950/20 px-8 py-6 flex items-center justify-between rounded-t-3xl">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
                   Create New Diet Plan
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowCreateModal(false)}
-                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center "
+                  className="w-10 h-10 rounded-full bg-gray-100 dark:bg-zinc-900 hover:bg-gray-200 dark:hover:bg-zinc-800 flex items-center justify-center cursor-pointer"
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="w-5 h-5 text-gray-600 dark:text-zinc-400" />
                 </motion.button>
               </div>
 
               {/* Modal Body */}
               <form onSubmit={handleCreatePlan} className="p-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* First Name (read-only, display only) */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Name
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                      First Name
                     </label>
                     <input
                       type="text"
-                      value={userData?.name || ""}
+                      value={userData?.name?.split(" ")[0] || ""}
                       readOnly
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-950 dark:text-white cursor-not-allowed opacity-75 focus:outline-none"
                     />
                   </div>
 
+                  {/* Last Name (read-only, display only) */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      value={userData?.name?.split(" ").slice(1).join(" ") || ""}
+                      readOnly
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-950 dark:text-white cursor-not-allowed opacity-75 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Age (read-only) */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Age
                     </label>
                     <input
                       type="number"
                       value={userAge}
                       readOnly
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                      placeholder="Enter your age"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-950 dark:text-white cursor-not-allowed opacity-75 focus:outline-none"
+                      placeholder="Calculated from DOB"
                     />
                   </div>
 
+                  {/* Weight */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Weight (kg)
                     </label>
                     <input
                       type="number"
                       name="weight"
                       value={formData.weight}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        if (parseFloat(e.target.value) >= 0 || e.target.value === "") {
+                          handleInputChange(e);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
                       required
+                      min="1"
                       step="0.1"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all duration-200"
                       placeholder="Enter weight in kg"
                     />
                   </div>
 
+                  {/* Height */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Height (cm)
                     </label>
                     <input
                       type="number"
                       name="height"
                       value={formData.height}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        if (parseFloat(e.target.value) >= 0 || e.target.value === "") {
+                          handleInputChange(e);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
                       required
+                      min="1"
                       step="0.1"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all duration-200"
                       placeholder="Enter height in cm"
                     />
                   </div>
 
+                  {/* Gender */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Gender
                     </label>
-                    <select
+                    <AutoSelect
                       name="gender"
                       value={formData.gender}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                    >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
+                      options={[
+                        { value: "Male", label: "Male" },
+                        { value: "Female", label: "Female" },
+                      ]}
+                    />
                   </div>
 
+                  {/* Food Preference */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Food Preference
                     </label>
-                    <select
+                    <AutoSelect
                       name="food_preference"
                       value={formData.food_preference}
-                      required
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                    >
-                      <option value="Vegetarian">Vegetarian</option>
-                      <option value="Eggetarian">Eggetarian</option>
-                      <option value="Non-Vegetarian">Non-Vegetarian</option>
-                      <option value="Any">Any</option>
-                    </select>
+                      required
+                      options={[
+                        { value: "Vegetarian", label: "Vegetarian" },
+                        { value: "Eggetarian", label: "Eggetarian" },
+                        { value: "Non-Vegetarian", label: "Non-Vegetarian" },
+                        { value: "Any", label: "Any" },
+                      ]}
+                    />
                   </div>
 
+                  {/* Activity Level */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Activity Level
                     </label>
-                    <select
+                    <AutoSelect
                       name="activity_level"
                       value={formData.activity_level}
-                      required
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                    >
-                      <option value="Sedentary">Sedentary</option>
-                      <option value="Lightly Active">Lightly Active</option>
-                      <option value="Moderately Active">
-                        Moderately Active
-                      </option>
-                      <option value="Very Active">Very Active</option>
-                    </select>
+                      required
+                      options={[
+                        { value: "Sedentary", label: "Sedentary" },
+                        { value: "Lightly Active", label: "Lightly Active" },
+                        { value: "Moderately Active", label: "Moderately Active" },
+                        { value: "Very Active", label: "Very Active" },
+                      ]}
+                    />
                   </div>
 
+                  {/* Goal */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Goal
                     </label>
-                    <select
+                    <AutoSelect
                       name="goal"
                       value={formData.goal}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                    >
-                      <option value="Weight Loss">Weight Loss</option>
-                      <option value="Muscle Gain">Muscle Gain</option>
-                      <option value="Maintenance">Maintenance</option>
-                    </select>
+                      options={[
+                        { value: "Weight Loss", label: "Weight Loss" },
+                        { value: "Muscle Gain", label: "Muscle Gain" },
+                        { value: "Maintenance", label: "Maintenance" },
+                      ]}
+                    />
                   </div>
 
+                  {/* Days */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Days
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                      Plan Duration
                     </label>
-                    <select
+                    <AutoSelect
                       name="days"
-                      value={formData.days}
+                      value={String(formData.days)}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
-                    >
-                      <option value="7">7</option>
-                      <option value="14">14</option>
-                    </select>
+                      options={[
+                        { value: "7", label: "7 Days" },
+                        { value: "14", label: "14 Days" },
+                      ]}
+                    />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Medical Conditions (comma-separated)
                     </label>
                     <input
@@ -667,13 +711,13 @@ export default function DietPlans() {
                       name="medical_conditions"
                       value={formData.medical_conditions}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:outline-none"
                       placeholder="e.g., diabetes, hypertension"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Allergies (comma-separated)
                     </label>
                     <input
@@ -681,7 +725,7 @@ export default function DietPlans() {
                       name="allergies"
                       value={formData.allergies}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:outline-none"
                       placeholder="e.g., peanuts, dairy"
                     />
                   </div>

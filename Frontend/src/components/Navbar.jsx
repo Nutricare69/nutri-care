@@ -5,6 +5,8 @@ import { motion, scale } from "framer-motion";
 import { userDataContext } from "../context/UserContext";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContextProvider";
+import { useTheme } from "./theme.js";
+import { Sun, Moon } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ export default function Navbar() {
   const { serverUrl } = useContext(authDataContext);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const { theme, toggleTheme } = useTheme();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -97,7 +100,7 @@ const logoVariants = {
   const linkHoverVariants = {
     hover: {
       scale: 1.1,
-      color: "#000000",
+      color: theme === "dark" ? "#ffffff" : "#000000",
       transition: {
         duration: 0.2,
       },
@@ -109,7 +112,7 @@ const logoVariants = {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 backdrop-blur-xl rounded-full shadow-md shadow-green-300"
+      className="sticky p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-full shadow-md shadow-green-300 dark:shadow-green-950/40 text-black dark:text-white"
     >
       {/* Navbar main div */}
 
@@ -158,9 +161,9 @@ const logoVariants = {
       </motion.div>
 
       {/** Navbar Links */}
-      <div className="hidden lg:flex gap-4 xl:gap-8 2xl:gap-18 text-black/70">
+      <div className="hidden lg:flex gap-4 xl:gap-8 2xl:gap-18 text-black/70 dark:text-white/70">
         <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 cursor-pointer relative"
+          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
           onClick={() => navigate("/")}
           custom={0}
           initial="hidden"
@@ -177,7 +180,7 @@ const logoVariants = {
           />
         </motion.span>
         <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 cursor-pointer relative"
+          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
           custom={1}
           initial="hidden"
           animate="visible"
@@ -198,7 +201,7 @@ const logoVariants = {
           />
         </motion.span>
         <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 cursor-pointer relative"
+          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
           custom={2}
           initial="hidden"
           animate="visible"
@@ -219,7 +222,7 @@ const logoVariants = {
           />
         </motion.span>
         <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 cursor-pointer relative"
+          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
           onClick={() => navigate("/contact")}
           custom={3}
           initial="hidden"
@@ -238,13 +241,28 @@ const logoVariants = {
       </div>
 
       {/** Navbar Buttons / User Profile */}
-      <div className="px-1 sm:px-2 md:px-4 lg:px-6 xl:px-10 flex gap-1 xs:gap-2 sm:gap-3 md:gap-4 text-xs xs:text-sm sm:text-base md:text-lg items-center">
+      <div className="px-1 sm:px-2 md:px-4 lg:px-6 xl:px-10 flex gap-2 sm:gap-4 text-xs xs:text-sm sm:text-base md:text-lg items-center">
+        {/* Theme Switcher Toggle */}
+        <motion.button
+          onClick={toggleTheme}
+          className="p-1.5 sm:p-2 rounded-full cursor-pointer transition-colors text-black/60 hover:bg-black/10 dark:text-white/80 dark:hover:bg-white/10 flex items-center justify-center"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {theme === "dark" ? (
+            <Sun className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-yellow-400" />
+          ) : (
+            <Moon className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-slate-700" />
+          )}
+        </motion.button>
+
         {!userData ? (
           // Show Login and Sign Up buttons when no user data
           <>
             <motion.button
               onClick={() => navigate("/login")}
-              className="text-black/60 px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 w-auto min-w-[50px] xs:min-w-[60px] sm:min-w-[70px] md:min-w-[80px] rounded-full hover:bg-black/10 hover:text-white/90 transition duration-300"
+              className="text-black/60 dark:text-white/70 px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 w-auto min-w-[50px] xs:min-w-[60px] sm:min-w-[70px] md:min-w-[80px] rounded-full hover:bg-black/10 dark:hover:bg-white/10 hover:text-white/90 dark:hover:text-white transition duration-300 cursor-pointer"
               custom={0}
               initial="hidden"
               animate="visible"
@@ -256,7 +274,7 @@ const logoVariants = {
             </motion.button>
             <motion.button
               onClick={() => navigate("/signup")}
-              className="bg-green-500 rounded-full px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-white/90 min-w-[60px] xs:min-w-[70px] sm:min-w-[80px] md:min-w-[90px] hover:bg-green-600 hover:text-black/70 transition duration-300"
+              className="bg-green-500 rounded-full px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-white/90 min-w-[60px] xs:min-w-[70px] sm:min-w-[80px] md:min-w-[90px] hover:bg-green-600 dark:hover:bg-green-400 hover:text-black/70 dark:hover:text-zinc-950 transition duration-300 cursor-pointer"
               custom={1}
               initial="hidden"
               animate="visible"
@@ -305,11 +323,11 @@ const logoVariants = {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg overflow-hidden z-300"
+                className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-lg shadow-lg overflow-hidden z-300"
               >
                 <motion.button
                   onClick={handleLogout}
-                  className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition duration-200"
+                  className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 dark:text-zinc-300 hover:bg-rose-50 dark:hover:bg-rose-950/35 hover:text-rose-600 dark:hover:text-rose-400 transition duration-200 cursor-pointer"
                   whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.98 }}
                 >

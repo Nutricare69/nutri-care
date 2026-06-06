@@ -41,10 +41,8 @@ export default function Home() {
         {/* Main Content Wrapper - Gets Flex-Grow so it eats up all empty space to pin footer down */}
         <div className="flex-grow flex flex-col items-center w-full pb-10 overflow-x-hidden">
           
-          <div className="w-full relative">
-            <Navbar />
-            <Hero />
-          </div>
+          <Navbar />
+          <Hero />
           
           {/* Core Features Section */}
           <div className="w-full max-w-[1400px] px-4 sm:px-6 md:px-8 mt-12 sm:mt-20 md:mt-28">

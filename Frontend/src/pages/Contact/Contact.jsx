@@ -16,9 +16,11 @@ import { IoIosContacts } from "react-icons/io";
 import { Sparkles } from "lucide-react";
 import axios from "axios";
 import { authDataContext } from "../../context/AuthContextProvider";
+import { useTheme } from "../../components/theme.js";
 
 export default function Contact() {
   const { serverUrl } = useContext(authDataContext);
+  const { isDark } = useTheme();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -168,7 +170,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-[#A6D4AC]/40">
+    <div className="flex flex-col min-h-screen w-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 transition-colors duration-300">
       <Navbar />
       
       {/* Main Wrapper pushing Footer Down */}
@@ -211,10 +213,10 @@ export default function Contact() {
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full mb-6 shadow-md"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-[#0f1d13]/80 dark:border dark:border-green-800/20 backdrop-blur-sm rounded-full mb-6 shadow-md"
             >
               <Sparkles className="w-5 h-5 text-yellow-500" />
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-semibold text-gray-700 dark:text-zinc-200">
                 We're Here to Help You
               </span>
             </motion.div>
@@ -223,7 +225,7 @@ export default function Contact() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-gray-800 dark:text-white"
             >
               Get in <span className="text-green-500">Touch</span> With Us
             </motion.h1>
@@ -232,7 +234,7 @@ export default function Contact() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10"
+              className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-zinc-300 max-w-3xl mx-auto mb-10"
             >
               Have questions or need support? We're here to assist you on your health journey. Reach out to us anytime!
             </motion.p>
@@ -249,10 +251,10 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
                 Connect With <span className="text-green-500">NutriCare</span>
               </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto">
                 Multiple ways to reach us - choose what works best for you
               </p>
             </motion.div>
@@ -268,46 +270,46 @@ export default function Contact() {
               <motion.div
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl p-8 shadow-xl text-center"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-xl text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                   <MdMarkEmailRead className="text-4xl text-[#10B981]" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Email Us</h3>
-                <p className="text-gray-600 break-words">nutricareai@gmail.com</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">Email Us</h3>
+                <p className="text-gray-600 dark:text-zinc-355 break-words">nutricareai@gmail.com</p>
               </motion.div>
 
               <motion.div
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl p-8 shadow-xl text-center"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-xl text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                   <MdPermPhoneMsg className="text-4xl text-[#10B981]" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Call Us</h3>
-                <p className="text-gray-600">+(91) 1800-456-7890</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">Call Us</h3>
+                <p className="text-gray-600 dark:text-zinc-355">+(91) 1800-456-7890</p>
               </motion.div>
 
               <motion.div
                 variants={cardVariants}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="bg-white rounded-3xl p-8 shadow-xl text-center"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-xl text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
                   <FaMapMarkedAlt className="text-4xl text-[#10B981]" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Visit Us</h3>
-                <p className="text-gray-600">Nishchintapur, Budge Budge, Kolkata-700138</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">Visit Us</h3>
+                <p className="text-gray-600 dark:text-zinc-355">Nishchintapur, Budge Budge, Kolkata-700138</p>
               </motion.div>
             </motion.div>
 
@@ -315,17 +317,18 @@ export default function Contact() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
               {/* Map Section */}
               <motion.div
+                状况="visible"
                 variants={slideInLeftVariant}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
                 whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-3xl p-4 md:p-6 shadow-xl h-fit"
+                className="bg-white dark:bg-[#0f1d13] rounded-3xl p-4 md:p-6 shadow-xl h-fit border border-transparent dark:border-green-800/15"
                 style={{
-                  boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                 }}
               >
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">
+                <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
                   Find Us Here
                 </h3>
                 <div className="rounded-2xl overflow-hidden shadow-lg" style={{ height: "500px" }}>
@@ -352,9 +355,9 @@ export default function Contact() {
                 <div className="w-full max-w-md">
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="p-4 rounded-4xl bg-black phone-card-container"
+                    className="p-4 rounded-4xl bg-black dark:bg-[#0c130d] phone-card-container border border-transparent dark:border-green-950"
                     style={{
-                      boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                      boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                     }}
                     initial="visible"
                     // whileInView="visible"
@@ -362,7 +365,7 @@ export default function Contact() {
                     variants={slideUpVariant}
                   >
                     <motion.div
-                      className="relative py-4 px-2 rounded-t-3xl bg-gradient-to-bl from-[#A6D4AC] via-[#8FBC8F] via-[#98D8C8] to-[#F7D8BA] overflow-y-auto"
+                      className="relative py-4 px-2 rounded-t-3xl bg-gradient-to-bl from-[#A6D4AC] via-[#8FBC8F] via-[#98D8C8] to-[#F7D8BA] dark:from-[#09120c] dark:via-[#132318] dark:to-[#172c21] overflow-y-auto"
                       style={{ height: "750px" }}
                       initial="hidden"
                       whileInView="visible"
@@ -407,7 +410,7 @@ export default function Contact() {
                             id={id + "firstName"}
                             placeholder="First Name"
                             required
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                           />
@@ -425,7 +428,7 @@ export default function Contact() {
                             id={id + "lastName"}
                             placeholder="Last Name"
                             required
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                           />
@@ -443,7 +446,7 @@ export default function Contact() {
                             id={id + "email"}
                             placeholder="Write your email"
                             required
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                           />
@@ -461,7 +464,7 @@ export default function Contact() {
                             id={id + "mobileNumber"}
                             placeholder="Write your Mobile Number"
                             required
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                           />
@@ -475,14 +478,14 @@ export default function Contact() {
                           transition={{ duration: 0.5, delay: 1.2 }}
                         >
                           <select
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none"
                             defaultValue=""
                             id={id + "category"}
                             required
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
                           >
-                            <option value="" disabled>
+                            <option value="" disabled className="text-gray-500">
                               Select Category
                             </option>
                             <option value="login-issue">Login Issue</option>
@@ -502,7 +505,7 @@ export default function Contact() {
                           <textarea
                             placeholder="Describe your issue in detail..."
                             rows="4"
-                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 focus:border-green-700 focus:outline-none resize-none"
+                            className="w-full px-3 py-2 rounded-lg border-2 border-green-600 dark:border-green-800 bg-white dark:bg-zinc-900/90 text-gray-900 dark:text-zinc-100 focus:border-green-700 focus:outline-none resize-none"
                             id={id + "description"}
                             required
                             value={description}

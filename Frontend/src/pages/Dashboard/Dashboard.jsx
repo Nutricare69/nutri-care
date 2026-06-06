@@ -1,4 +1,3 @@
-// c:\Users\suvaj\Desktop\NutriCare\Frontend\src\pages\Dashboard\Dashboard.jsx
 import React, { useEffect, useContext, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -13,12 +12,14 @@ import { userDataContext } from "../../context/UserContext";
 import NutriCareLogo from "../../assets/nutricareLogo.jpg";
 import Loader from "../../components/Loader";
 import ProfileSetup from "../../components/ProfileSetup";
+import { useTheme } from "../../components/theme.js";
 
 export default function Dashboard() {
   const { userData, getCurrentUser } = useContext(userDataContext);
   const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDark } = useTheme();
 
   // Fetch user data on mount
   useEffect(() => {
@@ -51,17 +52,17 @@ export default function Dashboard() {
 
     return (
       // Outer div stays fixed to screen size, hides its own overflow
-      <div className="h-screen w-full bg-[#A6D4AC]/40 flex overflow-hidden">
+      <div className="h-screen w-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 flex overflow-hidden transition-colors duration-300">
         {userData && !userData.profileCompleted && <ProfileSetup />}
 
         {/* Sidebar - stays fixed to the left */}
         <motion.aside
           initial={{ x: -300 }}
           animate={{ x: 0, delay: 0.5 }}
-          className="w-64 bg-white shadow-xl flex flex-col z-20 flex-shrink-0"
+          className="w-64 bg-white dark:bg-[#0c130d] dark:border-r dark:border-green-950/20 shadow-xl flex flex-col z-20 flex-shrink-0"
         >
           {/* Logo */}
-          <div className="p-6 border-b">
+          <div className="p-6 border-b dark:border-green-950/20">
             <h1
               className="text-2xl font-bold cursor-pointer"
               onClick={() => {
@@ -94,10 +95,10 @@ export default function Dashboard() {
                       setLoading(true);
                     }
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer ${
                     isActive
                       ? "bg-green-500 text-white shadow-lg"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                      : "bg-gray-50 dark:bg-zinc-900/40 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-900/80"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -108,16 +109,16 @@ export default function Dashboard() {
           </nav>
 
           {/* User Info at Bottom */}
-          <div className="p-4 border-t">
-            <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl">
+          <div className="p-4 border-t dark:border-green-950/20">
+            <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-zinc-900/40 rounded-xl">
               <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
                 {userData?.name?.charAt(0).toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">
+                <p className="font-semibold text-sm truncate dark:text-zinc-200">
                   {userData?.name?.split(" ")[0] || "User"}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-zinc-400 truncate">
                   {userData?.email || "user@nutricare.com"}
                 </p>
               </div>
@@ -134,15 +135,15 @@ export default function Dashboard() {
             <motion.header
               initial={{ y: -100 }}
               animate={{ y: 0 }}
-              className="bg-white shadow-md px-8 py-4 flex items-center justify-between sticky top-0 z-10 w-full"
+              className="bg-white dark:bg-[#0c130d] border-b dark:border-green-950/20 shadow-md dark:shadow-green-950/10 px-8 py-4 flex items-center justify-between sticky top-0 z-10 w-full"
             >
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                   {getActiveLabel()}
                 </h2>
-                <div className="text-xl text-gray-500 flex gap-2">
+                <div className="text-xl text-gray-500 dark:text-zinc-400 flex gap-2">
                   Welcome back,{" "}
-                  <div className="font-bold">
+                  <div className="font-bold text-gray-800 dark:text-white">
                     {userData?.name?.split(" ")[0] || "User"}!
                   </div>
                 </div>
