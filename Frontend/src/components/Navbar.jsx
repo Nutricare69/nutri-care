@@ -109,7 +109,7 @@ const logoVariants = {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="absolute p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 backdrop-blur-xl rounded-full shadow-md shadow-green-300"
+      className="sticky p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 backdrop-blur-xl rounded-full shadow-md shadow-green-300"
     >
       {/* Navbar main div */}
 
@@ -133,7 +133,7 @@ const logoVariants = {
           <motion.img
             src={nutriCareLogo}
             alt="Nutri-Care Logo"
-            className="absolute left-0.5 xs:left-1 sm:left-2 md:left-4 w-[28px] xs:w-[32px] sm:w-[40px] md:w-[48px] h-full object-cover rounded-full"
+            className="absolute left-0.5 xs:left-1 sm:left-2 md:left-4 w-7 xs:w-[32px] sm:w-10 md:w-12 h-full object-cover rounded-full"
             // animate={{ rotate: 0}}
             // whileHover={{ rotate: 5}} // Changed from -5 to 180
             // transition={{ duration: 0.3 }}
@@ -288,13 +288,12 @@ const logoVariants = {
               onClick={() => setShowDropdown(!showDropdown)}
               className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] md:w-[45px] md:h-[45px] bg-amber-500 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg md:text-xl cursor-pointer hover:bg-amber-600 transition duration-300 shadow-md"
               whileHover={{
-                scale: 1.1,
+                scale: 1.05,
                 boxShadow: "0px 0px 20px rgba(245, 158, 11, 0.6)",
-                rotate: 5,
               }}
               whileTap={{ scale: 0.95 }}
-              animate={showDropdown ? { rotate: 180 } : { rotate: 0 }}
-              transition={{ duration: 0.3 }}
+              animate={showDropdown ? { scale: 1.05 } : { scale: 1 }}
+              transition={{ duration: 0.2 }}
             >
               {userData?.name?.slice(0, 1)?.toUpperCase() || "U"}
             </motion.div>
@@ -310,7 +309,7 @@ const logoVariants = {
               >
                 <motion.button
                   onClick={handleLogout}
-                  className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200"
+                  className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition duration-200"
                   whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.98 }}
                 >

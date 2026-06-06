@@ -26,3 +26,7 @@ frontend/node_modules
 *.njsproj
 *.sln
 *.sw?
+
+
+#Agent file
+Agents.md
