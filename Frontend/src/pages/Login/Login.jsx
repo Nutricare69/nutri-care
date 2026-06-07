@@ -14,13 +14,13 @@ export default function Login() {
   const [reveal, setReveal] = useState(false); // start animation
   const [settle, setSettle] = useState(false); // overshoot -> settle
   const [showPassword, setShowPassword] = useState(false);
-<<<<<<< HEAD
   const navigate = useNavigate();
   const { serverUrl } = useContext(authDataContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { getCurrentUser } = useContext(userDataContext);
   const [loading, setLoading] = useState(false);
+  const { isDark } = useTheme();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,28 +34,6 @@ export default function Login() {
         },
         { withCredentials: true },
       );
-=======
-   const navigate = useNavigate();
-   const { serverUrl } = useContext(authDataContext);
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const {  getCurrentUser } = useContext(userDataContext);
-   const [loading, setLoading] = useState(false);
-   const { isDark } = useTheme();
-
-   const handleLogin = async (e) => {
-     e.preventDefault();
-     setLoading(true); // 🟢 Show loader when login starts
-     try {
-        await axios.post(
-         serverUrl + "/api/auth/login",
-         {
-           email,
-           password,
-         },
-         { withCredentials: true }
-       );
->>>>>>> origin/fix/user-details-form-ui
       //  setUserData(result.data);
       //  alert("login successful!");
       await getCurrentUser();
@@ -155,20 +133,11 @@ export default function Login() {
               </span>
             </div>
           </div>
-<<<<<<< HEAD
-          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] mb-10">
-=======
-
           <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-10">
->>>>>>> origin/fix/user-details-form-ui
             Log In to Your Account
           </h1>
           {loading && <Loader />} {/* Show loader when loading state is true */}
-          <form
-            className="space-y-9 max-w-md top-"
-            action=""
-            onSubmit={handleLogin}
-          >
+          <form className="space-y-9 max-w-md" action="" onSubmit={handleLogin}>
             <input
               type="email"
               id="email"
@@ -177,26 +146,14 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
-<<<<<<< HEAD
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Enter password John@1234"
-                className="w-full rounded-full border border-[#e3e6df] px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40"
+                className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-=======
-             <div className="relative">
-                
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              placeholder="Enter password John@1234"
-              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
->>>>>>> origin/fix/user-details-form-ui
               />
               <div
                 className="absolute right-4 top-1/4  transform -translate-y-1/12 cursor-pointer select-none"
@@ -212,29 +169,24 @@ export default function Login() {
 
             <button
               type="submit"
-<<<<<<< HEAD
-              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95"
-=======
               className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer"
-             
->>>>>>> origin/fix/user-details-form-ui
             >
               Log In
             </button>
             <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300">
               <input type="checkbox" className="mt-1 accent-[#7fbe9a]" />
               <span>Remember Me</span>
-              <span className="text-sm text-[#6b7280] dark:text-zinc-400 ml-auto cursor-pointer">Forgot Password?</span>
+              <span className="text-sm text-[#6b7280] dark:text-zinc-400 ml-auto cursor-pointer">
+                Forgot Password?
+              </span>
             </label>
           </form>
-<<<<<<< HEAD
-          <p className="mt-6 text-sm text-[#6b7280]">
-=======
-
           <p className="mt-6 text-sm text-[#6b7280] dark:text-zinc-400">
->>>>>>> origin/fix/user-details-form-ui
             Don't have an account?{" "}
-            <a href="/signup" className="underline text-[#5aa87f] dark:text-green-400">
+            <a
+              href="/signup"
+              className="underline text-[#5aa87f] dark:text-green-400"
+            >
               Sign Up
             </a>
           </p>

@@ -1,47 +1,26 @@
-<<<<<<< HEAD
 import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import bgUrl from "../../assets/wallpaper login and signup.jpg"; // blurred page background
 import leftImg from "../../assets/loginDesign.jpg";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
-=======
-import React, { useEffect, useState, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import bgUrl from '../../assets/wallpaper login and signup.jpg'; // blurred page background
-import leftImg from '../../assets/loginDesign.jpg';
-import nutriCareLogo from '../../assets/nutricareLogo.jpg'
->>>>>>> origin/fix/user-details-form-ui
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { authDataContext } from "../../context/AuthContextProvider";
-<<<<<<< HEAD
 import Loader from "../../components/Loader";
-
-export default function SignUp() {
-  const navigate = useNavigate();
-  const [reveal, setReveal] = useState(false); // start animation
-  const [settle, setSettle] = useState(false); // overshoot -> settle
-=======
-import Loader from '../../components/Loader';
 import { useTheme } from "../../components/theme.js";
 
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [reveal, setReveal] = useState(false);   // start animation
-  const [settle, setSettle] = useState(false);   // overshoot -> settle
->>>>>>> origin/fix/user-details-form-ui
+  const [reveal, setReveal] = useState(false); // start animation
+  const [settle, setSettle] = useState(false); // overshoot -> settle
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl } = useContext(authDataContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setloading] = useState(false);
-<<<<<<< HEAD
-  //  const { userData, setUserData } = useContext(userDataContext);
-=======
   const { isDark } = useTheme();
->>>>>>> origin/fix/user-details-form-ui
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -55,42 +34,22 @@ export default function SignUp() {
           email,
           password,
         },
-<<<<<<< HEAD
         { withCredentials: true },
       );
-      //  setUserData(result.data);
       console.log(result);
-      //  alert("Signup successful!");
-
-      // Optional: Show success message
     } catch (error) {
       console.error("Error signing up:", error);
       alert(
         "Signup failed: " + (error.response?.data?.message || error.message),
-=======
-        { withCredentials: true }
-      );
-      console.log(result);
-    } catch (error) {
-      console.error("Error signing up:", error);
-      alert(
-        "Signup failed: " + (error.response?.data?.message || error.message)
->>>>>>> origin/fix/user-details-form-ui
       );
     } finally {
       setTimeout(() => {
         navigate("/login");
         setloading(false);
-<<<<<<< HEAD
       }, 200);
     }
   };
-=======
-      }, 200)
-    }
-  };
 
->>>>>>> origin/fix/user-details-form-ui
   useEffect(() => {
     setloading(false);
   }, [location.pathname]);
@@ -245,7 +204,10 @@ export default function SignUp() {
 
           <p className="mt-6 text-sm text-[#6b7280] dark:text-zinc-400">
             Already have an account?{" "}
-            <a href="/login" className="underline text-[#5aa87f] dark:text-green-400">
+            <a
+              href="/login"
+              className="underline text-[#5aa87f] dark:text-green-400"
+            >
               Log In
             </a>
           </p>

@@ -1,8 +1,7 @@
-import React, {useContext,useState,useEffect} from 'react'
-import {createContext} from 'react'
-import {authDataContext} from './AuthContextProvider.jsx'
-import axios from 'axios'
-
+import React, { useContext, useState, useEffect } from "react";
+import { createContext } from "react";
+import { authDataContext } from "./AuthContextProvider.jsx";
+import axios from "axios";
 
 export const userDataContext = createContext();
 
@@ -40,7 +39,7 @@ export default function UserContext({ children }) {
     setUserData,
     getCurrentUser,
     hasPromptedPremium,
-    setHasPromptedPremium
+    setHasPromptedPremium,
   };
 
   return (

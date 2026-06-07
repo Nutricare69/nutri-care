@@ -16,11 +16,34 @@ import ProfileSetup from "../../components/ProfileSetup";
 import { useTheme } from "../../components/theme.js";
 
 export default function Dashboard() {
-  const { userData,hasPromptedPremium, setHasPromptedPremium, getCurrentUser } = useContext(userDataContext);
+  const {
+    userData,
+    hasPromptedPremium,
+    setHasPromptedPremium,
+    getCurrentUser,
+  } = useContext(userDataContext);
   const [loading, setLoading] = useState(true);
-  const [showPremiumPrompt, setShowPremiumPrompt] = useState(false); 
+  const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    let timer;
+
+    if (
+      userData &&
+      !userData.isPremium &&
+      !hasPromptedPremium &&
+      !showPremiumPrompt
+    ) {
+      timer = setTimeout(() => {
+        setShowPremiumPrompt(true);
+        setHasPromptedPremium(true); // Persists globally as 'true' across sub-section changes
+      }, 3000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [userData, hasPromptedPremium]);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -73,30 +96,30 @@ export default function Dashboard() {
     setLoading(false);
   }, [location.pathname]);
 
-    return (
-      // Outer div stays fixed to screen size, hides its own overflow
-      <div className="h-screen w-full bg-[#A6D4AC]/40 flex overflow-hidden">
-        {userData && !userData.profileCompleted && <ProfileSetup />}
+  return (
+    // Outer div stays fixed to screen size, hides its own overflow
+    <div className="h-screen w-full bg-[#A6D4AC]/40 flex overflow-hidden">
+      {userData && !userData.profileCompleted && <ProfileSetup />}
 
-        {/* Sidebar - stays fixed to the left */}
-        <motion.aside
-          initial={{ x: -300 }}
-          animate={{ x: 0, delay: 0.5 }}
-          className="w-64 bg-white shadow-xl flex flex-col z-20 flex-shrink-0"
-        >
-          {/* Logo */}
-          <div className="p-6 border-b">
-            <h1
-              className="text-2xl font-bold cursor-pointer"
-              onClick={() => {
-                navigate("/");
-                setLoading(true);
-              }}
-            >
-              <span className="text-green-500">Nutri</span>
-              <span className="text-yellow-500">Care</span>
-            </h1>
-          </div>
+      {/* Sidebar - stays fixed to the left */}
+      <motion.aside
+        initial={{ x: -300 }}
+        animate={{ x: 0, delay: 0.5 }}
+        className="w-64 bg-white shadow-xl flex flex-col z-20 flex-shrink-0"
+      >
+        {/* Logo */}
+        <div className="p-6 border-b">
+          <h1
+            className="text-2xl font-bold cursor-pointer"
+            onClick={() => {
+              navigate("/");
+              setLoading(true);
+            }}
+          >
+            <span className="text-green-500">Nutri</span>
+            <span className="text-yellow-500">Care</span>
+          </h1>
+        </div>
 
         {/* Menu Items */}
         <nav className="flex-1 p-4 space-y-2">
@@ -107,70 +130,69 @@ export default function Dashboard() {
               (location.pathname === "/dashboard/" &&
                 item.path === "/dashboard");
 
-              return (
-                <motion.button
-                  key={item.id}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    if (location.pathname != item.path) {
-                      navigate(item.path);
-                      setLoading(true);
-                    }
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    isActive
-                      ? "bg-green-500 text-white shadow-lg"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-semibold">{item.label}</span>
-                </motion.button>
-              );
-            })}
-          </nav>
+            return (
+              <motion.button
+                key={item.id}
+                whileHover={{ scale: 1.02, x: 5 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  if (location.pathname != item.path) {
+                    navigate(item.path);
+                    setLoading(true);
+                  }
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  isActive
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-semibold">{item.label}</span>
+              </motion.button>
+            );
+          })}
+        </nav>
 
-          {/* User Info at Bottom */}
-          <div className="p-4 border-t">
-            <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl">
-              <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
-                {userData?.name?.charAt(0).toUpperCase() || "U"}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">
-                  {userData?.name?.split(" ")[0] || "User"}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {userData?.email || "user@nutricare.com"}
-                </p>
-              </div>
+        {/* User Info at Bottom */}
+        <div className="p-4 border-t">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl">
+            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+              {userData?.name?.charAt(0).toUpperCase() || "U"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">
+                {userData?.name?.split(" ")[0] || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {userData?.email || "user@nutricare.com"}
+              </p>
             </div>
           </div>
-        </motion.aside>
+        </div>
+      </motion.aside>
 
-                {/* Main Layout Wrapper - This div handles the scrollbars */}
-        <div className="flex-1 overflow-auto relative">
-          {/* Inner Wrapper - This forces both Header and Main to share the same expanded width */}
-          <div className="flex flex-col min-w-max min-h-full">
-            
-            {/* Top Header - now it stretches fully across the expanded scroll area */}
-            <motion.header
-              initial={{ y: -100 }}
-              animate={{ y: 0 }}
-              className="bg-white shadow-md px-8 py-4 flex items-center justify-between sticky top-0 z-10 w-full"
-            >
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {getActiveLabel()}
-                </h2>
-                <div className="text-xl text-gray-500 flex gap-2">
-                  Welcome back,{" "}
-                  <div className="font-bold">
-                    {userData?.name?.split(" ")[0] || "User"}!
-                  </div>
+      {/* Main Layout Wrapper - This div handles the scrollbars */}
+      <div className="flex-1 overflow-auto relative">
+        {/* Inner Wrapper - This forces both Header and Main to share the same expanded width */}
+        <div className="flex flex-col min-w-max min-h-full">
+          {/* Top Header - now it stretches fully across the expanded scroll area */}
+          <motion.header
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className="bg-white shadow-md px-8 py-4 flex items-center justify-between sticky top-0 z-10 w-full"
+          >
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {getActiveLabel()}
+              </h2>
+              <div className="text-xl text-gray-500 flex gap-2">
+                Welcome back,{" "}
+                <div className="font-bold">
+                  {userData?.name?.split(" ")[0] || "User"}!
                 </div>
               </div>
+            </div>
 
             <motion.div
               initial={{ x: 150, opacity: 1, scale: 0.8 }}
