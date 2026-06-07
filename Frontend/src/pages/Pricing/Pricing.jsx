@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 
+
 import axios from "axios";
 
 export default function Pricing() {
@@ -47,6 +48,7 @@ export default function Pricing() {
         name: "NutriCare",
         description: "30-Day Premium Plan",
         order_id: orderRes.data.orderId,
+        image: "https://res.cloudinary.com/ddkgrqekv/image/upload/v1780849496/nutricareLogo_nlzjrj.jpg",
         handler: async function (response) {
           // Verify with Backend
           const verifyData = {
