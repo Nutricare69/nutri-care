@@ -26,6 +26,7 @@ import { Pie, Bar, Line } from "react-chartjs-2";
 
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
+import { useTheme } from "../../components/theme.js";
 
 // Register Chart.js components
 ChartJS.register(
@@ -43,6 +44,7 @@ ChartJS.register(
 
 export default function Analytics() {
   const { serverUrl } = useContext(authDataContext);
+  const { isDark } = useTheme();
   const [dietPlans, setDietPlans] = useState([]);
   const [expandedPlan, setExpandedPlan] = useState(null); // Starts as null, so all are closed initially
   const [loading, setLoading] = useState(true);
@@ -148,11 +150,7 @@ export default function Analytics() {
     }
   };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: "bottom" } },
-  };
+  // chartOptions and chart themes are calculated dynamically inside the map render loop based on the active dark theme
 
   return (
     <AnimatePresence mode="wait">
@@ -164,7 +162,7 @@ export default function Analytics() {
         className="space-y-6 pb-10"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <Activity className="w-6 h-6 text-green-500" />
             Your Nutrition Analytics
           </h3>
@@ -178,16 +176,18 @@ export default function Analytics() {
 
         {!loading && dietPlans.length === 0 && (
           <motion.div
-            className="bg-white rounded-3xl p-16 text-center shadow-lg"
+            className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-3xl p-16 text-center shadow-lg"
             style={{
-              boxShadow: "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+              boxShadow: isDark
+                ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
             }}
           >
-            <ActivitySquare className="w-16 h-16 text-green-200 mx-auto mb-4" />
-            <h4 className="text-xl font-bold text-gray-800 mb-2">
+            <ActivitySquare className="w-16 h-16 text-green-200 dark:text-green-950 mx-auto mb-4" />
+            <h4 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
               No Analytics Available
             </h4>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-zinc-400">
               Generate a diet plan first to see your nutritional insights.
             </p>
           </motion.div>
@@ -196,6 +196,71 @@ export default function Analytics() {
         {!loading &&
           dietPlans.map((plan) => {
             const isExpanded = expandedPlan === plan._id;
+
+            // Theme-aware Chart.js Configurations
+            const chartOptions = {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    color: isDark ? "#e4e4e7" : "#374151",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                },
+                tooltip: {
+                  backgroundColor: isDark ? "#18181b" : "#ffffff",
+                  titleColor: isDark ? "#ffffff" : "#1f2937",
+                  bodyColor: isDark ? "#e4e4e7" : "#4b5563",
+                  borderColor: isDark ? "#27272a" : "#e5e7eb",
+                  borderWidth: 1,
+                },
+              },
+              scales: {
+                x: {
+                  grid: {
+                    color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                  },
+                  ticks: {
+                    color: isDark ? "#a1a1aa" : "#4b5563",
+                  },
+                },
+                y: {
+                  grid: {
+                    color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                  },
+                  ticks: {
+                    color: isDark ? "#a1a1aa" : "#4b5563",
+                  },
+                },
+              },
+            };
+
+            const pieChartOptions = {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    color: isDark ? "#e4e4e7" : "#374151",
+                    font: {
+                      weight: "bold",
+                    },
+                  },
+                },
+                tooltip: {
+                  backgroundColor: isDark ? "#18181b" : "#ffffff",
+                  titleColor: isDark ? "#ffffff" : "#1f2937",
+                  bodyColor: isDark ? "#e4e4e7" : "#4b5563",
+                  borderColor: isDark ? "#27272a" : "#e5e7eb",
+                  borderWidth: 1,
+                },
+              },
+            };
 
             const targetCals = plan.profileSnapshot?.tdee || 2000;
             const targetProt = (targetCals * 0.35) / 4;
@@ -277,7 +342,7 @@ export default function Analytics() {
                     Number(targetFat.toFixed(2)),
                     Number(targetCarbs.toFixed(2)),
                   ],
-                  backgroundColor: "#d1d5db",
+                  backgroundColor: isDark ? "#3f3f46" : "#d1d5db",
                   borderRadius: 4,
                 },
               ],
@@ -300,7 +365,7 @@ export default function Analytics() {
                 {
                   label: "Target Caloric Baseline",
                   data: allDayNumbers.map(() => targetCals),
-                  borderColor: "#9ca3af",
+                  borderColor: isDark ? "#52525b" : "#9ca3af",
                   borderDash: [5, 5],
                   borderWidth: 2,
                   pointRadius: 0,
@@ -315,31 +380,33 @@ export default function Analytics() {
                 key={plan._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100"
+                className="bg-white dark:bg-[#0c130d] rounded-3xl overflow-hidden shadow-lg border border-gray-100 dark:border-transparent"
                 style={{
-                  boxShadow: "2px 2px 12px #8fa98f, -2px -2px 8px #8fa98f",
+                  boxShadow: isDark
+                    ? "2px 2px 12px rgba(0, 0, 0, 0.4)"
+                    : "2px 2px 12px #8fa98f, -2px -2px 8px #8fa98f",
                 }}
               >
                 {/* Plan Header (Clickable) */}
                 <motion.div
-                  whileHover={{ backgroundColor: "#f9fafb" }}
+                  whileHover={{ backgroundColor: isDark ? "#121b14" : "#f9fafb" }}
                   onClick={() => togglePlan(plan._id)}
                   className="flex items-center justify-between p-6 cursor-pointer"
                 >
                   <div className="flex items-center gap-4">
                     <PlaystoreStar number={plan.planNumber} />
                     <div>
-                      <h4 className="text-lg font-bold text-gray-800">
+                      <h4 className="text-lg font-bold text-gray-800 dark:text-zinc-200">
                         {plan.user?.name?.split(" ")[0] || "Your"}'s Analytics
                         Plan
                       </h4>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-zinc-400">
                         Generated on {formatDate(plan.createdAt)}
                       </p>
                     </div>
                   </div>
                   <motion.div animate={{ rotate: isExpanded ? 90 : 0 }}>
-                    <ChevronRight className="w-6 h-6 text-gray-400" />
+                    <ChevronRight className="w-6 h-6 text-gray-400 dark:text-zinc-500" />
                   </motion.div>
                 </motion.div>
 
@@ -350,9 +417,9 @@ export default function Analytics() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-gray-200 overflow-hidden"
+                      className="border-t border-gray-200 dark:border-green-950/20 overflow-hidden"
                     >
-                      <div className="p-4 md:p-6 space-y-6 bg-gray-50 text-sm">
+                      <div className="p-4 md:p-6 space-y-6 bg-gray-50/50 dark:bg-[#0f1d13]/60 text-sm">
                         {/* Day Selector Ribbon */}
                         <div
                           className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide py-2"
@@ -367,10 +434,10 @@ export default function Analytics() {
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                               onClick={() => setSelectedDayNumber(num)}
-                              className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 text-sm md:text-base md:px-5 md:py-2.5 rounded-full font-semibold transition-all shadow-sm flex-shrink-0 ${
+                              className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 text-sm md:text-base md:px-5 md:py-2.5 rounded-full font-semibold transition-all shadow-sm flex-shrink-0 cursor-pointer ${
                                 selectedDayNumber === num
-                                  ? "bg-green-500 text-white shadow-md shadow-green-200"
-                                  : "bg-white text-gray-600 hover:bg-green-100"
+                                  ? "bg-green-500 text-white shadow-md shadow-green-950/35"
+                                  : "bg-white dark:bg-zinc-900/60 dark:border dark:border-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-green-100 dark:hover:bg-green-950/40"
                               }`}
                             >
                               <CalendarDays className="w-4 h-4" /> Day {num}
@@ -382,28 +449,29 @@ export default function Analytics() {
                         {/* the key change here is "min-w-0" to prevent grid blowout! */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 w-full">
                           {/* Macro Balance container isolated */}
-                          <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 flex flex-col w-full min-w-0">
-                            <h4 className="text-gray-800 font-bold mb-4 text-center">
+                          <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-transparent flex flex-col w-full min-w-0">
+                            <h4 className="text-gray-800 dark:text-zinc-200 font-bold mb-4 text-center">
                               Macro Balance - Day {selectedDayNumber}
                             </h4>
                             <div className="relative w-full h-[250px] flex items-center justify-center">
                               {/* Change Doughnut to Pie, and remove cutout */}
                               <Pie
-                                key={`pie-${selectedDayNumber}`} // Updating key name for clarity
+                                key={`pie-${selectedDayNumber}-${isDark}`} // Add isDark key to redraw cleanly
                                 data={macroData}
-                                options={chartOptions}
+                                options={pieChartOptions}
                               />
                             </div>
                           </div>
 
                           {/* Intake Vs Targets container isolated */}
-                          <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 flex flex-col w-full min-w-0">
-                            <h4 className="flex items-center gap-2 text-gray-800 font-bold mb-4">
+                          <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-transparent flex flex-col w-full min-w-0">
+                            <h4 className="flex items-center gap-2 text-gray-800 dark:text-zinc-200 font-bold mb-4">
                               <Target className="w-5 h-5 text-blue-500" />{" "}
                               Intake vs Targets
                             </h4>
                             <div className="relative w-full h-[250px]">
                               <Bar
+                                key={`bar-${selectedDayNumber}-${isDark}`} // Add isDark key to redraw cleanly
                                 data={targetVsActualData}
                                 options={chartOptions}
                               />
@@ -411,8 +479,8 @@ export default function Analytics() {
                           </div>
 
                           {/* 14 Day Trend container isolated */}
-                          <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 w-full min-w-0 lg:col-span-2">
-                            <h4 className="flex items-center gap-2 text-gray-800 font-bold mb-4">
+                          <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-transparent w-full min-w-0 lg:col-span-2">
+                            <h4 className="flex items-center gap-2 text-gray-800 dark:text-zinc-200 font-bold mb-4">
                               <TrendingUp className="w-5 h-5 text-green-500" />{" "}
                               Meal Plan Caloric Trend
                             </h4>
@@ -421,6 +489,7 @@ export default function Analytics() {
                               className={`relative h-[300px] ${allDayNumbers.length > 7 ? "min-w-[800px]" : "w-full"}`}
                             >
                               <Line
+                                key={`line-${isDark}`} // Add isDark key to redraw cleanly
                                 data={trendDataChart}
                                 options={{
                                   ...chartOptions,
@@ -429,6 +498,20 @@ export default function Analytics() {
                                     y: {
                                       beginAtZero: true,
                                       suggestedMax: targetCals + 500,
+                                      grid: {
+                                        color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                                      },
+                                      ticks: {
+                                        color: isDark ? "#a1a1aa" : "#4b5563",
+                                      },
+                                    },
+                                    x: {
+                                      grid: {
+                                        color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                                      },
+                                      ticks: {
+                                        color: isDark ? "#a1a1aa" : "#4b5563",
+                                      },
                                     },
                                   },
                                 }}

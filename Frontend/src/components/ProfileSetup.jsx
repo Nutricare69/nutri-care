@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { userDataContext } from "../context/UserContext.jsx";
 import { authDataContext } from "../context/AuthContextProvider.jsx";
+import { useTheme } from "./theme.js";
 
 export default function ProfileSetup() {
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -10,6 +11,7 @@ export default function ProfileSetup() {
 
   const { getCurrentUser } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
+  const { isDark } = useTheme();
 
   // Prevent users from selecting future dates
   const today = new Date().toISOString().split("T")[0];
@@ -44,23 +46,28 @@ export default function ProfileSetup() {
       );
     } finally {
       setTimeout(() => {
-      setLoading(false);
-    },200);}
+        setLoading(false);
+      }, 200);
+    }
   };
 
   return (
     // Backdrop overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div
-        className="bg-white rounded-3xl w-full max-w-md p-8 md:p-10 relative overflow-hidden"
-        style={{ boxShadow: "0px 10px 30px rgba(74, 158, 74, 0.2)" }} // Subtle green glow
+        className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-800/20 rounded-3xl w-full max-w-md p-8 md:p-10 relative overflow-hidden"
+        style={{
+          boxShadow: isDark
+            ? "0px 10px 30px rgba(0, 0, 0, 0.5)"
+            : "0px 10px 30px rgba(74, 158, 74, 0.2)",
+        }}
       >
         {/* Decorative background element */}
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-amber-400"></div>
 
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-green-600 mb-2">Welcome!</h2>
-          <p className="text-gray-500 text-sm md:text-base">
+          <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">Welcome!</h2>
+          <p className="text-gray-500 dark:text-zinc-400 text-sm md:text-base">
             Let's personalize your experience. When is your birthday?
           </p>
         </div>
@@ -69,7 +76,7 @@ export default function ProfileSetup() {
           <div className="flex flex-col gap-2">
             <label
               htmlFor="dob"
-              className="text-sm font-semibold text-gray-700 ml-1"
+              className="text-sm font-semibold text-gray-700 dark:text-zinc-300 ml-1"
             >
               Date of Birth
             </label>
@@ -83,7 +90,7 @@ export default function ProfileSetup() {
                   setDateOfBirth(e.target.value);
                   setError("");
                 }}
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all date-input cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all date-input cursor-pointer"
                 required
               />
             </div>
@@ -97,7 +104,7 @@ export default function ProfileSetup() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 w-full flex items-center justify-center gap-2 bg-green-500 text-amber-100 font-bold text-lg py-3 rounded-xl hover:bg-green-600 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-md"
+            className="mt-2 w-full flex items-center justify-center gap-2 bg-green-500 text-amber-100 font-bold text-lg py-3 rounded-xl hover:bg-green-600 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-md cursor-pointer"
           >
             {loading ? (
               <>

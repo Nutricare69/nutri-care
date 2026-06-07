@@ -72,25 +72,40 @@ export default function Hero() {
         className="w-full flex justify-center bg-transparent relative"
       >
         <div
-          className="relative w-full max-w-[2000px] min-h-[400px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-[700px] xl:min-h-[850px] flex items-center justify-start rounded-b-3xl overflow-hidden mx-auto"
+          className="relative w-full max-w-[2000px] min-h-[420px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-[700px] xl:min-h-[850px] flex items-center justify-start rounded-b-3xl overflow-hidden mx-auto"
           style={{ boxShadow: "2px 2px 8px #8fa98f, -4px -4px 16px #8fa98f" }}
         >
-          {/* Background Image */}
+          {/* Background Image — centered on all sizes */}
           <img
             src={HomeBGImage}
             alt="Home Page Background"
-            className="hero-bg absolute inset-0 w-full h-full object-cover object-right sm:object-center z-0"
+            className="hero-bg absolute inset-0 w-full h-full object-cover object-center z-0"
           />
 
+          {/* Gradient overlay — strong dark on left where text lives, fades to transparent right */}
+          <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/75 via-black/55 sm:via-black/45 md:via-black/35 to-transparent" />
+
+          {/* Additional bottom-of-screen fade for mobile readability */}
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/30 via-transparent to-transparent sm:hidden" />
+
           {/* Overlay Content */}
-          <div className="relative z-10 flex flex-col items-start px-6 sm:px-10 md:px-16 lg:px-24 xl:px-32 w-full max-w-[90%] md:max-w-[700px] lg:max-w-[800px] xl:max-w-[1000px] text-black">
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-2 sm:mb-3 text-green-500">
+          <div className="relative z-[2] flex flex-col items-start px-5 sm:px-10 md:px-16 lg:px-24 xl:px-32 w-full max-w-[95%] sm:max-w-[80%] md:max-w-[700px] lg:max-w-[800px] xl:max-w-[1000px] py-12 sm:py-0">
+            <h1
+              className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-2 sm:mb-3 text-green-400"
+              style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}
+            >
               AI That Cares for
             </h1>
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 md:mb-8 text-amber-400">
+            <h1
+              className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 md:mb-8 text-amber-400"
+              style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}
+            >
               Your Health
             </h1>
-            <p className="hero-desc text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semi-bold text-green-300/90 mb-6 sm:mb-8 ">
+            <p
+              className="hero-desc text-sm sm:text-base md:text-xl lg:text-2xl xl:text-3xl font-semibold text-white/95 mb-6 sm:mb-8 leading-relaxed max-w-[90%] sm:max-w-full"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.7)" }}
+            >
               <span className="text-amber-300 font-bold">Personalized</span>,{" "}
               <span className="text-amber-300 font-bold">affordable</span>, and{" "}
               <span className="text-amber-300 font-bold">data-driven</span>{" "}
@@ -110,7 +125,7 @@ export default function Hero() {
                     setLoading(false);
                   }, 200);
                 }}
-                className="hero-btn bg-green-500 text-amber-200 px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full w-full sm:w-auto min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-base sm:text-lg xl:text-xl font-bold hover:bg-green-600 transition duration-300 shadow-md cursor-pointer"
+                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
               >
                 {/* {if user is old and visited the dashboard} */}
                 {userData.profileCompleted
@@ -126,7 +141,7 @@ export default function Hero() {
                     setLoading(false);
                   }, 200);
                 }}
-                className="hero-btn bg-green-500 text-amber-200 px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full w-full sm:w-auto min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-base sm:text-lg xl:text-xl font-bold hover:bg-green-600 transition duration-300 shadow-md cursor-pointer"
+                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
               >
                 Start My Nutrition Journey
               </button>

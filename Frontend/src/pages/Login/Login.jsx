@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
+import { useTheme } from "../../components/theme.js";
 
 export default function Login() {
   const [reveal, setReveal] = useState(false); // start animation
   const [settle, setSettle] = useState(false); // overshoot -> settle
   const [showPassword, setShowPassword] = useState(false);
+<<<<<<< HEAD
   const navigate = useNavigate();
   const { serverUrl } = useContext(authDataContext);
   const [email, setEmail] = useState("");
@@ -32,6 +34,28 @@ export default function Login() {
         },
         { withCredentials: true },
       );
+=======
+   const navigate = useNavigate();
+   const { serverUrl } = useContext(authDataContext);
+   const [email, setEmail] = useState("");
+   const [password, setPassword] = useState("");
+   const {  getCurrentUser } = useContext(userDataContext);
+   const [loading, setLoading] = useState(false);
+   const { isDark } = useTheme();
+
+   const handleLogin = async (e) => {
+     e.preventDefault();
+     setLoading(true); // 🟢 Show loader when login starts
+     try {
+        await axios.post(
+         serverUrl + "/api/auth/login",
+         {
+           email,
+           password,
+         },
+         { withCredentials: true }
+       );
+>>>>>>> origin/fix/user-details-form-ui
       //  setUserData(result.data);
       //  alert("login successful!");
       await getCurrentUser();
@@ -80,14 +104,14 @@ export default function Login() {
           className="absolute inset-0 bg-center bg-cover scale-105 blur-md"
           style={{ backgroundImage: `url(${bgUrl})` }}
         />
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
 
       {/* Centered, smaller two-panel card */}
-      <div className=" relative  mx-auto my-8  md:my-12  w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 ring-1 ring-black/5">
+      <div className=" relative  mx-auto my-8  md:my-12  w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 ring-1 ring-black/5 dark:ring-white/10">
         {/* Left panel: gradient bg, icon with no bg (SVG only), slides across the center */}
         <div
-          className={` flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
+          className={` flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] dark:from-[#1b3f27] dark:to-[#2e5f3f] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
         >
           {/* left design image  */}
           <img
@@ -97,7 +121,7 @@ export default function Login() {
           />
           {/* Text slightly below the icon */}
           <div className="mt-6 text-white text-center px-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-2">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-2 text-white">
               Welcome Back!
             </h2>
             <p className="text-white/90 text-base md:text-lg">
@@ -108,7 +132,7 @@ export default function Login() {
 
         {/* Right panel: form, slides across the center */}
         <div
-          className={`bg-white/95 backdrop-blur-sm p-6 md:p-10 transform transition-transform rounded-r-3xl ${speedClass} ease-out ${rightPhase}`}
+          className={`bg-white/95 dark:bg-[#0c130d]/95 text-gray-800 dark:text-zinc-100 backdrop-blur-sm p-6 md:p-10 transform transition-transform rounded-r-3xl ${speedClass} ease-out ${rightPhase}`}
         >
           <div className="mb-6 flex items-center gap-1.5">
             <div className="w-[70px] h-[70px] ">
@@ -131,7 +155,12 @@ export default function Login() {
               </span>
             </div>
           </div>
+<<<<<<< HEAD
           <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] mb-10">
+=======
+
+          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-10">
+>>>>>>> origin/fix/user-details-form-ui
             Log In to Your Account
           </h1>
           {loading && <Loader />} {/* Show loader when loading state is true */}
@@ -144,10 +173,11 @@ export default function Login() {
               type="email"
               id="email"
               placeholder="john@gmail.com"
-              className="w-full rounded-full border border-[#e3e6df] px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40"
+              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
+<<<<<<< HEAD
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -156,6 +186,17 @@ export default function Login() {
                 className="w-full rounded-full border border-[#e3e6df] px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
+=======
+             <div className="relative">
+                
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="Enter password John@1234"
+              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+>>>>>>> origin/fix/user-details-form-ui
               />
               <div
                 className="absolute right-4 top-1/4  transform -translate-y-1/12 cursor-pointer select-none"
@@ -171,19 +212,29 @@ export default function Login() {
 
             <button
               type="submit"
+<<<<<<< HEAD
               className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95"
+=======
+              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer"
+             
+>>>>>>> origin/fix/user-details-form-ui
             >
               Log In
             </button>
-            <label className="flex items-start gap-3 text-sm text-[#444]">
+            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300">
               <input type="checkbox" className="mt-1 accent-[#7fbe9a]" />
               <span>Remember Me</span>
-              <span className="text-sm text-[#6b7280]">Forgot Password?</span>
+              <span className="text-sm text-[#6b7280] dark:text-zinc-400 ml-auto cursor-pointer">Forgot Password?</span>
             </label>
           </form>
+<<<<<<< HEAD
           <p className="mt-6 text-sm text-[#6b7280]">
+=======
+
+          <p className="mt-6 text-sm text-[#6b7280] dark:text-zinc-400">
+>>>>>>> origin/fix/user-details-form-ui
             Don't have an account?{" "}
-            <a href="/signup" className="underline">
+            <a href="/signup" className="underline text-[#5aa87f] dark:text-green-400">
               Sign Up
             </a>
           </p>

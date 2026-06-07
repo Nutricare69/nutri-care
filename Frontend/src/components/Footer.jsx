@@ -53,20 +53,20 @@ export default function Footer() {
 
       {/* FIX: Added mt-auto to strictly push the footer to the bottom of the Flex container in Home.jsx */}
       <motion.div
-        className="mt-auto relative flex w-full h-70 rounded-t-2xl justify-center mb-0 items-center bg-[#1d2f21]/80"
+        className="mt-auto relative flex flex-col w-full h-auto min-h-[280px] lg:h-70 rounded-t-2xl justify-center mb-0 items-center bg-[#1d2f21]/80 py-8 lg:py-0 pb-16 lg:pb-0"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={containerVariants}
       >
         {/*Logo and Name*/}
-        <div className=" p-5 w-375 flex justify-between items-center ">
+        <div className=" p-5 w-full max-w-[1500px] flex flex-col lg:flex-row justify-between items-center gap-8 lg:gap-0 ">
           <motion.div
-            className=" w-90 flex justify-between left-5 items-center px-4 py-2 "
+            className=" w-full max-w-[360px] sm:w-90 flex justify-between items-center px-4 py-2 "
             variants={itemVariants}
           >
             <motion.span
-              className=" w-[77px] h-[70px] bg-green-500 rounded-full inline-block  mt-2"
+              className=" w-[77px] h-[70px] bg-green-500 rounded-full inline-block  mt-2 shrink-0"
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
@@ -105,17 +105,17 @@ export default function Footer() {
 
           {/*links*/}
           <motion.div
-            className=" relative flex p-2  w-250 h-40 space-x-8"
+            className=" relative flex flex-col sm:flex-row p-2 w-full lg:w-250 lg:h-40 gap-8 sm:gap-4 lg:gap-0 lg:space-x-8 justify-between sm:justify-around lg:justify-start items-center sm:items-start"
             variants={itemVariants}
           >
             <motion.div
-              className=" flex p-2 w-40 h-35  "
+              className=" flex p-2 w-full sm:w-40 h-auto sm:h-35 justify-center sm:justify-start "
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <div className="  w-40 space-y-2  ">
+              <div className="  w-full sm:w-40 space-y-2 text-center sm:text-left ">
                 <motion.h2
                   className=" text-lg font-bold text-white  "
                   initial={{ opacity: 0 }}
@@ -192,13 +192,13 @@ export default function Footer() {
 
             {/*Contact Info*/}
             <motion.div
-              className=" flex p-2 w-100 h-35 justify-center  "
+              className=" flex p-2 w-full sm:w-100 h-auto sm:h-35 justify-center sm:justify-start "
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className=" space-y-2 ">
+              <div className=" w-full sm:w-100 space-y-2 text-center sm:text-left ">
                 <motion.h2
                   className=" text-lg font-bold text-white  "
                   initial={{ opacity: 0 }}
@@ -241,7 +241,7 @@ export default function Footer() {
               </div>
             </motion.div>
             <motion.div
-              className=" absolute flex p-2 w-70 h-20 gap-3 right-7 top-10 items-center "
+              className=" relative lg:absolute flex p-2 w-full sm:w-auto lg:w-70 h-20 gap-3 justify-center sm:justify-start lg:right-7 lg:top-10 items-center mt-4 sm:mt-0 "
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -287,7 +287,7 @@ export default function Footer() {
 
         {/*Right reserved*/}
         <motion.div
-          className="absolute flex gap-1 bottom-4 "
+          className="absolute flex gap-1 bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -301,7 +301,7 @@ export default function Footer() {
             <BsCCircle className="text-white " />
           </motion.div>
           <p className=" text-sm font-bold  text-white">
-            2025 Nutri-Care AI. All rights reserved.
+            {new Date().getFullYear()} Nutri-Care AI. All rights reserved.
           </p>
         </motion.div>
       </motion.div>
