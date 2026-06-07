@@ -1,31 +1,47 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import User from '../models/user.model.js'; // Ensure you import the User model
 
-export const isAuth = async (req,res,next) => {
+export const isAuth = async (req, res, next) => {
     try {
-        const {token} =  req.cookies;
-        if(!token){
-            return res.status(401).json({message:"User doesn't have a token"});
+        // 1. (Your existing code) Token verification logic...
+        const token = req.cookies.token; // or req.headers.authorization...
+        if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // 2. Fetch the user
+        const user = await User.findById(decoded.id || decoded._id);
+        if (!user) return res.status(401).json({ message: "User not found" });
+
+        // --- NEW: SUBSCRIPTION & QUOTA MAINTENANCE ---
+        let requiresSave = false;
+        const currentDate = new Date();
+
+        // A. Check Premium Expiry
+        if (user.isPremium && user.premiumValidUntil && user.premiumValidUntil < currentDate) {
+            user.isPremium = false; // Downgrade
+            requiresSave = true;
         }
-        
-        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-        
-        if(!verifyToken){
-            return res.status(401).json({message:"User token is not valid"});
+
+        // B. Reset free plan counter if it's a new month
+        if (user.lastMealPlanDate && user.lastMealPlanDate.getMonth() !== currentDate.getMonth()) {
+            user.freePlansUsedThisMonth = 0;
+            requiresSave = true;
         }
-        
-        req.user = verifyToken;
+
+        // C. Save if any maintenance changes were made
+        if (requiresSave) {
+            await user.save();
+        }
+        // ---------------------------------------------
+
+        // 3. Attach the fresh, accurate user object to the request
+        req.user = user;
         next();
     } catch (error) {
-        // Handle JWT-specific errors as 401 (unauthorized)
-        // if (error.name === 'JsonWebTokenError' || 
-        //     error.name === 'TokenExpiredError' || 
-        //     error.name === 'NotBeforeError') {
-        //     return res.status(401).json({message:"Invalid or expired token"});
-        // }
-        
-        // Other errors as 500 (server error)
-        return res.status(500).json({message:`Auth Middleware error ${error}`});
+        console.log("Error in isAuth middleware", error);
+        res.status(401).json({ message: "Invalid or expired token" });
     }
-}
+};
 
 export default isAuth;

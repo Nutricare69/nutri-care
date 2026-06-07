@@ -9,6 +9,8 @@ export const userDataContext = createContext();
 export default function UserContext({ children }) {
   const { serverUrl } = useContext(authDataContext);
   const [userData, setUserData] = useState(null);
+  // NEW: Global flag tracking if the user has been prompted during this app lifecycle
+  const [hasPromptedPremium, setHasPromptedPremium] = useState(false);
 
   const getCurrentUser = async () => {
     try {
@@ -37,6 +39,8 @@ export default function UserContext({ children }) {
     userData,
     setUserData,
     getCurrentUser,
+    hasPromptedPremium,
+    setHasPromptedPremium
   };
 
   return (

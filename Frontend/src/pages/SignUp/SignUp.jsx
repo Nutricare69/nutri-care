@@ -1,75 +1,81 @@
-import React, { useEffect, useState,useContext, use } from 'react';
-import {useLocation} from 'react-router-dom';
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import bgUrl from '../../assets/wallpaper login and signup.jpg'; // blurred page background
-import leftImg from '../../assets/loginDesign.jpg';
-import nutriCareLogo from '../../assets/nutricareLogo.jpg'
+import bgUrl from "../../assets/wallpaper login and signup.jpg"; // blurred page background
+import leftImg from "../../assets/loginDesign.jpg";
+import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 // import { userDataContext } from "../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
-import Loader  from '../../components/Loader';
+import Loader from "../../components/Loader";
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const [reveal, setReveal] = useState(false);   // start animation
-  const [settle, setSettle] = useState(false);   // overshoot -> settle
+  const [reveal, setReveal] = useState(false); // start animation
+  const [settle, setSettle] = useState(false); // overshoot -> settle
   const [showPassword, setShowPassword] = useState(false);
-     const { serverUrl } = useContext(authDataContext);
-     const [name, setName] = useState("");
-     const [email, setEmail] = useState("");
-     const [password, setPassword] = useState("");
-     const [loading , setloading] = useState(false);
-    //  const { userData, setUserData } = useContext(userDataContext);
+  const { serverUrl } = useContext(authDataContext);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setloading] = useState(false);
+  //  const { userData, setUserData } = useContext(userDataContext);
 
-    
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setloading(true);
 
+    try {
+      const result = await axios.post(
+        serverUrl + "/api/auth/signup",
+        {
+          name,
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
+      //  setUserData(result.data);
+      console.log(result);
+      //  alert("Signup successful!");
 
-     const handleSignUp = async (e) => {
-       e.preventDefault();
-       setloading(true);
-
-       try {
-         const result = await axios.post(
-           serverUrl + "/api/auth/signup",
-           {
-             name,
-             email,
-             password,
-           },
-           { withCredentials: true }
-         );
-        //  setUserData(result.data);
-         console.log(result);
-        //  alert("Signup successful!");
-         
-
-         // Optional: Show success message
-       } catch (error) {
-         
-         console.error("Error signing up:", error);
-         alert(
-           "Signup failed: " + (error.response?.data?.message || error.message)
-         );
-       } finally {
-        setTimeout(()=> {
+      // Optional: Show success message
+    } catch (error) {
+      console.error("Error signing up:", error);
+      alert(
+        "Signup failed: " + (error.response?.data?.message || error.message),
+      );
+    } finally {
+      setTimeout(() => {
         navigate("/login");
         setloading(false);
-       },200)}
-     };
-     useEffect(()=>{
-      setloading(false);
-     },[location.pathname]);
+      }, 200);
+    }
+  };
+  useEffect(() => {
+    setloading(false);
+  }, [location.pathname]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setReveal(true), 50);      // slide in
-    const t2 = setTimeout(() => setSettle(true), 800);     // then settle to final position
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => setReveal(true), 50); // slide in
+    const t2 = setTimeout(() => setSettle(true), 800); // then settle to final position
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
-  const speedClass = settle ? 'duration-500' : 'duration-700';
-  const leftPhase  = !reveal ? '-translate-x-full' : !settle ? 'translate-x-[10%]' : 'translate-x-0';
-  const rightPhase = !reveal ? 'translate-x-full'  : !settle ? '-translate-x-[10%]' : 'translate-x-0';
+  const speedClass = settle ? "duration-500" : "duration-700";
+  const leftPhase = !reveal
+    ? "-translate-x-full"
+    : !settle
+      ? "translate-x-[10%]"
+      : "translate-x-0";
+  const rightPhase = !reveal
+    ? "translate-x-full"
+    : !settle
+      ? "-translate-x-[10%]"
+      : "translate-x-0";
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
@@ -134,7 +140,7 @@ export default function SignUp() {
           <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] mb-6">
             Create Your Account
           </h1>
-          {loading && <Loader/> } 
+          {loading && <Loader />}
           <form
             className="space-y-4 max-w-md"
             action=""

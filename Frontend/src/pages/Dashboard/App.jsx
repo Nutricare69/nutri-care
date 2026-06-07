@@ -8,6 +8,7 @@ import Analytics from "./Analytics.jsx";
 import Community from "./Community.jsx";
 import NgoSupport from "./NGOSupport.jsx";
 
+
 export default function App() {
   return (
     <>
@@ -16,13 +17,14 @@ export default function App() {
         {/* Make Dashboard the parent layout route */}
         <Route path="/" element={<Dashboard />}>
           {/* Index route shown when exactly on /dashboard */}
-          <Route index element={<DietPlans  />} />
+          <Route index element={<DietPlans />} />
 
           {/* All the other dashboard tabs */}
           <Route path="analytics" element={<Analytics />} />
           <Route path="community" element={<Community />} />
           <Route path="ngo" element={<NgoSupport />} />
           <Route path="settings" element={<Settings />} />
+      
         </Route>
       </Routes>
     </>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
-import bgUrl from '../../assets/wallpaper login and signup.jpg'; // blurred page background
-import leftImg from '../../assets/loginDesign.jpg';
-import nutriCareLogo from '../../assets/nutricareLogo.jpg'
+import bgUrl from "../../assets/wallpaper login and signup.jpg"; // blurred page background
+import leftImg from "../../assets/loginDesign.jpg";
+import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -11,61 +10,67 @@ import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
 
 export default function Login() {
-  const [reveal, setReveal] = useState(false);   // start animation
-  const [settle, setSettle] = useState(false);   // overshoot -> settle
+  const [reveal, setReveal] = useState(false); // start animation
+  const [settle, setSettle] = useState(false); // overshoot -> settle
   const [showPassword, setShowPassword] = useState(false);
-   const navigate = useNavigate();
-   const { serverUrl } = useContext(authDataContext);
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const {  getCurrentUser } = useContext(userDataContext);
-   const [loading, setLoading] = useState(false);
-   
-  
+  const navigate = useNavigate();
+  const { serverUrl } = useContext(authDataContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { getCurrentUser } = useContext(userDataContext);
+  const [loading, setLoading] = useState(false);
 
-
-
-   const handleLogin = async (e) => {
-     e.preventDefault();
-     setLoading(true); // 🟢 Show loader when login starts
-     try {
-        await axios.post(
-         serverUrl + "/api/auth/login",
-         {
-           email,
-           password,
-         },
-         { withCredentials: true }
-       );
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true); // 🟢 Show loader when login starts
+    try {
+      await axios.post(
+        serverUrl + "/api/auth/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
       //  setUserData(result.data);
       //  alert("login successful!");
-       await getCurrentUser();
-      
+      await getCurrentUser();
+
       //  console.log(result);
-     } catch (error) {
-       console.error("Error logging in:", error);
-       alert(
-         "Login failed: " + (error.response?.data?.message || error.message)
-       );
-     }finally {
-     setTimeout(()=> {
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert(
+        "Login failed: " + (error.response?.data?.message || error.message),
+      );
+    } finally {
+      setTimeout(() => {
         navigate("/");
         setLoading(false);
-      },200)
+      }, 200);
       // 🟢 Hide loader when login finishes (success or error)
-     }
-   };
-
+    }
+  };
 
   useEffect(() => {
-    const t1 = setTimeout(() => setReveal(true), 50);      // slide in
-    const t2 = setTimeout(() => setSettle(true), 800);     // then settle to final position
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => setReveal(true), 50); // slide in
+    const t2 = setTimeout(() => setSettle(true), 800); // then settle to final position
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
-  const speedClass = settle ? 'duration-500' : 'duration-700';
-  const leftPhase  = !reveal ? '-translate-x-full' : !settle ? 'translate-x-[10%]' : 'translate-x-0';
-  const rightPhase = !reveal ? 'translate-x-full'  : !settle ? '-translate-x-[10%]' : 'translate-x-0';
+  const speedClass = settle ? "duration-500" : "duration-700";
+  const leftPhase = !reveal
+    ? "-translate-x-full"
+    : !settle
+      ? "translate-x-[10%]"
+      : "translate-x-0";
+  const rightPhase = !reveal
+    ? "translate-x-full"
+    : !settle
+      ? "-translate-x-[10%]"
+      : "translate-x-0";
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
@@ -126,11 +131,10 @@ export default function Login() {
               </span>
             </div>
           </div>
-
           <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] mb-10">
             Log In to Your Account
           </h1>
-          {loading && <Loader/> } {/* Show loader when loading state is true */}
+          {loading && <Loader />} {/* Show loader when loading state is true */}
           <form
             className="space-y-9 max-w-md top-"
             action=""
@@ -144,34 +148,30 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
-             <div className="relative">
-               
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              placeholder="Enter password John@1234"
-              className="w-full rounded-full border border-[#e3e6df] px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Enter password John@1234"
+                className="w-full rounded-full border border-[#e3e6df] px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
-            <div
-              className="absolute right-4 top-1/4  transform -translate-y-1/12 cursor-pointer select-none"
-              onClick={() => setShowPassword(!showPassword)}
+              <div
+                className="absolute right-4 top-1/4  transform -translate-y-1/12 cursor-pointer select-none"
+                onClick={() => setShowPassword(!showPassword)}
               >
-              {!showPassword ? (
-                <IoMdEyeOff className="w-7 h-7 text-gray-400" />
-              ) : (
-                <IoMdEye className="w-7 h-7 text-gray-400" />
-              )}
-            </div>
+                {!showPassword ? (
+                  <IoMdEyeOff className="w-7 h-7 text-gray-400" />
+                ) : (
+                  <IoMdEye className="w-7 h-7 text-gray-400" />
+                )}
               </div>
-           
-
+            </div>
 
             <button
               type="submit"
               className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95"
-             
             >
               Log In
             </button>
@@ -181,7 +181,6 @@ export default function Login() {
               <span className="text-sm text-[#6b7280]">Forgot Password?</span>
             </label>
           </form>
-
           <p className="mt-6 text-sm text-[#6b7280]">
             Don't have an account?{" "}
             <a href="/signup" className="underline">
