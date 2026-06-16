@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import bgUrl from "../../assets/wallpaper login and signup.jpg"; // blurred page background
+import bgUrl from "../../assets/wallpaper login and signup.jpg";
 import leftImg from "../../assets/loginDesign.jpg";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -11,51 +11,55 @@ import Loader from "../../components/Loader";
 import { useTheme } from "../../components/theme.js";
 
 export default function Login() {
-  const [reveal, setReveal] = useState(false); // start animation
-  const [settle, setSettle] = useState(false); // overshoot -> settle
+  const [reveal, setReveal] = useState(false);
+  const [settle, setSettle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { serverUrl } = useContext(authDataContext);
+
+  // Form State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false); // 🟢 Tracks checkbox state
+
   const { getCurrentUser } = useContext(userDataContext);
   const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // 🟢 Show loader when login starts
+
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!EMAIL_REGEX.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
     try {
+      // 🟢 Sent the rememberMe boolean value down to the backend
       await axios.post(
         serverUrl + "/api/auth/login",
-        {
-          email,
-          password,
-        },
+        { email, password, rememberMe },
         { withCredentials: true },
       );
-      //  setUserData(result.data);
-      //  alert("login successful!");
       await getCurrentUser();
-
-      //  console.log(result);
+      setTimeout(() => {
+        navigate("/");
+        setLoading(false);
+      }, 200);
     } catch (error) {
       console.error("Error logging in:", error);
       alert(
         "Login failed: " + (error.response?.data?.message || error.message),
       );
-    } finally {
-      setTimeout(() => {
-        navigate("/");
-        setLoading(false);
-      }, 200);
-      // 🟢 Hide loader when login finishes (success or error)
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const t1 = setTimeout(() => setReveal(true), 50); // slide in
-    const t2 = setTimeout(() => setSettle(true), 800); // then settle to final position
+    const t1 = setTimeout(() => setReveal(true), 50);
+    const t2 = setTimeout(() => setSettle(true), 800);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -85,19 +89,17 @@ export default function Login() {
         <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
 
-      {/* Centered, smaller two-panel card */}
-      <div className=" relative  mx-auto my-8  md:my-12  w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 ring-1 ring-black/5 dark:ring-white/10">
-        {/* Left panel: gradient bg, icon with no bg (SVG only), slides across the center */}
+      {/* Centered card container */}
+      <div className="relative mx-auto my-8 md:my-12 w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 grid-rows-1 ring-1 ring-black/5 dark:ring-white/10">
+        {/* Left panel */}
         <div
-          className={` flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] dark:from-[#1b3f27] dark:to-[#2e5f3f] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
+          className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] dark:from-[#1b3f27] dark:to-[#2e5f3f] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
         >
-          {/* left design image  */}
           <img
             src={leftImg}
             alt="Nutri-Care"
-            className="w-60 md:w-72 lg:w-80 h-auto rounded-full "
+            className="w-60 md:w-72 lg:w-80 h-auto rounded-full"
           />
-          {/* Text slightly below the icon */}
           <div className="mt-6 text-white text-center px-6">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-2 text-white">
               Welcome Back!
@@ -108,73 +110,97 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Right panel: form, slides across the center */}
+        {/* Right panel */}
         <div
           className={`bg-white/95 dark:bg-[#0c130d]/95 text-gray-800 dark:text-zinc-100 backdrop-blur-sm p-6 md:p-10 transform transition-transform rounded-r-3xl ${speedClass} ease-out ${rightPhase}`}
         >
           <div className="mb-6 flex items-center gap-1.5">
-            <div className="w-[70px] h-[70px] ">
+            <div className="w-[70px] h-[70px]">
               <img
                 src={nutriCareLogo}
                 alt="Nutri-Care Logo"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            {/* Nutri-Care Logo Text */}
             <div className="flex items-center gap-0.5">
               <span className="text-lg md:text-xl font-semibold text-green-500">
                 Nutri
               </span>
-              <span className="text-lg md:text-xl font-semibold text-yellow-500 ">
+              <span className="text-lg md:text-xl font-semibold text-yellow-500">
                 -
               </span>
-              <span className="text-lg md:text-xl font-semibold text-yellow-500 ">
+              <span className="text-lg md:text-xl font-semibold text-yellow-500">
                 Care
               </span>
             </div>
           </div>
-          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-10">
+
+          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-6">
             Log In to Your Account
           </h1>
-          {loading && <Loader />} {/* Show loader when loading state is true */}
-          <form className="space-y-9 max-w-md" action="" onSubmit={handleLogin}>
-            <input
-              type="email"
-              id="email"
-              placeholder="john@gmail.com"
-              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
-            <div className="relative">
+
+          {loading && <Loader />}
+
+          <form className="space-y-5 max-w-md" onSubmit={handleLogin}>
+            {/* Email Field */}
+            <div className="flex flex-col gap-1 w-full">
               <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Enter password John@1234"
+                type="email"
+                placeholder="john@gmail.com"
                 className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                required
               />
-              <div
-                className="absolute right-4 top-1/4  transform -translate-y-1/12 cursor-pointer select-none"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {!showPassword ? (
-                  <IoMdEyeOff className="w-7 h-7 text-gray-400" />
-                ) : (
-                  <IoMdEye className="w-7 h-7 text-gray-400" />
-                )}
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span> Must be a
+                valid format (e.g., name@domain.com)
+              </p>
+            </div>
+
+            {/* Password Field */}
+            <div className="flex flex-col gap-1 w-full">
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter password John@1234"
+                  className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  required
+                />
+                <div
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer select-none"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {!showPassword ? (
+                    <IoMdEyeOff className="w-7 h-7 text-gray-400" />
+                  ) : (
+                    <IoMdEye className="w-7 h-7 text-gray-400" />
+                  )}
+                </div>
               </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span>{" "}
+                Case-sensitive account authentication field.
+              </p>
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer"
+              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer mt-2"
             >
               Log In
             </button>
-            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300">
-              <input type="checkbox" className="mt-1 accent-[#7fbe9a]" />
+
+            {/* Remember Me Label Section */}
+            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="mt-1 accent-[#7fbe9a]"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)} // 🟢 Hooked up event handler
+              />
               <span>Remember Me</span>
               <span className="text-sm text-[#6b7280] dark:text-zinc-400 ml-auto cursor-pointer">
                 Forgot Password?

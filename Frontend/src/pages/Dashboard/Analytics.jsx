@@ -76,7 +76,7 @@ export default function Analytics() {
             <div className="absolute inset-0 bg-green-100 rounded-xl transform -rotate-45 opacity-80 mix-blend-multiply"></div>
           </div>
         </motion.div>
-        <span className="relative z-10 text-white font-bold text-xs bg-black/35 w-10 h-10 flex flex-col items-center justify-center rounded-full backdrop-blur-sm">
+        <span className="relative z-5 text-white font-bold text-xs bg-black/35 w-10 h-10 flex flex-col items-center justify-center rounded-full backdrop-blur-sm">
           <span className="text-[9px] leading-none text-gray-200">Plan</span>
           <span className="leading-none">{number}</span>
         </span>
@@ -393,7 +393,7 @@ export default function Analytics() {
                   onClick={() => togglePlan(plan._id)}
                   className="flex items-center justify-between p-6 cursor-pointer"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 ">
                     <PlaystoreStar number={plan.planNumber} />
                     <div>
                       <h4 className="text-lg font-bold text-gray-800 dark:text-zinc-200">

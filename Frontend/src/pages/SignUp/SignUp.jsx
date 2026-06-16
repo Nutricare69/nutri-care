@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import bgUrl from "../../assets/wallpaper login and signup.jpg"; // blurred page background
+import bgUrl from "../../assets/wallpaper login and signup.jpg";
 import leftImg from "../../assets/loginDesign.jpg";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -12,41 +12,63 @@ import { useTheme } from "../../components/theme.js";
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [reveal, setReveal] = useState(false); // start animation
-  const [settle, setSettle] = useState(false); // overshoot -> settle
+  const [reveal, setReveal] = useState(false);
+  const [settle, setSettle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl } = useContext(authDataContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setloading] = useState(false);
   const { isDark } = useTheme();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setloading(true);
 
+    const NAME_REGEX = /^[A-Za-z\s]{2,}$/;
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const PASSWORD_REGEX =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!NAME_REGEX.test(name)) {
+      alert(
+        "Please enter a valid name (at least 2 letters, no special characters).",
+      );
+      return;
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+    if (!PASSWORD_REGEX.test(password)) {
+      alert(
+        "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.",
+      );
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    setloading(true);
     try {
-      const result = await axios.post(
+      await axios.post(
         serverUrl + "/api/auth/signup",
-        {
-          name,
-          email,
-          password,
-        },
+        { name, email, password },
         { withCredentials: true },
       );
-      console.log(result);
+      setTimeout(() => {
+        navigate("/login");
+        setloading(false);
+      }, 200);
     } catch (error) {
       console.error("Error signing up:", error);
       alert(
         "Signup failed: " + (error.response?.data?.message || error.message),
       );
-    } finally {
-      setTimeout(() => {
-        navigate("/login");
-        setloading(false);
-      }, 200);
+      setloading(false);
     }
   };
 
@@ -55,8 +77,8 @@ export default function SignUp() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setReveal(true), 50); // slide in
-    const t2 = setTimeout(() => setSettle(true), 800); // then settle to final position
+    const t1 = setTimeout(() => setReveal(true), 50);
+    const t2 = setTimeout(() => setSettle(true), 800);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -86,19 +108,17 @@ export default function SignUp() {
         <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
 
-      {/* Centered, smaller two-panel card */}
+      {/* Centered card container */}
       <div className="mx-auto my-8 md:my-12 w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 ring-1 ring-black/5 dark:ring-white/10">
-        {/* Left panel: gradient bg, icon with no bg (SVG only), slides across the center */}
+        {/* Left panel */}
         <div
           className={`relative flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] dark:from-[#1b3f27] dark:to-[#2e5f3f] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
         >
-          {/* left design image  */}
           <img
             src={leftImg}
             alt="Nutri-Care"
-            className="w-60 md:w-72 lg:w-80 h-auto rounded-full "
+            className="w-60 md:w-72 lg:w-80 h-auto rounded-full"
           />
-          {/* Text slightly below the icon */}
           <div className="mt-6 text-white text-center px-6">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-2 text-white">
               Join Our Community!
@@ -109,95 +129,126 @@ export default function SignUp() {
           </div>
         </div>
 
-        {/* Right panel: form, slides across the center */}
+        {/* Right panel */}
         <div
           className={`bg-white/95 dark:bg-[#0c130d]/95 text-gray-800 dark:text-zinc-100 rounded-r-3xl backdrop-blur-sm p-6 md:p-10 transform transition-transform ${speedClass} ease-out ${rightPhase}`}
         >
           <div className="mb-6 flex items-center gap-1.5">
-            <div className="w-[70px] h-[70px] ">
+            <div className="w-[70px] h-[70px]">
               <img
                 src={nutriCareLogo}
                 alt="Nutri-Care Logo"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            {/* Nutri-Care Logo Text */}
             <div className="flex items-center gap-0.5">
               <span className="text-lg md:text-xl font-semibold text-green-500">
                 Nutri
               </span>
-              <span className="text-lg md:text-xl font-semibold text-yellow-500 ">
+              <span className="text-lg md:text-xl font-semibold text-yellow-500">
                 -
               </span>
-              <span className="text-lg md:text-xl font-semibold text-yellow-500 ">
+              <span className="text-lg md:text-xl font-semibold text-yellow-500">
                 Care
               </span>
             </div>
           </div>
 
-          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-6">
+          <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-4">
             Create Your Account
           </h1>
           {loading && <Loader />}
-          <form
-            className="space-y-4 max-w-md"
-            action=""
-            onSubmit={handleSignUp}
-          >
-            <input
-              type="text"
-              id="name"
-              placeholder="Full Name"
-              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-              required
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-            />
-            <input
-              type="email"
-              id="email"
-              placeholder="Email Address"
-              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              value={email}
-            />
-            <div className="relative">
+
+          <form className="space-y-3 max-w-md" onSubmit={handleSignUp}>
+            {/* Full Name Container */}
+            <div className="flex flex-col gap-0.5 w-full">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
+                required
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+              />
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span> Letters
+                and spaces only, min 2 characters.
+              </p>
+            </div>
+
+            {/* Email Container */}
+            <div className="flex flex-col gap-0.5 w-full">
+              <input
+                type="email"
+                placeholder="Email Address"
+                className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                value={email}
+              />
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span> Enter a
+                valid email address structure.
+              </p>
+            </div>
+
+            {/* Password Container */}
+            <div className="flex flex-col gap-0.5 w-full">
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  value={password}
+                />
+                <div
+                  className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer text-2xl text-gray-400"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <IoMdEyeOff className="w-7 h-7 text-gray-400" />
+                  ) : (
+                    <IoMdEye className="w-7 h-7 text-gray-400" />
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span> Min 8
+                chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol.
+              </p>
+            </div>
+
+            {/* Confirm Password Container */}
+            <div className="flex flex-col gap-0.5 w-full">
               <input
                 type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Password"
+                placeholder="Confirm Password"
                 className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPassword}
                 required
-                value={password}
               />
-              <div
-                className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer text-2xl text-gray-400"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <IoMdEyeOff className="w-7 h-7 text-gray-400" />
-                ) : (
-                  <IoMdEye className="w-7 h-7 text-gray-400" />
-                )}
-              </div>
+              <p className="text-xs text-gray-500 dark:text-zinc-400 px-4">
+                <span className="text-red-500 font-bold mr-1">*</span> Must
+                match the password entered above.
+              </p>
             </div>
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
-            />
 
             <button
               type="submit"
-              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer"
+              className="w-full rounded-full py-3 font-semibold text-white bg-gradient-to-r from-[#7fbe9a] to-[#5aa87f] shadow hover:opacity-95 cursor-pointer mt-2"
             >
               Sign Up
             </button>
 
-            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300">
-              <input type="checkbox" className="mt-1 accent-[#7fbe9a]" />
+            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1">
+              <input
+                type="checkbox"
+                className="mt-1 accent-[#7fbe9a]"
+                required
+              />
               <span>I agree to Terms & Privacy Policy</span>
             </label>
           </form>

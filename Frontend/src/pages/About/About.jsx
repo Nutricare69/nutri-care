@@ -1,5 +1,5 @@
-import React from "react";
-import { motion, } from "framer-motion";
+import React, { useContext } from "react";
+import { motion } from "framer-motion";
 import {
   Target,
   Eye,
@@ -7,7 +7,6 @@ import {
   Users,
   Shield,
   Sparkles,
-  CheckCircle2,
   Lightbulb,
   Code,
   Rocket,
@@ -21,12 +20,15 @@ import KaustubhImg from "../../assets/team/kaustubhPaul.jpeg";
 import SuvajitImg from "../../assets/team/SuvajitRoy.jpg";
 import RajaniImg from "../../assets/team/RajaniGiri.jpeg";
 import SambitImg from "../../assets/team/SambitMondal.jpg";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
+import { userDataContext } from "../../context/UserContext"; // 🟢 Added context import
 
 export default function About() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
+  const { userData } = useContext(userDataContext); // 🟢 Consume userData state
+
   const team = [
     {
       name: "Arnab Jana",
@@ -132,7 +134,6 @@ export default function About() {
     },
   ];
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -163,7 +164,6 @@ export default function About() {
 
   return (
     <div className="w-full h-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 transition-colors duration-300">
-      {/* Navbar */}
       <Navbar />
 
       {/* Hero Section */}
@@ -173,7 +173,6 @@ export default function About() {
         transition={{ duration: 0.8 }}
         className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
       >
-        {/* Animated background elements */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -241,7 +240,6 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            // viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -258,16 +256,16 @@ export default function About() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 gap-8"
           >
-            {/* Mission */}
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, y: -5 }}
               className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20"
               style={{
-                boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                boxShadow: isDark
+                  ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                  : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
               }}
             >
               <div className="w-16 h-16 mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
@@ -284,13 +282,14 @@ export default function About() {
               </p>
             </motion.div>
 
-            {/* Vision */}
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, y: -5 }}
               className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20"
               style={{
-                boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                boxShadow: isDark
+                  ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                  : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
               }}
             >
               <div className="w-16 h-16 mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
@@ -343,7 +342,9 @@ export default function About() {
                 whileHover={{ scale: 1.05, y: -10 }}
                 className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-lg text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
+                  boxShadow: isDark
+                    ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                    : "2px 2px 12px #8fa98f",
                 }}
               >
                 <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
@@ -352,7 +353,9 @@ export default function About() {
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">{value.title}</h3>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">
+                  {value.title}
+                </h3>
                 <p className="text-gray-600 dark:text-zinc-400 text-sm leading-relaxed">
                   {value.description}
                 </p>
@@ -388,10 +391,8 @@ export default function About() {
             viewport={{ once: true }}
             className="relative"
           >
-            {/* Timeline Line - Hidden on mobile */}
             <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-green-200 dark:from-green-950 via-green-400 dark:via-green-700 to-green-200 dark:to-green-950 transform -translate-x-1/2" />
 
-            {/* Timeline Items */}
             <div className="space-y-12">
               {timeline.map((item, index) => (
                 <motion.div
@@ -401,19 +402,18 @@ export default function About() {
                     index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                   } gap-8 lg:gap-12 items-center`}
                 >
-                  {/* Content Card */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className="relative w-full lg:w-5/12 bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-xl border border-transparent dark:border-green-800/10"
                     style={{
-                      boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                      boxShadow: isDark
+                        ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                        : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                     }}
                   >
-                    {/* Month Badge */}
                     <div className="inline-block px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white text-sm font-semibold rounded-full mb-4">
                       {item.month}
                     </div>
-
                     <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-green-400">
                       {item.title}
                     </h3>
@@ -422,7 +422,6 @@ export default function About() {
                     </p>
                   </motion.div>
 
-                  {/* Timeline Icon - Center */}
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 360 }}
                     transition={{ duration: 0.5 }}
@@ -438,7 +437,6 @@ export default function About() {
                     />
                   </motion.div>
 
-                  {/* Spacer for alternating layout */}
                   <div className="hidden lg:block w-5/12" />
                 </motion.div>
               ))}
@@ -480,7 +478,9 @@ export default function About() {
                 whileHover={{ scale: 1.05, y: -10 }}
                 className="bg-white dark:bg-[#0f1d13] rounded-3xl overflow-hidden shadow-lg border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
+                  boxShadow: isDark
+                    ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                    : "2px 2px 12px #8fa98f",
                 }}
               >
                 <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-[#121f14]">
@@ -497,7 +497,9 @@ export default function About() {
                   />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">{member.name}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">
+                    {member.name}
+                  </h3>
                   <p className="text-sm text-gray-600 dark:text-zinc-400 font-semibold">
                     {member.role}
                   </p>
@@ -508,7 +510,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Dynamic CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -517,7 +519,6 @@ export default function About() {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-12 md:p-16 shadow-2xl relative overflow-hidden"
         >
-          {/* Animated background elements */}
           <motion.div
             animate={{
               scale: [1, 1.5, 1],
@@ -551,6 +552,8 @@ export default function About() {
               Join thousands of people who have transformed their lives with
               NutriCare's personalized nutrition plans
             </motion.p>
+
+            {/* 🟢 Dynamic Authentication Button Layer */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -559,16 +562,25 @@ export default function About() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 bg-white text-green-600 text-lg font-bold rounded-full hover:bg-gray-100 transition-colors duration-300 shadow-xl inline-flex items-center gap-3 cursor-pointer"
-              onClick={() => navigate("/signup")}
+              onClick={() => {
+                if (userData) {
+                  navigate("/dashboard");
+                } else {
+                  navigate("/signup");
+                }
+              }}
             >
-              Get Started Today
+              {userData
+                ? userData.profileCompleted
+                  ? `Welcome Back, ${userData.name.split(" ")[0]}!`
+                  : "Complete Your Profile"
+                : "Get Started Today"}
               <ArrowRight className="w-5 h-5" />
             </motion.button>
           </div>
         </motion.div>
       </section>
 
-      {/* Footer */}
       <div className="mt-20">
         <Footer />
       </div>

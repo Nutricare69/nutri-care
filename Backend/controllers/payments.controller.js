@@ -1,4 +1,4 @@
-import  createRazorpayInstance  from '../config/razorpay.config.js';
+import createRazorpayInstance from '../config/razorpay.config.js';
 import Order from '../models/PaymentModel/order.model.js';
 import Plan from '../models/PaymentModel/plan.model.js';
 import User from '../models/user.model.js';
@@ -81,7 +81,7 @@ export const verifyPayment = async (req, res) => {
     const order = await Order.findOneAndUpdate(
       { orderId: razorpay_order_id },
       { status: 'SUCCESS' },
-      { new: true } // returns the updated order document
+      { returnDocument: 'after' } // returns the updated order document
     );
 
     if (!order) {

@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, X , ArrowLeft} from "lucide-react";
+import { CheckCircle2, X, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
-
 
 import axios from "axios";
 
@@ -36,7 +35,7 @@ export default function Pricing() {
       const orderRes = await axios.post(
         `${serverUrl}/api/payment/create-order`,
         {
-          planId: "6a243c4f43ad2b3377ba1e2b", //  Should give the  actual plan ID
+          planId: "6a31560f040f93760704d896", //  Should give the  actual plan ID
         },
         { withCredentials: true },
       );
@@ -48,7 +47,8 @@ export default function Pricing() {
         name: "NutriCare",
         description: "30-Day Premium Plan",
         order_id: orderRes.data.orderId,
-        image: "https://res.cloudinary.com/ddkgrqekv/image/upload/v1780849496/nutricareLogo_nlzjrj.jpg",
+        image:
+          "https://res.cloudinary.com/ddkgrqekv/image/upload/v1780849496/nutricareLogo_nlzjrj.jpg",
         handler: async function (response) {
           // Verify with Backend
           const verifyData = {
@@ -195,7 +195,7 @@ export default function Pricing() {
             <h3 className="text-2xl font-bold">Premium</h3>
             <p className="text-green-100 mt-2">Unlimited Access for 30 Days</p>
             <div className="my-6 text-4xl font-extrabold">
-              ₹499{" "}
+              ₹399{" "}
               <span className="text-lg font-normal text-green-200">
                 / 30 days
               </span>

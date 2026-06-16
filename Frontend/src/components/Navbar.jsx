@@ -1,7 +1,7 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import nutriCareLogo from "../assets/nutricareLogo.jpg";
 import { useNavigate } from "react-router-dom";
-import { motion, scale } from "framer-motion";
+import { motion } from "framer-motion";
 import { userDataContext } from "../context/UserContext";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContextProvider";
@@ -35,7 +35,7 @@ export default function Navbar() {
         {},
         {
           withCredentials: true,
-        }
+        },
       );
       setUserData(null);
       setShowDropdown(false);
@@ -76,35 +76,42 @@ export default function Navbar() {
     },
     tap: { scale: 0.95 },
   };
-const logoVariants = {
-  hidden: { rotate: -360, opacity: 0 ,x:-20},
-  visible: {
-    scale: 1.0,
-    rotate: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.7,
-      ease: "easeOut",
-    },
-  },
-  hover: {
-    scale: 1.1,
-    rotate: 5, 
-    transition: {
-      duration: 0.3,
-      ease: "easeInOut",
-    },
-  },
-};
 
-  const linkHoverVariants = {
+  const logoVariants = {
+    hidden: { rotate: -360, opacity: 0, x: -20 },
+    visible: {
+      scale: 1.0,
+      rotate: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.7,
+        ease: "easeOut",
+      },
+    },
     hover: {
       scale: 1.1,
-      color: theme === "dark" ? "#ffffff" : "#000000",
+      rotate: 5,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  // REMOVED JavaScript color configuration options to eliminate theme conflict bugs
+  const linkHoverVariants = {
+    hover: {
+      scale: 1.05,
       transition: {
         duration: 0.2,
       },
     },
+  };
+
+  // Linked directly to parent hover actions for premium performance behavior
+  const underlineVariants = {
+    hidden: { width: "0%" },
+    hover: { width: "100%", transition: { duration: 0.25, ease: "easeInOut" } },
   };
 
   return (
@@ -112,10 +119,8 @@ const logoVariants = {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-full shadow-md shadow-green-300 dark:shadow-green-950/40 text-black dark:text-white"
+      className="sticky p-2 sm:p-3 md:p-4 top-0 left-0 w-full z-200 flex justify-between items-center h-auto bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-full shadow-md shadow-green-300 dark:shadow-green-950/40 text-black dark:text-white transition-colors duration-300"
     >
-      {/* Navbar main div */}
-
       {/* Nutri-Care Logo */}
       <motion.div
         className="relative px-1 sm:px-2 md:px-4 flex items-center gap-0.5 sm:gap-1 md:gap-1.5 cursor-pointer"
@@ -125,7 +130,7 @@ const logoVariants = {
         whileHover="hover"
       >
         <motion.span
-          className="w-[30px] h-[28px] xs:w-[35px] xs:h-[32px] sm:w-[45px] sm:h-[42px] md:w-[55px] md:h-[50px] bg-green-500 rounded-full inline-block mr-0.5 sm:mr-1 md:mr-2"
+          className="w-[30px] h-[28px] xs:w-[35px] xs:h-[32px] sm:w-[45px] sm:h-[42px] md:w-[55px] md:h-[50px] bg-green-500 rounded-full inline-block mr-0.5 sm:mr-1 md:mr-2 relative overflow-hidden"
           variants={logoVariants}
           animate={{ x: -10 }}
           whileHover={{
@@ -133,18 +138,14 @@ const logoVariants = {
             transition: { duration: 0.3 },
           }}
         >
-          <motion.img
+          <img
             src={nutriCareLogo}
             alt="Nutri-Care Logo"
-            className="absolute left-0.5 xs:left-1 sm:left-2 md:left-4 w-7 xs:w-[32px] sm:w-10 md:w-12 h-full object-cover rounded-full"
-            // animate={{ rotate: 0}}
-            // whileHover={{ rotate: 5}} // Changed from -5 to 180
-            // transition={{ duration: 0.3 }}
+            className="absolute inset-0 w-full h-full object-cover rounded-full"
           />
         </motion.span>
         <motion.span
           className="text-lg xs:text-xl sm:text-2xl md:text-4xl lg:text-5xl font-semibold text-green-500"
-          // initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
@@ -162,82 +163,32 @@ const logoVariants = {
 
       {/** Navbar Links */}
       <div className="hidden lg:flex gap-4 xl:gap-8 2xl:gap-18 text-black/70 dark:text-white/70">
-        <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
-          onClick={() => navigate("/")}
-          custom={0}
-          initial="hidden"
-          animate="visible"
-          variants={navLinksVariants}
-          whileHover="hover"
-        >
-          <motion.span variants={linkHoverVariants}>Home</motion.span>
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-green-500"
-            initial={{ width: "0%" }}
-            whileHover={{ width: "100%" }}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.span>
-        <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
-          custom={1}
-          initial="hidden"
-          animate="visible"
-          variants={navLinksVariants}
-          whileHover="hover"
-        >
+        {[
+          { label: "Home", path: "/" },
+          { label: "About", path: "/about" },
+          { label: "How It Works", path: "/how-it-works" },
+          { label: "Contact", path: "/contact" },
+        ].map((link, index) => (
           <motion.span
-            variants={linkHoverVariants}
-            onClick={() => navigate("/about")}
+            key={link.label}
+            className="text-base lg:text-lg xl:text-xl 2xl:text-2xl text-gray-600 dark:text-zinc-300 hover:text-black dark:hover:text-white cursor-pointer relative pb-1 block transition-colors duration-200"
+            onClick={() => navigate(link.path)}
+            custom={index}
+            initial="hidden"
+            animate="visible"
+            variants={navLinksVariants}
+            whileHover="hover"
           >
-            About
+            <motion.span className="block" variants={linkHoverVariants}>
+              {link.label}
+            </motion.span>
+            <motion.div
+              className="absolute bottom-0 left-0 h-0.5 bg-green-500"
+              variants={underlineVariants}
+              initial="hidden"
+            />
           </motion.span>
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-green-500"
-            initial={{ width: "0%" }}
-            whileHover={{ width: "100%" }}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.span>
-        <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={navLinksVariants}
-          whileHover="hover"
-        >
-          <motion.span
-            variants={linkHoverVariants}
-            onClick={() => navigate("/how-it-works")}
-          >
-            How It Works
-          </motion.span>
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-green-500"
-            initial={{ width: "0%" }}
-            whileHover={{ width: "100%" }}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.span>
-        <motion.span
-          className="text-base lg:text-lg xl:text-xl 2xl:text-2xl hover:text-black/90 dark:hover:text-white cursor-pointer relative"
-          onClick={() => navigate("/contact")}
-          custom={3}
-          initial="hidden"
-          animate="visible"
-          variants={navLinksVariants}
-          whileHover="hover"
-        >
-          <motion.span variants={linkHoverVariants}>Contact</motion.span>
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-green-500"
-            initial={{ width: "0%" }}
-            whileHover={{ width: "100%" }}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.span>
+        ))}
       </div>
 
       {/** Navbar Buttons / User Profile */}
@@ -248,7 +199,9 @@ const logoVariants = {
           className="p-1.5 sm:p-2 rounded-full cursor-pointer transition-colors text-black/60 hover:bg-black/10 dark:text-white/80 dark:hover:bg-white/10 flex items-center justify-center"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          title={
+            theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
+          }
         >
           {theme === "dark" ? (
             <Sun className="w-5 h-5 sm:w-[22px] sm:h-[22px] text-yellow-400" />
@@ -258,11 +211,10 @@ const logoVariants = {
         </motion.button>
 
         {!userData ? (
-          // Show Login and Sign Up buttons when no user data
           <>
             <motion.button
               onClick={() => navigate("/login")}
-              className="text-black/60 dark:text-white/70 px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 w-auto min-w-[50px] xs:min-w-[60px] sm:min-w-[70px] md:min-w-[80px] rounded-full hover:bg-black/10 dark:hover:bg-white/10 hover:text-white/90 dark:hover:text-white transition duration-300 cursor-pointer"
+              className="text-gray-600 dark:text-zinc-300 px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 w-auto min-w-[50px] xs:min-w-[60px] sm:min-w-[70px] md:min-w-[80px] rounded-full hover:bg-black/10 dark:hover:bg-white/10 hover:text-black dark:hover:text-white transition duration-300 cursor-pointer"
               custom={0}
               initial="hidden"
               animate="visible"
@@ -274,7 +226,7 @@ const logoVariants = {
             </motion.button>
             <motion.button
               onClick={() => navigate("/signup")}
-              className="bg-green-500 rounded-full px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-white/90 min-w-[60px] xs:min-w-[70px] sm:min-w-[80px] md:min-w-[90px] hover:bg-green-600 dark:hover:bg-green-400 hover:text-black/70 dark:hover:text-zinc-950 transition duration-300 cursor-pointer"
+              className="bg-green-500 rounded-full px-1.5 xs:px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 text-white/90 min-w-[60px] xs:min-w-[70px] sm:min-w-[80px] md:min-w-[90px] hover:bg-green-600 dark:hover:bg-green-400 hover:text-white transition duration-300 cursor-pointer"
               custom={1}
               initial="hidden"
               animate="visible"
@@ -289,7 +241,6 @@ const logoVariants = {
             </motion.button>
           </>
         ) : (
-          // Show User Profile when user data exists
           <motion.div
             className="relative"
             ref={dropdownRef}

@@ -1,8 +1,7 @@
-import React,{useState} from "react";
+import React, { useState, useContext } from "react";
 import { motion } from "framer-motion";
 import {
   UserCircle,
-  ClipboardList,
   Utensils,
   TrendingUp,
   ArrowRight,
@@ -13,7 +12,6 @@ import {
   Users,
   Brain,
   Heart,
-  Video,
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -24,12 +22,13 @@ import TrackingVideo from "../../assets/track&Evolve.mp4";
 import demoVideo from "../../assets/howItWorks.mp4";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
-
+import { userDataContext } from "../../context/UserContext"; // 🟢 Added context import
 
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const { isDark } = useTheme();
+  const { userData } = useContext(userDataContext); // 🟢 Consume userData state
 
   const handleVideoToggle = () => {
     const video = document.getElementById("demo-video");
@@ -40,6 +39,7 @@ export default function HowItWorks() {
     }
     setIsPlaying(!isPlaying);
   };
+
   const steps = [
     {
       number: "01",
@@ -54,7 +54,7 @@ export default function HowItWorks() {
       ],
       color: "#10B981",
       bgColor: isDark ? "rgba(16, 185, 129, 0.15)" : "#E8F4F0",
-      image: profileImg ,
+      image: profileImg,
     },
     {
       number: "02",
@@ -69,7 +69,7 @@ export default function HowItWorks() {
       ],
       color: "#8B5CF6",
       bgColor: isDark ? "rgba(139, 92, 246, 0.15)" : "#F3E8FF",
-      video: aiAnalysisVideo ,
+      video: aiAnalysisVideo,
     },
     {
       number: "03",
@@ -84,7 +84,7 @@ export default function HowItWorks() {
       ],
       color: "#F59E0B",
       bgColor: isDark ? "rgba(245, 158, 11, 0.15)" : "#FEF3C7",
-      image:  mealPlansImg ,
+      image: mealPlansImg,
     },
     {
       number: "04",
@@ -99,7 +99,7 @@ export default function HowItWorks() {
       ],
       color: "#EF4444",
       bgColor: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEE2E2",
-      video:  TrackingVideo ,
+      video: TrackingVideo,
     },
   ];
 
@@ -126,7 +126,6 @@ export default function HowItWorks() {
     },
   ];
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -166,7 +165,6 @@ export default function HowItWorks() {
 
   return (
     <div className="w-full h-full bg-[#A6D4AC]/40 dark:bg-[#060f09] text-black dark:text-zinc-100 transition-colors duration-300">
-      {/* Navbar */}
       <Navbar />
 
       {/* Hero Section */}
@@ -176,7 +174,6 @@ export default function HowItWorks() {
         transition={{ duration: 0.8 }}
         className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden "
       >
-        {/* Animated background elements */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -241,15 +238,27 @@ export default function HowItWorks() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
+            {/* 🟢 Dynamic Hero CTA Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-[#10B981] text-white text-lg font-semibold rounded-full hover:bg-[#059669] transition-colors duration-300 shadow-lg flex items-center gap-2 cursor-pointer"
-              onClick={() => navigate("/signup")}
+              onClick={() => {
+                if (userData) {
+                  navigate("/dashboard");
+                } else {
+                  navigate("/signup");
+                }
+              }}
             >
-              Get Started Now
+              {userData
+                ? userData.profileCompleted
+                  ? `Welcome Back, ${userData.name.split(" ")[0]}!`
+                  : "Complete Your Profile"
+                : "Get Started Now"}
               <ArrowRight className="w-5 h-5" />
             </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -271,7 +280,6 @@ export default function HowItWorks() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            // viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -284,8 +292,7 @@ export default function HowItWorks() {
             </p>
           </motion.div>
 
-          {/* Steps Cards */}
-          <motion.div className="space-y-12">
+          <div className="space-y-12">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -297,15 +304,15 @@ export default function HowItWorks() {
                   index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                 } gap-8 lg:gap-12 items-center`}
               >
-                {/* Card Content */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="relative w-full lg:w-1/2 bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20 text-gray-800 dark:text-zinc-100"
                   style={{
-                    boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                    boxShadow: isDark
+                      ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                      : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                   }}
                 >
-                  {/* Step Number Badge */}
                   <motion.div
                     animate={floatAnimation}
                     className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-12"
@@ -315,7 +322,6 @@ export default function HowItWorks() {
                     </span>
                   </motion.div>
 
-                  {/* Icon */}
                   <div
                     className="w-20 h-20 mb-6 rounded-2xl flex items-center justify-center"
                     style={{ backgroundColor: step.bgColor }}
@@ -327,7 +333,6 @@ export default function HowItWorks() {
                     />
                   </div>
 
-                  {/* Content */}
                   <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800 dark:text-green-400">
                     {step.title}
                   </h3>
@@ -335,7 +340,6 @@ export default function HowItWorks() {
                     {step.description}
                   </p>
 
-                  {/* Details List */}
                   <div className="space-y-3">
                     {step.details.map((detail, idx) => (
                       <motion.div
@@ -350,29 +354,30 @@ export default function HowItWorks() {
                           className="w-5 h-5 text-green-500 flex-shrink-0"
                           strokeWidth={2}
                         />
-                        <span className="text-gray-700 dark:text-zinc-300">{detail}</span>
+                        <span className="text-gray-700 dark:text-zinc-300">
+                          {detail}
+                        </span>
                       </motion.div>
                     ))}
                   </div>
                 </motion.div>
 
-                {/* Visual Element - Images/Videos */}
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="w-full lg:w-1/2 h-80 lg:h-96 rounded-3xl overflow-hidden shadow-xl"
                   style={{
-                    boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
+                    boxShadow: isDark
+                      ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                      : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                   }}
                 >
                   {step.image ? (
-                    // Render Image
                     <img
                       src={step.image}
                       alt={step.title}
                       className="w-full h-full object-cover"
                     />
                   ) : step.video ? (
-                    // Render Video (use HTML video tag, not lucide-react Video component)
                     <video
                       src={step.video}
                       autoPlay
@@ -382,7 +387,6 @@ export default function HowItWorks() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    // Fallback to animated icon background
                     <div
                       className="w-full h-full flex items-center justify-center text-white text-2xl font-bold relative overflow-hidden"
                       style={{
@@ -417,9 +421,8 @@ export default function HowItWorks() {
                 </motion.div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Connection Lines */}
           <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-white/30 via-green-400 to-white/30 transform -translate-x-1/2 opacity-30" />
         </div>
       </section>
@@ -457,7 +460,9 @@ export default function HowItWorks() {
                 whileHover={{ scale: 1.05, y: -10 }}
                 className="bg-white dark:bg-[#0f1d13] rounded-3xl p-8 shadow-lg text-center border border-transparent dark:border-green-800/10"
                 style={{
-                  boxShadow: isDark ? "4px 4px 16px rgba(0, 0, 0, 0.4)" : "2px 2px 12px #8fa98f",
+                  boxShadow: isDark
+                    ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                    : "2px 2px 12px #8fa98f",
                 }}
               >
                 <div className="w-16 h-16 mx-auto mb-6 bg-[#E8F4F0] dark:bg-green-950/40 rounded-2xl flex items-center justify-center">
@@ -466,8 +471,12 @@ export default function HowItWorks() {
                     strokeWidth={1.5}
                   />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">{benefit.title}</h3>
-                <p className="text-gray-600 dark:text-zinc-400 text-sm">{benefit.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-green-400">
+                  {benefit.title}
+                </h3>
+                <p className="text-gray-600 dark:text-zinc-400 text-sm">
+                  {benefit.description}
+                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -508,13 +517,8 @@ export default function HowItWorks() {
                 onPause={() => setIsPlaying(false)}
               />
 
-              {/* Play/Pause Overlay */}
               <div
-                className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-500/20 to-blue-500/20 transition-opacity duration-300 ${
-                  isPlaying
-                    ? "opacity-0 group-hover:opacity-90"
-                    : "opacity-100"
-                }`}
+                className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-500/20 to-blue-500/20 transition-opacity duration-300 ${isPlaying ? "opacity-0 group-hover:opacity-90" : "opacity-100"}`}
               >
                 <motion.div
                   whileHover={{ scale: 1.1 }}
@@ -522,25 +526,18 @@ export default function HowItWorks() {
                   className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
                 >
                   {isPlaying ? (
-                    // Pause Icon
                     <div className="flex gap-1">
                       <div className="w-1.5 h-6 bg-green-500 rounded" />
                       <div className="w-1.5 h-6 bg-green-500 rounded" />
                     </div>
                   ) : (
-                    // Play Icon
                     <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-green-500 border-b-[12px] border-b-transparent ml-1" />
                   )}
                 </motion.div>
               </div>
 
-              {/* Video Controls Overlay */}
               <div
-                className={`absolute bottom-4 left-4 right-4 flex items-center justify-between bg-black/50 rounded-lg p-3 transition-opacity duration-300 ${
-                  isPlaying
-                    ? "opacity-0 group-hover:opacity-100"
-                    : "opacity-100"
-                }`}
+                className={`absolute bottom-4 left-4 right-4 flex items-center justify-between bg-black/50 rounded-lg p-3 transition-opacity duration-300 ${isPlaying ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}
               >
                 <button
                   onClick={(e) => {
@@ -567,7 +564,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Dynamic Bottom CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -576,7 +573,6 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-12 md:p-16 shadow-2xl relative overflow-hidden"
         >
-          {/* Animated background elements */}
           <motion.div
             animate={{
               scale: [1, 1.5, 1],
@@ -610,6 +606,8 @@ export default function HowItWorks() {
               Join thousands of users who have transformed their health with
               NutriCare AI
             </motion.p>
+
+            {/* 🟢 Dynamic Bottom CTA Button */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -617,17 +615,26 @@ export default function HowItWorks() {
               transition={{ delay: 0.6 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 bg-white text-green-600 text-lg font-bold rounded-full hover:bg-gray-100 transition-colors duration-300 shadow-xl inline-flex items-center gap-3"
-              onClick={() => navigate("/signup")}
+              className="px-10 py-4 bg-white text-green-600 text-lg font-bold rounded-full hover:bg-gray-100 transition-colors duration-300 shadow-xl inline-flex items-center gap-3 cursor-pointer"
+              onClick={() => {
+                if (userData) {
+                  navigate("/dashboard");
+                } else {
+                  navigate("/signup");
+                }
+              }}
             >
-              Start Your Free Trial
+              {userData
+                ? userData.profileCompleted
+                  ? `Welcome Back, ${userData.name.split(" ")[0]}!`
+                  : "Complete Your Profile"
+                : "Start Your Free Trial"}
               <ArrowRight className="w-5 h-5" />
             </motion.button>
           </div>
         </motion.div>
       </section>
 
-      {/* Footer */}
       <div className="mt-20">
         <Footer />
       </div>

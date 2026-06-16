@@ -21,7 +21,7 @@ const seedPlan = async () => {
     // 3. Create the Premium Plan
     const premiumPlan = new Plan({
       name: 'Premium',
-      price: 499, // Assuming your razorpay options multiplier (* 100) requires this to be rupees
+      price: 399, // Assuming your razorpay options multiplier (* 100) requires this to be rupees
       currency: 'INR',
       durationInDays: 30
     });

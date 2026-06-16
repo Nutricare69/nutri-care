@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, ChevronRight, Timer } from "lucide-react";
+import { Plus, X, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
@@ -16,21 +16,22 @@ export default function DietPlans() {
   const [dietPlans, setDietPlans] = useState([]);
   const [expandedPlan, setExpandedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fetchingPlans, setFetchingPlans] = useState(true); // To track if we're in the process of fetching plans
+  const [fetchingPlans, setFetchingPlans] = useState(true);
 
-  // Form state for creating diet plan
+  // Form state for creating diet plan - REPLACED height with feet and inches
   const [formData, setFormData] = useState({
-    // name: "",
-    // age: "",
     weight: "",
-    height: "",
+    feet: "", // ➔ Added field
+    inches: "", // ➔ Added field
     goal: "Weight Loss",
-    food_preference: "Vegetarian",
+    food_preference: "Veg",
     gender: "Male",
     days: 7,
     medical_conditions: "",
     allergies: "",
-    activity_level: "Moderately Active",
+    activity_level: "Moderate",
+    region: "West",
+    state: "Maharashtra",
   });
 
   const calculateAgeFrontend = (dob) => {
@@ -44,7 +45,7 @@ export default function DietPlans() {
     }
     return age;
   };
-  //playstore star like animation component
+
   const PlaystoreStar = ({ number }) => {
     return (
       <div className="relative w-14 h-14 flex items-center justify-center overflow-hidden">
@@ -63,7 +64,7 @@ export default function DietPlans() {
           </div>
         </motion.div>
 
-        <span className="relative z-10 text-white font-bold text-xs bg-black/35 w-10 h-10 flex flex-col items-center justify-center rounded-full backdrop-blur-sm">
+        <span className="relative z-5 text-white font-bold text-xs bg-black/35 w-10 h-10 flex flex-col items-center justify-center rounded-full backdrop-blur-sm">
           <span className="text-[9px] leading-none text-gray-200">Plan</span>
           <span className="leading-none">{number}</span>
         </span>
@@ -71,10 +72,8 @@ export default function DietPlans() {
     );
   };
 
-  // Calculate it once to use in the form
   const userAge = calculateAgeFrontend(userData?.dateOfBirth);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -85,16 +84,21 @@ export default function DietPlans() {
     e.preventDefault();
     setLoading(true);
 
+    // 🟢 Conversion Engine: Translate Imperial inputs into metric centimeters
+    const ft = parseFloat(formData.feet) || 0;
+    const inc = parseFloat(formData.inches) || 0;
+    const heightInCm = Math.round(ft * 30.48 + inc * 2.54);
+
     try {
       const user_profile = {
-        // name: formData.name,
-        // age: parseInt(formData.age),
         weight: parseFloat(formData.weight),
-        height: parseFloat(formData.height),
+        height: heightInCm, // 🟢 Passed converted cm value cleanly to the payload
         gender: formData.gender,
         goal: formData.goal,
         days: parseInt(formData.days),
         food_preference: formData.food_preference,
+        region: formData.region,
+        state: formData.state,
         medical_conditions: formData.medical_conditions
           .split(",")
           .map((c) => c.trim())
@@ -105,28 +109,29 @@ export default function DietPlans() {
           .filter((a) => a),
         activity_level: formData.activity_level,
       };
-      const response = await axios.post(
+
+      await axios.post(
         `${serverUrl}/api/generate/ml-response-generate`,
         user_profile,
         { withCredentials: true },
       );
 
-      // alert("Diet Plan created successfully!");
+      alert("Diet Plan created successfully!");
       setShowCreateModal(false);
       setFormData({
-        // name: "",
-        // age: "",
         weight: "",
-        height: "",
+        feet: "", // ➔ Clear field
+        inches: "", // ➔ Clear field
         gender: "Male",
         goal: "Weight Loss",
         days: 7,
-        food_preference: "Vegetarian",
+        food_preference: "Veg",
         medical_conditions: "",
         allergies: "",
-        activity_level: "Moderately Active",
+        activity_level: "Moderate",
+        region: "West",
+        state: "Maharashtra",
       });
-      // Refresh diet plans
       fetchDietPlans();
     } catch (error) {
       console.error("Error creating diet plan:", error);
@@ -136,7 +141,6 @@ export default function DietPlans() {
     }
   };
 
-  // Fetch all diet plans
   const fetchDietPlans = async () => {
     try {
       const response = await axios.get(`${serverUrl}/api/generate/all-plans`, {
@@ -147,7 +151,7 @@ export default function DietPlans() {
           setFetchingPlans(false);
         },
         response.data.length > 0 ? 500 : 1500,
-      ); // Shorter delay if plans exist, longer if no plans to show the empty state animation
+      );
 
       setDietPlans(response.data || []);
     } catch (error) {
@@ -159,7 +163,6 @@ export default function DietPlans() {
     fetchDietPlans();
   }, []);
 
-  // Format date for display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -238,7 +241,9 @@ export default function DietPlans() {
                 >
                   {/* Plan Header */}
                   <motion.div
-                    whileHover={{ backgroundColor: isDark ? "#121b14" : "#f9fafb" }}
+                    whileHover={{
+                      backgroundColor: isDark ? "#121b14" : "#f9fafb",
+                    }}
                     onClick={() =>
                       setExpandedPlan(
                         expandedPlan === plan._id ? null : plan._id,
@@ -250,7 +255,10 @@ export default function DietPlans() {
                       <PlaystoreStar number={plan.planNumber} />
                       <div>
                         <h4 className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                          {plan.user.name.split(" ")[0]}'s Diet Plan
+                          {plan.user?.name
+                            ? plan.user.name.split(" ")[0]
+                            : "User"}
+                          's Diet Plan
                         </h4>
                         <p className="text-sm text-gray-500 dark:text-zinc-400">
                           Created on {formatDate(plan.createdAt)}
@@ -276,39 +284,78 @@ export default function DietPlans() {
                         className="border-t border-gray-200 dark:border-green-950/20"
                       >
                         <div className="p-6 space-y-4 bg-gray-50/50 dark:bg-[#0f1d13]/60">
-                          {/* User Profile Info */}
-                          <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                             <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Age</p>
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                Age
+                              </p>
                               <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                                {plan.profileSnapshot.age} yrs
+                                {plan.profileSnapshot?.age} yrs
                               </p>
                             </div>
                             <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Weight</p>
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                Weight
+                              </p>
                               <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                                {plan.profileSnapshot.weight} kg
+                                {plan.profileSnapshot?.weight} kg
                               </p>
                             </div>
                             <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">Height</p>
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                Height
+                              </p>
                               <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                                {plan.profileSnapshot.height} cm
+                                {plan.profileSnapshot?.height} cm
                               </p>
                             </div>
                             <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">BMI</p>
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                BMI
+                              </p>
                               <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                                {plan.profileSnapshot.bmi
+                                {plan.profileSnapshot?.bmi
                                   ? plan.profileSnapshot.bmi
                                   : "-"}
                               </p>
                             </div>
                             <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
-                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">TDEE</p>
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                Category
+                              </p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200 truncate">
+                                {plan.profileSnapshot?.bmi_category
+                                  ? plan.profileSnapshot.bmi_category
+                                  : "-"}
+                              </p>
+                            </div>
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                TDEE
+                              </p>
                               <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
-                                {plan.profileSnapshot.tdee
+                                {plan.profileSnapshot?.tdee
                                   ? plan.profileSnapshot.tdee
+                                  : "-"}
+                              </p>
+                            </div>
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                Region
+                              </p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200">
+                                {plan.profileSnapshot?.region
+                                  ? plan.profileSnapshot.region
+                                  : "-"}
+                              </p>
+                            </div>
+                            <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 p-4 rounded-xl shadow-sm">
+                              <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
+                                State
+                              </p>
+                              <p className="text-lg font-bold text-gray-800 dark:text-zinc-200 truncate">
+                                {plan.profileSnapshot?.state
+                                  ? plan.profileSnapshot.state
                                   : "-"}
                               </p>
                             </div>
@@ -345,33 +392,33 @@ export default function DietPlans() {
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Calories:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.calories} kcal
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Protein:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.protein}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Carbs:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.carbs}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Fat:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.fat}g
-                                              </span>{" "}
+                                              </span>
                                             </div>
                                           </li>
                                         ))}
@@ -392,33 +439,33 @@ export default function DietPlans() {
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Calories:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.calories} kcal
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Protein:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.protein}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Carbs:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.carbs}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Fat:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.fat}g
-                                              </span>{" "}
+                                              </span>
                                             </div>
                                           </li>
                                         ))}
@@ -439,33 +486,33 @@ export default function DietPlans() {
                                             </span>
                                             <br />
                                             <div className="ml-5">
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Calories:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.calories} kcal
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Protein:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.protein}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Carbs:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.carbs}g
-                                              </span>{" "}
+                                              </span>
                                               ,{" "}
-                                              <span className="font-semibold text-gray-700 dark:text-zinc-300">
-                                                <span className="text-gray-600 dark:text-zinc-400 font-bold">
+                                              <span className="text-xs text-gray-600 dark:text-zinc-400 font-semibold">
+                                                <b className="text-gray-500">
                                                   Fat:
-                                                </span>{" "}
+                                                </b>{" "}
                                                 {item.fat}g
-                                              </span>{" "}
+                                              </span>
                                             </div>
                                           </li>
                                         ))}
@@ -521,8 +568,7 @@ export default function DietPlans() {
               {/* Modal Body */}
               <form onSubmit={handleCreatePlan} className="p-8 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                  {/* First Name (read-only, display only) */}
+                  {/* First Name */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       First Name
@@ -535,20 +581,22 @@ export default function DietPlans() {
                     />
                   </div>
 
-                  {/* Last Name (read-only, display only) */}
+                  {/* Last Name */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Last Name
                     </label>
                     <input
                       type="text"
-                      value={userData?.name?.split(" ").slice(1).join(" ") || ""}
+                      value={
+                        userData?.name?.split(" ").slice(1).join(" ") || ""
+                      }
                       readOnly
                       className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-950 dark:text-white cursor-not-allowed opacity-75 focus:outline-none"
                     />
                   </div>
 
-                  {/* Age (read-only) */}
+                  {/* Age */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Age
@@ -572,7 +620,10 @@ export default function DietPlans() {
                       name="weight"
                       value={formData.weight}
                       onChange={(e) => {
-                        if (parseFloat(e.target.value) >= 0 || e.target.value === "") {
+                        if (
+                          parseFloat(e.target.value) >= 0 ||
+                          e.target.value === ""
+                        ) {
                           handleInputChange(e);
                         }
                       }}
@@ -587,29 +638,62 @@ export default function DietPlans() {
                     />
                   </div>
 
-                  {/* Height */}
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-                      Height (cm)
-                    </label>
-                    <input
-                      type="number"
-                      name="height"
-                      value={formData.height}
-                      onChange={(e) => {
-                        if (parseFloat(e.target.value) >= 0 || e.target.value === "") {
-                          handleInputChange(e);
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "-" || e.key === "e") e.preventDefault();
-                      }}
-                      required
-                      min="1"
-                      step="0.1"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all duration-200"
-                      placeholder="Enter height in cm"
-                    />
+                  {/* 🟢 REPLACED: Single Height (cm) field split into Side-by-Side Feet and Inches Inputs */}
+                  <div className="grid grid-cols-2 gap-4 md:col-span-1">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2 truncate">
+                        Height (Feet)
+                      </label>
+                      <input
+                        type="number"
+                        name="feet"
+                        value={formData.feet}
+                        onChange={(e) => {
+                          if (
+                            parseFloat(e.target.value) >= 0 ||
+                            e.target.value === ""
+                          ) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "-" || e.key === "e")
+                            e.preventDefault();
+                        }}
+                        required
+                        min="1"
+                        max="8"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all duration-200"
+                        placeholder="e.g., 5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2 truncate">
+                        Height (Inches)
+                      </label>
+                      <input
+                        type="number"
+                        name="inches"
+                        value={formData.inches}
+                        onChange={(e) => {
+                          if (
+                            parseFloat(e.target.value) >= 0 ||
+                            e.target.value === ""
+                          ) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "-" || e.key === "e")
+                            e.preventDefault();
+                        }}
+                        required
+                        min="0"
+                        max="11"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/60 text-gray-950 dark:text-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all duration-200"
+                        placeholder="e.g., 9"
+                      />
+                    </div>
                   </div>
 
                   {/* Gender */}
@@ -640,10 +724,9 @@ export default function DietPlans() {
                       onChange={handleInputChange}
                       required
                       options={[
-                        { value: "Vegetarian", label: "Vegetarian" },
-                        { value: "Eggetarian", label: "Eggetarian" },
-                        { value: "Non-Vegetarian", label: "Non-Vegetarian" },
-                        { value: "Any", label: "Any" },
+                        { value: "Veg", label: "Vegetarian" },
+                        { value: "Eggitarian", label: "Eggetarian" },
+                        { value: "Non-Veg", label: "Non-Vegetarian" },
                       ]}
                     />
                   </div>
@@ -660,8 +743,8 @@ export default function DietPlans() {
                       required
                       options={[
                         { value: "Sedentary", label: "Sedentary" },
-                        { value: "Lightly Active", label: "Lightly Active" },
-                        { value: "Moderately Active", label: "Moderately Active" },
+                        { value: "Light", label: "Lightly Active" },
+                        { value: "Moderate", label: "Moderately Active" },
                         { value: "Very Active", label: "Very Active" },
                       ]}
                     />
@@ -685,7 +768,7 @@ export default function DietPlans() {
                     />
                   </div>
 
-                  {/* Days */}
+                  {/* Duration */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                       Plan Duration
@@ -698,6 +781,54 @@ export default function DietPlans() {
                       options={[
                         { value: "7", label: "7 Days" },
                         { value: "14", label: "14 Days" },
+                      ]}
+                    />
+                  </div>
+
+                  {/* Region */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                      Region
+                    </label>
+                    <AutoSelect
+                      name="region"
+                      value={formData.region}
+                      onChange={handleInputChange}
+                      required
+                      options={[
+                        { value: "North", label: "North India" },
+                        { value: "South", label: "South India" },
+                        { value: "West", label: "West India" },
+                        { value: "East", label: "East India" },
+                        { value: "North East", label: "North-East India" },
+                        { value: "Central", label: "Central India" },
+                      ]}
+                    />
+                  </div>
+
+                  {/* State */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                      State
+                    </label>
+                    <AutoSelect
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      required
+                      options={[
+                        { value: "Maharashtra", label: "Maharashtra" },
+                        { value: "Gujarat", label: "Gujarat" },
+                        { value: "Punjab", label: "Punjab" },
+                        { value: "Rajasthan", label: "Rajasthan" },
+                        { value: "Tamil Nadu", label: "Tamil Nadu" },
+                        { value: "Telangana", label: "Telangana" },
+                        { value: "Uttar Pradesh", label: "Uttar Pradesh" },
+                        { value: "West Bengal", label: "West Bengal" },
+                        { value: "Assam", label: "Assam" },
+                        { value: "Meghalaya", label: "Meghalaya" },
+                        { value: "Tripura", label: "Tripura" },
+                        { value: "Uttarakhand", label: "Uttarakhand" },
                       ]}
                     />
                   </div>

@@ -7,15 +7,15 @@ import { useTheme } from "./theme.js";
  * AutoSelect — A premium custom dropdown component.
  *
  * Props:
- *  - name: string           (mirrors native select `name`)
- *  - value: string          (controlled value)
- *  - onChange: function     (called with a synthetic-like event: { target: { name, value } })
- *  - options: Array<{ value: string, label: string }>
- *  - label: string          (optional — rendered above the select)
- *  - placeholder: string    (optional — shown when no value selected)
- *  - required: bool
- *  - disabled: bool
- *  - className: string      (extra wrapper class)
+ * - name: string           (mirrors native select `name`)
+ * - value: string          (controlled value)
+ * - onChange: function     (called with a synthetic-like event: { target: { name, value } })
+ * - options: Array<{ value: string, label: string }>
+ * - label: string          (optional — rendered above the select)
+ * - placeholder: string    (optional — shown when no value selected)
+ * - required: bool
+ * - disabled: bool
+ * - className: string      (extra wrapper class)
  */
 export default function AutoSelect({
   name,
@@ -43,7 +43,8 @@ export default function AutoSelect({
   }, []);
 
   const selectedLabel =
-    options.find((o) => String(o.value) === String(value))?.label ?? placeholder;
+    options.find((o) => String(o.value) === String(value))?.label ??
+    placeholder;
 
   const handleSelect = (optValue) => {
     onChange({ target: { name, value: optValue } });
@@ -71,7 +72,13 @@ export default function AutoSelect({
           ${disabled ? "opacity-50 cursor-not-allowed" : ""}
         `}
       >
-        <span className={value ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-zinc-500"}>
+        <span
+          className={
+            value
+              ? "text-gray-900 dark:text-white"
+              : "text-gray-400 dark:text-zinc-500"
+          }
+        >
           {selectedLabel}
         </span>
         <motion.span
@@ -105,7 +112,7 @@ export default function AutoSelect({
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             className={`
-              absolute z-[200] w-full mt-1 rounded-xl overflow-hidden
+              absolute z-[200] w-full mt-1 rounded-xl overflow-y-auto max-h-60
               shadow-xl border
               ${
                 isDark
