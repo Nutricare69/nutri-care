@@ -37,7 +37,7 @@ export default function About() {
     },
     {
       name: "Kaustubh Paul",
-      role: "Project Planning, Coordinator, FullStack",
+      role: " Management Lead, Project Planning, Coordinator, FullStack",
       image: KaustubhImg,
     },
     {
