@@ -76,7 +76,6 @@ export default function PreMealWaterWorkspace({ challenge }) {
           setTimeout(() => {
             triggerPointAwardEffect(50);
           }, 600); // Delay to ensure state updates before animation
-          triggerPointAwardEffect(50);
         } catch (err) {
           console.log("Points already claimed previously.");
         }

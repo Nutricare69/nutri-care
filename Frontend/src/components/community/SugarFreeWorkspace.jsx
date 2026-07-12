@@ -63,7 +63,6 @@ export default function SugarFreeWorkspace({ challenge }) {
           setTimeout(() => {
             triggerPointAwardEffect(250);
           }, 600); // Delay to ensure state updates before animation
-          triggerPointAwardEffect(250);
         } catch (err) {
           console.log("Points already claimed previously.");
         }

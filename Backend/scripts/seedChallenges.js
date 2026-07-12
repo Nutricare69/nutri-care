@@ -8,7 +8,7 @@ import Challenge from '../models/challenge.model.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🟢 Explicitly force dotenv to step up one directory layer to find your main root .env file
+// Explicitly force dotenv to step up one directory layer to find your main root .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const challengesData = [
@@ -31,7 +31,7 @@ const challengesData = [
   {
     title: "Regional Culinary Swap",
     description: "Share authentic regional recipes from your home state to crowdsource macro-balanced traditional dishes and celebrate dietary diversity.",
-    category: "Nutrition", // 🟢 UPDATED: Automatically maps the Flame icon & orange badge in your UI!
+    category: "Nutrition", //  UPDATED: Automatically maps the Flame icon & orange badge in your UI!
     targetValue: "1 Recipe",
     totalTargetGoal: 200,
     participants: []

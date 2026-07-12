@@ -13,7 +13,7 @@ export default function UserContext({ children }) {
   const [remainingDays, setRemainingDays] = useState(0);
   const [isQuotaCapped, setIsQuotaCapped] = useState(false);
 
-  // 🟢 NEW: Gamification state parameters
+  //  NEW: Gamification state parameters
   const [nutriPoints, setNutriPoints] = useState(0);
   const [coinAnimation, setCoinAnimation] = useState({
     show: false,
@@ -31,7 +31,7 @@ export default function UserContext({ children }) {
     }
   };
 
-  // 🟢 NEW: Global animation claim function available to all workspaces
+  //  NEW: Global animation claim function available to all workspaces
   const triggerPointAwardEffect = (pointsAwarded) => {
     setCoinAnimation({ show: true, points: pointsAwarded });
     setNutriPoints((prev) => prev + pointsAwarded);
@@ -87,11 +87,11 @@ export default function UserContext({ children }) {
     setHasPromptedPremium,
     remainingDays,
     isQuotaCapped,
-    nutriPoints, // 🟢 Exposed gamification points total
+    nutriPoints, //  NEW: Exposed gamification points total
     setNutriPoints,
-    coinAnimation, // 🟢 Exposed animation state object
+    coinAnimation, //  NEW: Exposed animation state object
     setCoinAnimation,
-    triggerPointAwardEffect, // 🟢 Exposed claim trigger wrapper
+    triggerPointAwardEffect, //  NEW: Exposed claim trigger wrapper
     fetchWalletBalance,
   };
 
