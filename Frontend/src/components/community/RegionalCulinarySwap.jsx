@@ -13,28 +13,28 @@ import {
   Trophy,
 } from "lucide-react";
 import axios from "axios";
-import { toast } from "react-toastify"; // 🟢 NEW: Integrated Toastify engine
+import { toast } from "react-toastify";
 import { authDataContext } from "../../context/AuthContextProvider";
 import { userDataContext } from "../../context/UserContext";
 
 export default function RegionalVegetarianSwapWorkspace({ challenge }) {
   const { serverUrl } = useContext(authDataContext);
-  const { userData, triggerPointAwardEffect } = useContext(userDataContext);
+
+  // Centralized context tracking layer with protective structural fallbacks
+  const contextValues = useContext(userDataContext) || {};
+  const { userData, triggerPointAwardEffect } = contextValues;
 
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showShareTray, setShowShareTray] = useState(false);
   const [activeTab, setActiveTab] = useState("ai");
 
-  // Real-time parsed dynamic user tracking targets
   const [userRealMeals, setUserRealMeals] = useState([]);
   const [loadingMyMeals, setLoadingMyMeals] = useState(false);
 
-  // Manual Form Inputs
   const [customName, setCustomName] = useState("");
   const [customMacros, setCustomMacros] = useState("");
 
-  // State hooks for dynamic form tracking initialized with profile defaults
   const [customState, setCustomState] = useState(
     userData?.state || "Maharashtra",
   );
@@ -43,9 +43,9 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
 
   const [savedRecipeIds, setSavedRecipeIds] = useState([]);
 
-  // Dynamically compute if the current logged-in user has contributed to this pool
   const hasUserContributed = recipes.some(
-    (recipe) => recipe.user === userData?._id,
+    (recipe) =>
+      recipe.user === userData?._id || recipe.userId === userData?._id,
   );
 
   const fetchRecipesAndBookmarks = async () => {
@@ -72,8 +72,10 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
   };
 
   useEffect(() => {
-    fetchRecipesAndBookmarks();
-  }, [challenge._id, serverUrl]);
+    if (challenge?._id) {
+      fetchRecipesAndBookmarks();
+    }
+  }, [challenge?._id, serverUrl]);
 
   const fetchMyAiMeals = async () => {
     setLoadingMyMeals(true);
@@ -114,7 +116,7 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
       }
       setUserRealMeals(flatFoodsList);
     } catch (error) {
-      console.error("Error unravelling nested database schemas:", error);
+      console.error("Error unraveling nested database schemas:", error);
       setUserRealMeals([]);
     } finally {
       setLoadingMyMeals(false);
@@ -142,40 +144,47 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
         recipePayload,
         { withCredentials: true },
       );
+
+      // Instantly inject the new contribution into view state lines
       setRecipes((prev) => [response.data, ...prev]);
-      const userHasAlreadyContributed = recipes.some(
-        (recipe) => recipe.user === userData?._id,
-      );
-      if (!userHasAlreadyContributed) {
-        try {
-          await axios.post(
-            `${serverUrl}/api/points/claim`,
-            { challengeId: challenge._id, pointsToAward: 100 },
-            { withCredentials: true },
-          );
-          setTimeout(() => {
-            triggerPointAwardEffect(100);
-          }, 600);
-        } catch (err) {
-          console.log("Points already claimed previously.");
-        }
-      }
       setShowShareTray(false);
       setCustomName("");
       setCustomMacros("");
+
       toast.success(
         `"${recipePayload.name}" successfully published to the community pool!`,
-      ); // 🟢 NEW: Success notification for sharing
+      );
+
+      // 🟢 FIXED: Let the backend decide if this is an authentic first-time claim
+      try {
+        await axios.post(
+          `${serverUrl}/api/points/claim`,
+          { challengeId: challenge._id, pointsToAward: 100 },
+          { withCredentials: true },
+        );
+
+        // Match the 600ms transition delay pattern used by your other workspaces
+        setTimeout(() => {
+          if (typeof triggerPointAwardEffect === "function") {
+            triggerPointAwardEffect(100);
+          }
+        }, 600);
+      } catch (claimError) {
+        // Triggers silently if the database logs show the account has already redeemed this reward
+        console.log(
+          "Points for this culinary milestone have already been claimed previously.",
+        );
+      }
     } catch (error) {
       console.error("Failed to upload recipe payload:", error);
-      toast.error("Could not share recipe configuration to server."); // 🟢 FIXED: Swapped alert for toast
+      toast.error("Could not share recipe configuration to server.");
     }
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!customName.trim() || !customMacros.trim()) {
-      return toast.warn("Please fulfill all custom field parameters."); // 🟢 FIXED: Swapped alert for warning toast
+      return toast.warn("Please fulfill all custom field parameters.");
     }
     setIsSubmittingForm(true);
     await executePublish({
@@ -197,13 +206,13 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
       toast.success(
         response.data.message ||
           "Recipe successfully cataloged into your cookbook shelf!",
-      ); // 🟢 FIXED: Swapped alert for toast
+      );
       setSavedRecipeIds((prev) => [...prev, recipeId]);
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "Failed to finalize cookbook bookmark save.",
-      ); // 🟢 FIXED: Swapped alert for toast
+      );
     }
   };
 
@@ -337,7 +346,7 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
               </div>
             )}
 
-            {/* TAB CONTENT B: HANDMADE INPUT FORM WITH SELECT DROPDOWNS */}
+            {/* TAB CONTENT B: HANDMADE INPUT FORM */}
             {activeTab === "manual" && (
               <form onSubmit={handleFormSubmit} className="space-y-4 max-w-xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -367,7 +376,6 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
                     />
                   </div>
 
-                  {/* Region Selector Field */}
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase">
                       Origin Region
@@ -386,7 +394,6 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
                     </select>
                   </div>
 
-                  {/* State Selector Field */}
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase">
                       Origin State

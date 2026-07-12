@@ -12,10 +12,12 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
-  Coins,
 } from "lucide-react";
+
 import { userDataContext } from "../../context/UserContext";
 import NutriCareLogo from "../../assets/nutricareLogo.jpg";
+import coinFront from "../../assets/coinFront.png"; // 🟢 Front Asset
+import coinBack from "../../assets/coinBack.png"; // 🟢 Back Asset
 import Loader from "../../components/Loader";
 import ProfileSetup from "../../components/ProfileSetup";
 import { useTheme } from "../../components/theme.js";
@@ -32,7 +34,6 @@ export default function Dashboard() {
     setCoinAnimation,
   } = useContext(userDataContext);
 
-  // 🟢 Destructured toggleTheme from your existing theme custom hook
   const { isDark, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
@@ -41,7 +42,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     let timer;
-
     if (
       userData &&
       !userData.isPremium &&
@@ -53,18 +53,15 @@ export default function Dashboard() {
         setHasPromptedPremium(true);
       }, 3000);
     }
-
     return () => clearTimeout(timer);
   }, [userData, hasPromptedPremium]);
 
-  // Fetch user data on mount
   useEffect(() => {
     if (!userData) {
       getCurrentUser();
     }
   }, []);
 
-  // Sidebar menu items mapped to routes
   const menuItems = [
     {
       id: "dietplans",
@@ -93,7 +90,6 @@ export default function Dashboard() {
     },
   ];
 
-  // 🟢 Horizontal Navigation Logic: Find the active index position to cycle pages smoothly
   const currentActiveIndex = menuItems.findIndex(
     (item) =>
       item.path === location.pathname ||
@@ -111,7 +107,6 @@ export default function Dashboard() {
     navigate(menuItems[nextIndex].path);
   };
 
-  // Helper to determine the active header title
   const getActiveLabel = () => {
     const currentItem = menuItems.find(
       (item) =>
@@ -121,7 +116,6 @@ export default function Dashboard() {
     return currentItem ? currentItem.label : "Dashboard";
   };
 
-  // useEffect for loading
   useEffect(() => {
     setLoading(false);
   }, [location.pathname]);
@@ -136,7 +130,6 @@ export default function Dashboard() {
         animate={{ x: 0, delay: 0.5 }}
         className="w-64 bg-white dark:bg-[#0c130d] shadow-xl flex flex-col z-20 flex-shrink-0 border-r border-transparent dark:border-green-950/10 transition-colors duration-300"
       >
-        {/* Logo */}
         <div className="p-6 border-b border-gray-100 dark:border-green-950/20">
           <h1
             className="text-2xl font-bold cursor-pointer"
@@ -150,7 +143,6 @@ export default function Dashboard() {
           </h1>
         </div>
 
-        {/* Menu Items */}
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -182,7 +174,6 @@ export default function Dashboard() {
           })}
         </nav>
 
-        {/* User Info at Bottom */}
         <div className="p-4 border-t border-gray-100 dark:border-green-950/20">
           <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-zinc-900/60 rounded-xl transition-colors duration-300">
             <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold shrink-0">
@@ -207,16 +198,14 @@ export default function Dashboard() {
           <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300 "
+            className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300"
           >
-            {/* Left Header Title Cluster with Chevron Navigation Controls */}
             <div className="flex items-center gap-6">
-              {/* 🟢 NEW: Horizontal Sub-section Quick Swapping Button Triggers */}
               <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900/50 p-1.5 rounded-xl border border-gray-100 dark:border-zinc-800/40">
                 <button
                   type="button"
                   onClick={handlePrevSection}
-                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400  hover:text-green-500 dark:hover:text-green-400  rounded-lg cursor-pointer transition-colors shadow-xs hover:border-gray-200/40  "
+                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400 hover:text-green-500 dark:hover:text-green-400 rounded-lg cursor-pointer transition-colors shadow-xs"
                   title="Previous Section"
                 >
                   <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
@@ -224,14 +213,13 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={handleNextSection}
-                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400  hover:text-green-500 dark:hover:text-green-400  rounded-lg cursor-pointer transition-colors shadow-xs hover:border-gray-200/40  "
+                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400 hover:text-green-500 dark:hover:text-green-400 rounded-lg cursor-pointer transition-colors shadow-xs"
                   title="Next Section"
                 >
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
 
-              {/* 🟢 ENHANCED TYPOGRAPHY: Styled with tighter letter tracking and premium weight contrasts */}
               <div>
                 <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                   {getActiveLabel()}
@@ -245,27 +233,69 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right Action Cluster Row Container */}
             <motion.div
               initial={{ x: 150, opacity: 1, scale: 0.8 }}
               animate={{ x: 0, opacity: 0.8, scale: 1 }}
               whileHover={{ opacity: 1, scale: 1.05 }}
               className="flex items-center gap-3.5"
             >
-              {/* 🟢 NEW: Nutri Points Live Wallet Display Meter Indicator */}
+              {/* Wallet Display Badge Section */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 onClick={() => navigate("/pricing")}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-xl font-bold text-sm cursor-pointer transition-colors shadow-xs"
-                title="Your Nutri Points Wallet balance. Click to redeem for Premium discounts!"
+                className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 hover:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-xl font-bold text-sm cursor-pointer transition-colors shadow-xs select-none"
+                title="Your Nutri-Nuggets Wallet balance. Click to redeem for Premium discounts!"
               >
-                <Coins
-                  className="w-4 h-4 animate-spin"
-                  style={{ animationDuration: "6s" }}
-                />
+                {/* 🟢 NEW: Multi-sided micro spinning token frame pipeline */}
+                <div
+                  className="w-7 h-7 relative shrink-0"
+                  style={{ perspective: 400 }}
+                >
+                  <motion.div
+                    animate={{ rotateY: 360 }}
+                    transition={{
+                      duration: 4,
+                      ease: "linear",
+                      repeat: Infinity,
+                    }}
+                    className="w-full h-full relative"
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    {/* Front Badge Face */}
+                    <div
+                      className="absolute inset-0 w-full h-full rounded-full overflow-hidden filter drop-shadow-[0_1px_3px_rgba(212,163,89,0.3)]"
+                      style={{
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                      }}
+                    >
+                      <img
+                        src={coinFront}
+                        alt="Coin Front"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+
+                    {/* Back Badge Face */}
+                    <div
+                      className="absolute inset-0 w-full h-full rounded-full overflow-hidden filter drop-shadow-[0_1px_3px_rgba(212,163,89,0.3)]"
+                      style={{
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                        transform: "rotateY(180deg)",
+                      }}
+                    >
+                      <img
+                        src={coinBack}
+                        alt="Coin Back"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </motion.div>
+                </div>
                 <span>{nutriPoints} pts</span>
               </motion.div>
-              {/* 🟢 NEW: Theme Switch Toggle Button */}
+
               <motion.button
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
@@ -281,7 +311,6 @@ export default function Dashboard() {
                 )}
               </motion.button>
 
-              {/* Free / Premium Badge */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 onClick={() => !userData?.isPremium && navigate("/pricing")}
@@ -296,7 +325,6 @@ export default function Dashboard() {
                   : "Free Plan - Upgrade"}
               </motion.div>
 
-              {/* Logo */}
               <img
                 src={NutriCareLogo}
                 alt="NutriCare Logo"
@@ -306,14 +334,13 @@ export default function Dashboard() {
           </motion.header>
 
           {/* Dynamic Nested Page Rendering */}
-
           <main className="p-8 flex-1">
             <Outlet />
           </main>
         </div>
       </div>
 
-      {/* --- PREMIUM UPGRADE POPUP --- */}
+      {/* PREMIUM UPGRADE POPUP */}
       <AnimatePresence>
         {showPremiumPrompt && (
           <motion.div
@@ -360,7 +387,7 @@ export default function Dashboard() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* 🟢 NEW: Mount your point claim coin popup layout securely here */}
+
       <EarningCoinPopup
         animationState={coinAnimation}
         onClose={() => setCoinAnimation({ show: false, points: 0 })}
