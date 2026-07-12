@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useContext } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   UserCircle,
   Utensils,
@@ -22,22 +22,24 @@ import TrackingVideo from "../../assets/track&Evolve.mp4";
 import demoVideo from "../../assets/howItWorks.mp4";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
-import { userDataContext } from "../../context/UserContext"; // 🟢 Added context import
+import { userDataContext } from "../../context/UserContext";
 
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const { isDark } = useTheme();
-  const { userData } = useContext(userDataContext); // 🟢 Consume userData state
+  const { userData } = useContext(userDataContext);
 
   const handleVideoToggle = () => {
     const video = document.getElementById("demo-video");
-    if (isPlaying) {
-      video.pause();
-    } else {
-      video.play();
+    if (video) {
+      if (isPlaying) {
+        video.pause();
+      } else {
+        video.play();
+      }
+      setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const steps = [
@@ -155,7 +157,7 @@ export default function HowItWorks() {
   };
 
   const floatAnimation = {
-    y: [0, -10, 0],
+    y: [0, -6, 0],
     transition: {
       duration: 3,
       repeat: Infinity,
@@ -238,7 +240,6 @@ export default function HowItWorks() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            {/* 🟢 Dynamic Hero CTA Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -264,7 +265,7 @@ export default function HowItWorks() {
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-white/80 dark:bg-[#0c130d]/80 text-gray-800 dark:text-zinc-200 border border-transparent dark:border-green-800/20 backdrop-blur-sm text-lg font-semibold rounded-full hover:bg-white dark:hover:bg-zinc-900 transition-colors duration-300 shadow-lg cursor-pointer"
               onClick={() => {
-                const element = document.getElementById("demo-video");
+                const element = document.getElementById("action-demo-section");
                 element?.scrollIntoView({ behavior: "smooth" });
               }}
             >
@@ -275,13 +276,14 @@ export default function HowItWorks() {
       </motion.section>
 
       {/* Main Steps Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-24"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white">
               Your Path to <span className="text-green-500">Wellness</span>
@@ -292,7 +294,15 @@ export default function HowItWorks() {
             </p>
           </motion.div>
 
-          <div className="space-y-12">
+          {/* Timeline Cards Container */}
+          <div className="relative space-y-20 lg:space-y-32 mt-8">
+            {/* 
+              🟢 FIXED: Vertical Tracking Backbone Line. 
+              Anchored relative to this inner container, it initiates exactly under the subtitle 
+              and maps a direct route straight through the center grid row splits.
+            */}
+            <div className="hidden lg:block absolute left-1/2 top-0 bottom-24 w-1 bg-gradient-to-b from-green-500 via-emerald-400 to-transparent transform -translate-x-1/2 z-0" />
+
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -302,25 +312,33 @@ export default function HowItWorks() {
                 viewport={{ once: true }}
                 className={`flex flex-col ${
                   index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
-                } gap-8 lg:gap-12 items-center`}
+                } justify-between gap-8 lg:gap-0 items-center relative w-full z-10`}
               >
+                {/* 
+                  🟢 FIXED: Centered Desktop Tracking Node Marker.
+                  Anchored directly on the center string grid dividing row. Contains floating bounce physics.
+                */}
+                <motion.div
+                  animate={floatAnimation}
+                  className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl items-center justify-center shadow-xl z-30 transform rotate-12 text-white text-xl font-black select-none"
+                >
+                  <span className="transform -rotate-12">{step.number}</span>
+                </motion.div>
+
+                {/* Step Info Content Box */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="relative w-full lg:w-1/2 bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20 text-gray-800 dark:text-zinc-100"
+                  className="relative w-full lg:w-[calc(50%-4rem)] bg-white dark:bg-[#0f1d13] rounded-3xl p-8 md:p-10 shadow-xl border border-transparent dark:border-green-800/20 text-gray-800 dark:text-zinc-100"
                   style={{
                     boxShadow: isDark
-                      ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
+                      ? "4px 4px 16 rgba(0, 0, 0, 0.4)"
                       : "4px 4px 16px #8fa98f, -4px -4px 16px #8fa98f",
                   }}
                 >
-                  <motion.div
-                    animate={floatAnimation}
-                    className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-12"
-                  >
-                    <span className="text-white text-3xl font-bold transform -rotate-12">
-                      {step.number}
-                    </span>
-                  </motion.div>
+                  {/* Adaptive Corner Mobile Number Badge (Hidden on Large Widescreens) */}
+                  <div className="lg:hidden absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-md transform rotate-6 z-10 text-white font-bold text-lg select-none">
+                    {step.number}
+                  </div>
 
                   <div
                     className="w-20 h-20 mb-6 rounded-2xl flex items-center justify-center"
@@ -342,14 +360,7 @@ export default function HowItWorks() {
 
                   <div className="space-y-3">
                     {step.details.map((detail, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 }}
-                        className="flex items-center gap-3"
-                      >
+                      <div className="flex items-center gap-3" key={idx}>
                         <CheckCircle2
                           className="w-5 h-5 text-green-500 flex-shrink-0"
                           strokeWidth={2}
@@ -357,14 +368,15 @@ export default function HowItWorks() {
                         <span className="text-gray-700 dark:text-zinc-300">
                           {detail}
                         </span>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
 
+                {/* Step Media Assets Box Container */}
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="w-full lg:w-1/2 h-80 lg:h-96 rounded-3xl overflow-hidden shadow-xl"
+                  whileHover={{ scale: 1.02 }}
+                  className="w-full lg:w-[calc(50%-4rem)] h-80 lg:h-96 rounded-3xl overflow-hidden shadow-xl z-10"
                   style={{
                     boxShadow: isDark
                       ? "4px 4px 16px rgba(0, 0, 0, 0.4)"
@@ -375,7 +387,7 @@ export default function HowItWorks() {
                     <img
                       src={step.image}
                       alt={step.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover select-none pointer-events-none"
                     />
                   ) : step.video ? (
                     <video
@@ -384,7 +396,7 @@ export default function HowItWorks() {
                       loop
                       muted
                       playsInline
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover pointer-events-none"
                     />
                   ) : (
                     <div
@@ -422,8 +434,6 @@ export default function HowItWorks() {
               </motion.div>
             ))}
           </div>
-
-          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-white/30 via-green-400 to-white/30 transform -translate-x-1/2 opacity-30" />
         </div>
       </section>
 
@@ -484,7 +494,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Video/Demo Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="action-demo-section" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -607,7 +617,6 @@ export default function HowItWorks() {
               NutriCare AI
             </motion.p>
 
-            {/* 🟢 Dynamic Bottom CTA Button */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}

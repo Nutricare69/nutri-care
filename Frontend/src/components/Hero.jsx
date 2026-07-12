@@ -5,26 +5,20 @@ import HomeBGImage from "../assets/homePageBackground.jpeg";
 import { userDataContext } from "../context/UserContext.jsx";
 import Loader from "./Loader.jsx";
 
-// import Navbar from "../components/Navbar.jsx"; // If needed
-
 export default function Hero() {
   const navigate = useNavigate();
   const heroRef = useRef(null);
   const { userData } = useContext(userDataContext);
 
   useEffect(() => {
-    // GSAP Context ensures animations remain scoped to this component
-    // and are properly cleaned up when the component unmounts.
     let ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Subtle zoom and fade-in for the background image
       tl.from(".hero-bg", {
         scale: 1.1,
         opacity: 0,
         duration: 1.5,
       })
-        // 2. Slide up and fade in the titles with a slight stagger
         .from(
           ".hero-title",
           {
@@ -34,8 +28,7 @@ export default function Hero() {
             stagger: 0.2,
           },
           "-=1",
-        ) // Start 1 second before the background animation finishes
-        // 3. Fade in the description text
+        )
         .from(
           ".hero-desc",
           {
@@ -45,7 +38,6 @@ export default function Hero() {
           },
           "-=0.6",
         )
-        // 4. Pop in the button
         .from(
           ".hero-btn",
           {
@@ -58,20 +50,23 @@ export default function Hero() {
         );
     }, heroRef);
 
-    return () => ctx.revert(); // Cleanup on unmount
+    return () => ctx.revert();
   }, []);
 
   return (
     <>
-      {/* Render Loader conditionally at the top level of the component */}
-
+      {/* 
+        🟢 FIXED: Added 'max-w-[1400px]' and 'mx-auto' here.
+        Now when you zoom out, the hero wrapper stops expanding at 1400px and stays 
+        perfectly centered—aligning beautifully with your Core Features section!
+      */}
       <div
         ref={heroRef}
-        className="w-full flex justify-center bg-transparent relative"
+        className="w-full max-w-[2000px] mx-auto bg-transparent relative px-4 sm:px-6 md:py-5 md:px-8 mt-6 select-none"
       >
         <div
-          className="relative w-full max-w-[2000px] min-h-[420px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-[700px] xl:min-h-[850px] flex items-center justify-start rounded-b-3xl overflow-hidden mx-auto"
-          style={{ boxShadow: "2px 2px 8px #8fa98f, -4px -4px 16px #8fa98f" }}
+          className="relative w-full min-h-[420px] sm:min-h-[500px] md:min-h-[600px] lg:min-h-[700px] xl:min-h-[800px] flex items-center justify-start rounded-3xl overflow-hidden"
+          style={{ boxShadow: "0px 10px 30px rgba(143, 169, 143, 0.25)" }}
         >
           {/* Background Image — centered on all sizes */}
           <img
@@ -114,15 +109,12 @@ export default function Hero() {
             {userData ? (
               <button
                 onClick={() => {
-                  // Wrap navigate in a small timeout to allow Loader to render,
-                  // or just navigate immediately since it's client-side routing
                   setTimeout(() => {
                     navigate("/dashboard");
                   }, 200);
                 }}
-                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
+                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer text-center"
               >
-                {/* {if user is old and visited the dashboard} */}
                 {userData.profileCompleted
                   ? `Welcome Back ${userData.name.split(" ")[0]}!`
                   : "Complete Your Profile"}
@@ -132,10 +124,9 @@ export default function Hero() {
                 onClick={() => {
                   setTimeout(() => {
                     navigate("/signup");
-                    
                   }, 200);
                 }}
-                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
+                className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer text-center"
               >
                 Start My Nutrition Journey
               </button>

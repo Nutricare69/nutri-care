@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ExternalLink, Sparkles, Building2 } from "lucide-react";
+import {
+  Heart,
+  ExternalLink,
+  Sparkles,
+  Building2,
+  AlertTriangle,
+} from "lucide-react";
+import { toast } from "react-toastify"; // 🟢 NEW: Imported toast notification engine
 import { useTheme } from "../../components/theme.js";
 
 // Explicit Asset Imports using your exact filename strings
@@ -12,6 +19,31 @@ import noahsArkLogo from "../../assets/NGO's/noahsarklogo.png";
 
 export default function NgoSupport() {
   const { isDark } = useTheme();
+  const [isOffline, setIsOffline] = useState(!navigator.onLine); // 🟢 NEW: Active link validation layer
+
+  // 🟢 NEW: Listen to live hardware connection adjustments while sitting on the tab
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  // 🟢 NEW: Intercept link redirects if user tries to jump outward without internet lines
+  const handleExternalLinkClick = (e) => {
+    if (isOffline) {
+      e.preventDefault();
+      toast.error(
+        "Network connection down. External payment portals require active internet connection routes.",
+      );
+    }
+  };
 
   const ngoList = [
     {
@@ -67,6 +99,23 @@ export default function NgoSupport() {
             Corporate Social Responsibility
           </h3>
         </div>
+
+        {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+        {isOffline && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3.5 mt-4"
+          >
+            <div className="p-2 bg-amber-500 rounded-xl text-white shrink-0 shadow-xs">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
+              Displaying local NGO profiles. External platform redirection links
+              are disabled until internet access scales up.
+            </div>
+          </motion.div>
+        )}
 
         {/* Premium Core Pledges Announcement Block */}
         <div
@@ -162,10 +211,17 @@ export default function NgoSupport() {
                   href={ngo.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 bg-green-500 hover:bg-green-600 text-white rounded-2xl text-xs font-bold shadow-sm hover:shadow-md hover:shadow-green-500/10 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  onClick={handleExternalLinkClick} // 🟢 NEW: Integrated link tap intercept logic
+                  className={`w-full py-3.5 rounded-2xl text-xs font-bold shadow-sm hover:shadow-md flex items-center justify-center gap-2 transition-all ${
+                    isOffline
+                      ? "bg-zinc-300 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-600 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600 text-white hover:shadow-green-500/10 cursor-pointer"
+                  }`}
                 >
                   Contribute & Donate
-                  <ExternalLink className="w-4 h-4 stroke-[2.5] transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  {!isOffline && (
+                    <ExternalLink className="w-4 h-4 stroke-[2.5] transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  )}
                 </motion.a>
               </div>
             </motion.div>

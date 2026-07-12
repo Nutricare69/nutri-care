@@ -7,6 +7,7 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { toast } from "react-toastify"; // 🟢 NEW: Imported Toastify engine
 import { authDataContext } from "../../context/AuthContextProvider";
+import { userDataContext } from "../../context/UserContext"; // 🟢 NEW: Imported user context layer
 import Loader from "../../components/Loader";
 import { useTheme } from "../../components/theme.js";
 
@@ -17,12 +18,43 @@ export default function SignUp() {
   const [settle, setSettle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl } = useContext(authDataContext);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { getCurrentUser } = useContext(userDataContext); // 🟢 NEW: Extract user fetcher from context
+
+  // 🟢 NEW: Initialize fields from sessionStorage to keep data safe when reading policies
+  const [name, setName] = useState(sessionStorage.getItem("signup_name") || "");
+  const [email, setEmail] = useState(
+    sessionStorage.getItem("signup_email") || "",
+  );
+  const [password, setPassword] = useState(
+    sessionStorage.getItem("signup_password") || "",
+  );
+  const [confirmPassword, setConfirmPassword] = useState(
+    sessionStorage.getItem("signup_confirmPassword") || "",
+  );
+  const [agreeToTerms, setAgreeToTerms] = useState(
+    sessionStorage.getItem("signup_agree") === "true",
+  );
+
   const [loading, setloading] = useState(false);
   const { isDark } = useTheme();
+
+  // 🟢 NEW: Sync changes to sessionStorage automatically
+  useEffect(() => {
+    sessionStorage.setItem("signup_name", name);
+    sessionStorage.setItem("signup_email", email);
+    sessionStorage.setItem("signup_password", password);
+    sessionStorage.setItem("signup_confirmPassword", confirmPassword);
+    sessionStorage.setItem("signup_agree", agreeToTerms);
+  }, [name, email, password, confirmPassword, agreeToTerms]);
+
+  // 🟢 NEW: Wipes the temporary storage completely upon successful signup
+  const clearCacheForm = () => {
+    sessionStorage.removeItem("signup_name");
+    sessionStorage.removeItem("signup_email");
+    sessionStorage.removeItem("signup_password");
+    sessionStorage.removeItem("signup_confirmPassword");
+    sessionStorage.removeItem("signup_agree");
+  };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -61,6 +93,16 @@ export default function SignUp() {
         { name, email, password },
         { withCredentials: true },
       );
+
+      // 🟢 NEW: Wipes form memory cache instantly so fields are empty next time
+      clearCacheForm();
+
+      localStorage.setItem("nutricare_has_session", "true");
+
+      // 🟢 NEW: Hydrates user state variables globally right now to avoid needing a hard refresh
+      if (typeof getCurrentUser === "function") {
+        await getCurrentUser();
+      }
 
       // 🟢 NEW: Fire success toast configuration right before changing screen location states
       toast.success("Account created successfully! Welcome to NutriCare.");
@@ -250,10 +292,13 @@ export default function SignUp() {
               Sign Up
             </button>
 
+            {/* 🟢 FIXED: Linked input target check states to control state persistence values cleanly */}
             <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1 select-none">
               <input
                 type="checkbox"
                 className="mt-1 accent-[#7fbe9a] cursor-pointer"
+                checked={agreeToTerms}
+                onChange={(e) => setAgreeToTerms(e.target.checked)}
                 required
               />
               <span>

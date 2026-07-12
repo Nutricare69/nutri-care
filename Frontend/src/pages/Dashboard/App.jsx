@@ -13,20 +13,18 @@ export default function App() {
     <>
       <ScrollToTop />
       <Routes>
-        {/* Make Dashboard the parent layout route */}
+        {/* Make Dashboard the parent layout layout container structure */}
         <Route path="/" element={<Dashboard />}>
-          {/* Index route shown when exactly on /dashboard */}
+          {/* Index tab view mounted exactly when navigating onto /dashboard */}
           <Route index element={<DietPlans />} />
 
-          {/* All the other dashboard tabs */}
+          {/* Core App Subview Panel Target Slots */}
           <Route path="analytics" element={<Analytics />} />
           <Route path="community" element={<Community />} />
           <Route path="ngo" element={<NgoSupport />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
-
-  
     </>
   );
 }

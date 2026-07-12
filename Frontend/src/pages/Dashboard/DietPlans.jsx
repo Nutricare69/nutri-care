@@ -31,6 +31,7 @@ export default function DietPlans() {
   const [expandedPlan, setExpandedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingPlans, setFetchingPlans] = useState(true);
+  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Component connection tracker
 
   // Community Bookmarks States
   const [savedCommunityMeals, setSavedCommunityMeals] = useState([]);
@@ -53,6 +54,13 @@ export default function DietPlans() {
 
   // Interceptor function checking the context flags when the button is clicked
   const handleOpenCreateModal = () => {
+    // 🟢 NEW: Stop users from attempting complex ML generations while internet lines are broken
+    if (!navigator.onLine) {
+      toast.error(
+        "Network connection down. AI Generation requires an active internet connection.",
+      );
+      return;
+    }
     if (isQuotaCapped) {
       toast.error(
         `Quota exhausted! You have consumed your 5 free generations. Your slots will start renewing in ${remainingDays} days. Upgrade to Premium for infinite instant updates!`,
@@ -195,33 +203,73 @@ export default function DietPlans() {
   };
 
   const fetchDietPlans = async () => {
+    // 🟢 NEW: Offline Interceptor Layer for Diet Plans array tracking
+    if (!navigator.onLine) {
+      const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
+      setDietPlans(localPlans ? JSON.parse(localPlans) : []);
+      setIsOfflineView(true);
+      setFetchingPlans(false);
+      return;
+    }
+
     try {
       const response = await axios.get(`${serverUrl}/api/generate/all-plans`, {
         withCredentials: true,
       });
-      setDietPlans(response.data || []);
+      const dataPayload = response.data || [];
+      setDietPlans(dataPayload);
+
+      // Quietly write payload backings down into client cache lines
+      localStorage.setItem(
+        "nutricare_cached_diet_plans",
+        JSON.stringify(dataPayload),
+      );
+      setIsOfflineView(false);
     } catch (error) {
-      console.error("Error fetching diet plans:", error);
+      console.error("Error fetching diet plans, falling back to cache:", error);
+      const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
+      setDietPlans(localPlans ? JSON.parse(localPlans) : []);
+      setIsOfflineView(true);
     } finally {
       setFetchingPlans(false);
     }
   };
 
   const fetchSavedCommunityMeals = async () => {
+    // 🟢 NEW: Offline Interceptor Layer for Bookmark Cookbooks
+    if (!navigator.onLine) {
+      const localBookmarks = localStorage.getItem(
+        "nutricare_cached_saved_meals",
+      );
+      setSavedCommunityMeals(localBookmarks ? JSON.parse(localBookmarks) : []);
+      return;
+    }
+
     try {
       const response = await axios.get(
         `${serverUrl}/api/challenges/recipes/saved`,
         { withCredentials: true },
       );
-      setSavedCommunityMeals(response.data || []);
+      const dataPayload = response.data || [];
+      setSavedCommunityMeals(dataPayload);
+      localStorage.setItem(
+        "nutricare_cached_saved_meals",
+        JSON.stringify(dataPayload),
+      );
     } catch (error) {
       console.error("Error fetching bookmarked recipes:", error);
+      const localBookmarks = localStorage.getItem(
+        "nutricare_cached_saved_meals",
+      );
+      setSavedCommunityMeals(localBookmarks ? JSON.parse(localBookmarks) : []);
     }
   };
 
   useEffect(() => {
-    fetchDietPlans();
-    fetchSavedCommunityMeals();
+    if (serverUrl) {
+      fetchDietPlans();
+      fetchSavedCommunityMeals();
+    }
   }, [serverUrl]);
 
   return (
@@ -278,8 +326,25 @@ export default function DietPlans() {
             </div>
           </div>
 
+          {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+          {isOfflineView && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3.5"
+            >
+              <div className="p-2 bg-amber-500 rounded-xl text-white shrink-0 shadow-xs">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                Displaying last synced backup data records. New profile
+                calibrations are restricted until internet access scales up.
+              </div>
+            </motion.div>
+          )}
+
           {/* Context-Driven Cooldown Alert Banner */}
-          {isQuotaCapped && (
+          {isQuotaCapped && !isOfflineView && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -422,7 +487,6 @@ export default function DietPlans() {
                                 {plan.profileSnapshot?.bmi || "-"}
                               </p>
                             </div>
-                            {/* 🟢 FIXED: Cleaned up spacing typo <p className= here */}
                             <div className="bg-white dark:bg-[#0c130d] p-4 rounded-xl shadow-xs">
                               <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
                                 Category

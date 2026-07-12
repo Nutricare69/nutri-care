@@ -8,9 +8,10 @@ import {
   Trophy,
   ArrowRight,
   X,
+  AlertTriangle, // 🟢 NEW: Warning icon for offline states
 } from "lucide-react";
 import axios from "axios";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 import { useTheme } from "../../components/theme.js";
@@ -32,26 +33,65 @@ export default function Community() {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
+  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Active component connection tracker
 
   const fetchChallenges = async () => {
+    // 🟢 NEW: Offline Interceptor Layer
+    if (!navigator.onLine) {
+      const localChallenges = localStorage.getItem(
+        "nutricare_cached_challenges",
+      );
+      setChallenges(localChallenges ? JSON.parse(localChallenges) : []);
+      setIsOfflineView(true);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.get(`${serverUrl}/api/challenges/active`, {
         withCredentials: true,
       });
-      setChallenges(response.data || []);
+      const dataPayload = response.data || [];
+      setChallenges(dataPayload);
+
+      // Sync fresh online data to cache lines for offline use
+      localStorage.setItem(
+        "nutricare_cached_challenges",
+        JSON.stringify(dataPayload),
+      );
+      setIsOfflineView(false);
     } catch (error) {
-      console.error("Error connecting to database endpoint:", error);
+      console.error(
+        "Error connecting to database endpoint, falling back to cache:",
+        error,
+      );
+      const localChallenges = localStorage.getItem(
+        "nutricare_cached_challenges",
+      );
+      setChallenges(localChallenges ? JSON.parse(localChallenges) : []);
+      setIsOfflineView(true);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchChallenges();
-  }, []);
+    if (serverUrl) {
+      fetchChallenges();
+    }
+  }, [serverUrl]);
 
   const handleToggleChallenge = async (id, e) => {
     e.stopPropagation();
+
+    // 🟢 NEW: Block network alterations if user tries to update server logs while offline
+    if (!navigator.onLine) {
+      toast.error(
+        "Network connection down. Joining or leaving challenges requires an active internet connection.",
+      );
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${serverUrl}/api/challenges/toggle/${id}`,
@@ -77,7 +117,6 @@ export default function Community() {
         ),
       );
 
-      
       if (response.data.hasJoined) {
         toast.success(
           `Counted in! Welcome to the "${challengeTitle}" dashboard workspace.`,
@@ -164,6 +203,23 @@ export default function Community() {
           our server records.
         </p>
       </div>
+
+      {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+      {isOfflineView && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3.5"
+        >
+          <div className="p-2 bg-amber-500 rounded-xl text-white shrink-0 shadow-xs">
+            <AlertTriangle className="w-4 h-4" />
+          </div>
+          <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
+            Displaying last synced wellness metrics. Participating or leaving
+            community challenges is restricted until internet access scales up.
+          </div>
+        </motion.div>
+      )}
 
       {/* Conditionally switches between loader or card stack matrix */}
       {loading ? (

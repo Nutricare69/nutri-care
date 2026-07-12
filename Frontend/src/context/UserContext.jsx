@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, createContext } from "react";
+import React, { useEffect, useState, useContext, createContext } from "react";
 import { authDataContext } from "../context/AuthContextProvider.jsx";
 import { calculateQuotaStatus } from "../utils/quotaHelper.js";
 import { toast } from "react-toastify";
@@ -9,11 +9,12 @@ export const userDataContext = createContext();
 export default function UserContext({ children }) {
   const { serverUrl } = useContext(authDataContext);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [hasPromptedPremium, setHasPromptedPremium] = useState(false);
   const [remainingDays, setRemainingDays] = useState(0);
   const [isQuotaCapped, setIsQuotaCapped] = useState(false);
 
-  //  NEW: Gamification state parameters
+  // Gamification state parameters
   const [nutriPoints, setNutriPoints] = useState(0);
   const [coinAnimation, setCoinAnimation] = useState({
     show: false,
@@ -31,13 +32,19 @@ export default function UserContext({ children }) {
     }
   };
 
-  //  NEW: Global animation claim function available to all workspaces
   const triggerPointAwardEffect = (pointsAwarded) => {
     setCoinAnimation({ show: true, points: pointsAwarded });
     setNutriPoints((prev) => prev + pointsAwarded);
   };
 
   const getCurrentUser = async () => {
+    // 🟢 FIXED: If the device has no network connection on refresh, skip the call entirely!
+    // This stops the app from getting stuck waiting for an Axios request timeout.
+    if (!navigator.onLine) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     try {
       const result = await axios.get(serverUrl + "/api/user/currentuser", {
         withCredentials: true,
@@ -45,7 +52,11 @@ export default function UserContext({ children }) {
       if (result.data) {
         const user = result.data;
         setUserData(user);
-        fetchWalletBalance(); // Sync point tokens together on refresh loops
+
+        // Seed the session hint whenever validation clears successfully
+        localStorage.setItem("nutricare_has_session", "true");
+
+        fetchWalletBalance();
 
         if (!user.isPremium && user.lastMealPlanDate) {
           const status = calculateQuotaStatus(user.lastMealPlanDate);
@@ -67,31 +78,49 @@ export default function UserContext({ children }) {
         setUserData(null);
         setIsQuotaCapped(false);
         setRemainingDays(0);
+        // 🟢 NEW: If backend responds but returns empty data, wipe the orphan local flag
+        localStorage.removeItem("nutricare_has_session");
       }
     } catch (error) {
       setUserData(null);
       setIsQuotaCapped(false);
       setRemainingDays(0);
+
+      // 🟢 NEW: Smart Session Cleansing Firewall
+      // If the server explicitly responds with a 401 or 403 status code, it means the user is online
+      // but their temporary session cookie has expired or been deleted. Wipe the flag instantly!
+      // If there is NO error.response, it means they are simply offline, so we leave the flag alone.
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
+        localStorage.removeItem("nutricare_has_session");
+      }
+    } finally {
+      setLoading(false);
     }
-  };
+  };;
 
   useEffect(() => {
-    getCurrentUser();
+    if (serverUrl) {
+      getCurrentUser();
+    }
   }, [serverUrl]);
 
   const value = {
     userData,
     setUserData,
+    loading,
     getCurrentUser,
     hasPromptedPremium,
     setHasPromptedPremium,
     remainingDays,
     isQuotaCapped,
-    nutriPoints, //  NEW: Exposed gamification points total
+    nutriPoints,
     setNutriPoints,
-    coinAnimation, //  NEW: Exposed animation state object
+    coinAnimation,
     setCoinAnimation,
-    triggerPointAwardEffect, //  NEW: Exposed claim trigger wrapper
+    triggerPointAwardEffect,
     fetchWalletBalance,
   };
 

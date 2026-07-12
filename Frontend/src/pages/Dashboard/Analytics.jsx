@@ -7,6 +7,7 @@ import {
   CalendarDays,
   ChevronRight,
   ActivitySquare,
+  AlertTriangle, // 🟢 NEW: Warning icon for offline states
 } from "lucide-react";
 import axios from "axios";
 import {
@@ -46,8 +47,9 @@ export default function Analytics() {
   const { serverUrl } = useContext(authDataContext);
   const { isDark } = useTheme();
   const [dietPlans, setDietPlans] = useState([]);
-  const [expandedPlan, setExpandedPlan] = useState(null); 
+  const [expandedPlan, setExpandedPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Active component connection tracker
 
   // Track selected day per plan (defaults to 1 when a plan is opened)
   const [selectedDayNumber, setSelectedDayNumber] = useState(1);
@@ -85,21 +87,47 @@ export default function Analytics() {
   };
 
   const fetchDietPlans = async () => {
+    // 🟢 NEW: Offline Interceptor Layer
+    // Check if network status is down, if so pull immediately from local disk cache storage
+    if (!navigator.onLine) {
+      const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
+      setDietPlans(localPlans ? JSON.parse(localPlans) : []);
+      setIsOfflineView(true);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.get(`${serverUrl}/api/generate/all-plans`, {
         withCredentials: true,
       });
-      setDietPlans(response.data || []);
+      const plansData = response.data || [];
+      setDietPlans(plansData);
+
+      // Seed backup records back down into local cache storage lines cleanly
+      localStorage.setItem(
+        "nutricare_cached_diet_plans",
+        JSON.stringify(plansData),
+      );
+      setIsOfflineView(false);
     } catch (error) {
-      console.error("Error fetching diet plans for analytics:", error);
+      console.error(
+        "Error fetching diet plans for analytics, falling back to cache:",
+        error,
+      );
+      const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
+      setDietPlans(localPlans ? JSON.parse(localPlans) : []);
+      setIsOfflineView(true);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDietPlans();
-  }, []);
+    if (serverUrl) {
+      fetchDietPlans();
+    }
+  }, [serverUrl]);
 
   // Effect to trigger a sweep/shrink animation on day change
   useEffect(() => {
@@ -131,7 +159,7 @@ export default function Analytics() {
           Number(tCarbs.toFixed(2)),
         ]);
       }
-    }, 100); 
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [selectedDayNumber, expandedPlan, dietPlans]);
@@ -154,7 +182,7 @@ export default function Analytics() {
         exit={{ opacity: 0, y: -20 }}
         className="space-y-6 pb-10"
       >
-        {/* 🟢 NEW: Premium Layout Accent Header Integration Block */}
+        {/* Premium Layout Accent Header Integration Block */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-7 bg-green-500 rounded-full" />
@@ -163,6 +191,23 @@ export default function Analytics() {
             </h3>
           </div>
         </div>
+
+        {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+        {isOfflineView && !loading && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3.5"
+          >
+            <div className="p-2 bg-amber-500 rounded-xl text-white shrink-0 shadow-xs">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
+              Displaying last synced nutrition logs. Real-time metric analytics
+              updates are restricted until internet access scales up.
+            </div>
+          </motion.div>
+        )}
 
         {loading && <Loader inline />}
 
@@ -470,7 +515,7 @@ export default function Analytics() {
                             </div>
                           </div>
 
-                          {/* 14 Day Trend container isolated */}
+                          {/* Caloric Trend Chart Container */}
                           <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-transparent w-full min-w-0 lg:col-span-2">
                             <h4 className="flex items-center gap-2 text-gray-800 dark:text-zinc-200 font-bold mb-4">
                               <TrendingUp className="w-5 h-5 text-green-500" />{" "}

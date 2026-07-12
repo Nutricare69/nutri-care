@@ -1,22 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react"; // 🟢 UPDATED: Imported useContext
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
+import { userDataContext } from "../../context/UserContext"; // 🟢 NEW: Imported your global user context layer
 
 export default function PaymentSuccess() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleGoToDashboard = () => {
+  // 🟢 NEW: Extract the context hydrators to update state parameters instantly
+  const { getCurrentUser, fetchWalletBalance } = useContext(userDataContext);
+
+  const handleGoToDashboard = async () => {
     setLoading(true); // Turn loader on
 
-    // Simulate a brief delay to allow background data syncing before landing on the dashboard
+    try {
+      // 🟢 1. Re-fetch the fresh account snapshot containing the active premium flag
+      if (typeof getCurrentUser === "function") {
+        await getCurrentUser();
+      }
+
+      // 🟢 2. Refresh points balances to clear deductions used at checkout cleanly
+      if (typeof fetchWalletBalance === "function") {
+        await fetchWalletBalance();
+      }
+    } catch (error) {
+      console.error("Failed to smoothly hydrate payment contexts:", error);
+    }
+
+    // A comfortable, premium transition delay window
     setTimeout(() => {
-      setLoading(false); // Turn loader off (optional since we are navigating away)
-      // navigate("/dashboard");
-      window.location.href = "/dashboard";
-    }, 1500); // 1.5 seconds delay
+      setLoading(false);
+      navigate("/dashboard");
+    }, 1000);
   };
 
   return (
@@ -42,7 +59,9 @@ export default function PaymentSuccess() {
           Thank you for upgrading. Your premium features have been unlocked and
           your 30-day access is now active.
         </p>
+
         {loading && <Loader />}
+
         <button
           onClick={handleGoToDashboard}
           className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all cursor-pointer"
