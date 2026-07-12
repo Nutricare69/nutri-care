@@ -21,6 +21,7 @@ The application is engineered using a robust, decoupled three-tier microservices
 │   React.js Frontend    │ ───>  │   Core Central Backend  │ ───>  │   Python AI Engine     │
 │  (Tailwind + Motion)   │ <───  │   (Auth, Logic, DB)    │ <───  │   (Diet Algorithms)    │
 └────────────────────────┘       └────────────────────────┘       └────────────────────────┘
+```
 
 ---
 
@@ -241,11 +242,12 @@ o Dynamic Dark Theme Ecosystem: Includes a fully integrated night mode toggle en
 ## 📂 Repository & Project Structure
 The architecture is split into three core modules for clean maintainability:
 
+```text
 ├── nutricare-frontend/      # React SPA UI client
 │   ├── src/
 │   │   ├── assets/          # Static media, images, and brand logos
 │   │   ├── components/      # Reusable global layout items (Navbar, Footer)
-│   │   ├── pages/           # Routed view views (Home, About, Dashboard)
+│   │   ├── pages/           # Routed view pages (Home, About, Dashboard)
 │   │   └── App.jsx          # Main application entry and routing config
 │   ├── package.json
 │   └── tailwind.config.js
@@ -258,7 +260,8 @@ The architecture is split into three core modules for clean maintainability:
 │   │   └── routes/          # RESTful API endpoints
 │   └── server.js
 │
-|__
+└── nutricare-ai-python/     # Python AI microservice
+```
 
 ---
 
@@ -266,11 +269,11 @@ The architecture is split into three core modules for clean maintainability:
 To spin up the entire ecosystem locally for development, clone the repositories and follow these steps in order:
 
 * Prerequisites
-  Node.js (v18+ recommended)
-  React (v19+)
-  tailwind(4+)
-  nodemon
-  Package managers: npm
+  - Node.js (v18+ recommended)
+  - React (v19+)
+  - Tailwind CSS (v4+)
+  - nodemon
+  - Package manager: npm
 
 ---
 
@@ -299,28 +302,23 @@ Open your browser and navigate to http://localhost:5173 (or the terminal specifi
 ## 🗺️ Development Roadmap
 [x] Architect decoupled multi-service backend infrastructure.
 
-o [x] Build component-driven React application layout with custom Framer Motion dynamics.
-
-o [x] Build and integrate analytical Python nutrition calculation scripts.
-
-o [x] Design and implement global accessible Dark Theme configuration layout.
-
-o [ ] Implement robust user authentication tracking tokens (JWT).
-
-o [ ] Connect production-grade caching layer for instant structural history retrieval.
-
-o [ ] Add PDF generation automation download tools for user dietary logs.
+- [x] Build component-driven React application layout with custom Framer Motion dynamics.
+- [x] Build and integrate analytical Python nutrition calculation scripts.
+- [x] Design and implement global accessible Dark Theme configuration layout.
+- [ ] Implement robust user authentication tracking tokens (JWT).
+- [ ] Connect production-grade caching layer for instant structural history retrieval.
+- [ ] Add PDF generation automation download tools for user dietary logs.
 
 ---
 
 
 ## 👥 Team & Acknowledgments
 
-o Suvajit Roy — Lead Full-Stack Architect & Core Developer
+- Suvajit Roy — Lead Full-Stack Architect & Core Developer
 
     --> Fully responsible for the end-to-end software development lifecycle, system design patterns, database modeling, and central codebase creation across all frontend and backend services.
 
-o Contributors
+- Contributors
 
     --> Dedicated appreciation to the collaborating developers who assisted with integration testing routines and contributed to implementing the global dark theme UI environment.
 
