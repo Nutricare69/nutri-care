@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import bgUrl from "../../assets/wallpaper login and signup.jpg";
 import leftImg from "../../assets/loginDesign.jpg";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
+import { toast } from "react-toastify"; // 🟢 NEW: Imported Toastify engine
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
 import { useTheme } from "../../components/theme.js";
@@ -31,24 +32,25 @@ export default function SignUp() {
     const PASSWORD_REGEX =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
+    // 🟢 FIXED: Swapped out all blocking alert popups for clean warning toasts
     if (!NAME_REGEX.test(name)) {
-      alert(
+      toast.warn(
         "Please enter a valid name (at least 2 letters, no special characters).",
       );
       return;
     }
     if (!EMAIL_REGEX.test(email)) {
-      alert("Please enter a valid email address.");
+      toast.warn("Please enter a valid email address.");
       return;
     }
     if (!PASSWORD_REGEX.test(password)) {
-      alert(
+      toast.warn(
         "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.",
       );
       return;
     }
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match. Please verify your entries.");
       return;
     }
 
@@ -59,13 +61,18 @@ export default function SignUp() {
         { name, email, password },
         { withCredentials: true },
       );
+
+      // 🟢 NEW: Fire success toast configuration right before changing screen location states
+      toast.success("Account created successfully! Welcome to NutriCare.");
+
       setTimeout(() => {
-        navigate("/login");
+        navigate("/");
         setloading(false);
       }, 200);
     } catch (error) {
       console.error("Error signing up:", error);
-      alert(
+      // 🟢 FIXED: Replaced standard alert string compilation with an error toast alert
+      toast.error(
         "Signup failed: " + (error.response?.data?.message || error.message),
       );
       setloading(false);
@@ -243,13 +250,21 @@ export default function SignUp() {
               Sign Up
             </button>
 
-            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1">
+            <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1 select-none">
               <input
                 type="checkbox"
-                className="mt-1 accent-[#7fbe9a]"
+                className="mt-1 accent-[#7fbe9a] cursor-pointer"
                 required
               />
-              <span>I agree to Terms & Privacy Policy</span>
+              <span>
+                I agree to the{" "}
+                <Link
+                  to="/policy"
+                  className="text-[#5aa87f] dark:text-green-400 hover:underline font-bold transition-all"
+                >
+                  Terms & Privacy Policy
+                </Link>
+              </span>
             </label>
           </form>
 

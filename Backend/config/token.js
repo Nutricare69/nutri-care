@@ -6,6 +6,7 @@ const generateToken = async (userId) => {
        return token;
     }catch(err){
         console.log(err);
+        return null;
     }
 }
 

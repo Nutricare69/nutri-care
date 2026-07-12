@@ -118,3 +118,25 @@ export const getPlanById = async (req, res) => {
     res.status(500).json({ message: "Error fetching plan" });
   }
 };
+
+//get plan by recently created plan
+
+// @desc    Fetch the single most recent AI plan for the logged-in user
+// @route   GET /api/dietplans/latest
+export const getLatestPlan = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Sorts by newest creation date first and grabs only the first document found
+    const latestPlan = await NutriPlan.findOne({ user: userId })
+      .sort({ createdAt: -1 });
+
+    if (!latestPlan) {
+      return res.status(404).json({ message: "No diet plans generated yet." });
+    }
+
+    return res.status(200).json(latestPlan);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching latest plan: " + error.message });
+  }
+};

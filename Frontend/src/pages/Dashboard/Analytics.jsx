@@ -46,13 +46,13 @@ export default function Analytics() {
   const { serverUrl } = useContext(authDataContext);
   const { isDark } = useTheme();
   const [dietPlans, setDietPlans] = useState([]);
-  const [expandedPlan, setExpandedPlan] = useState(null); // Starts as null, so all are closed initially
+  const [expandedPlan, setExpandedPlan] = useState(null); 
   const [loading, setLoading] = useState(true);
 
   // Track selected day per plan (defaults to 1 when a plan is opened)
   const [selectedDayNumber, setSelectedDayNumber] = useState(1);
 
-  // NEW: State specifically for the animated Macro data
+  // State specifically for the animated Macro data
   const [animatedMacroData, setAnimatedMacroData] = useState([0, 0, 0]);
 
   const formatDate = (dateString) => {
@@ -93,7 +93,6 @@ export default function Analytics() {
     } catch (error) {
       console.error("Error fetching diet plans for analytics:", error);
     } finally {
-      // Loader finishes immediately
       setLoading(false);
     }
   };
@@ -102,14 +101,11 @@ export default function Analytics() {
     fetchDietPlans();
   }, []);
 
-  // NEW: Effect to trigger a sweep/shrink animation on day change
+  // Effect to trigger a sweep/shrink animation on day change
   useEffect(() => {
-    // 1. Immediately drop the values to 0 to trigger the shrinking animation
     setAnimatedMacroData([0, 0, 0]);
 
-    // 2. Wait just long enough for the user to visually perceive the change (e.g., 50ms)
     const timer = setTimeout(() => {
-      // We need to calculate the totals for the current day here to feed the state
       let currentPlan = dietPlans.find((p) => p._id === expandedPlan);
       if (currentPlan) {
         let tProt = 0,
@@ -129,14 +125,13 @@ export default function Analytics() {
             }
           });
         }
-        // 3. Set the actual data, triggering the sweeping "grow" animation
         setAnimatedMacroData([
           Number(tProt.toFixed(2)),
           Number(tFat.toFixed(2)),
           Number(tCarbs.toFixed(2)),
         ]);
       }
-    }, 100); // 100 millisecond delay
+    }, 100); 
 
     return () => clearTimeout(timer);
   }, [selectedDayNumber, expandedPlan, dietPlans]);
@@ -150,8 +145,6 @@ export default function Analytics() {
     }
   };
 
-  // chartOptions and chart themes are calculated dynamically inside the map render loop based on the active dark theme
-
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -161,18 +154,17 @@ export default function Analytics() {
         exit={{ opacity: 0, y: -20 }}
         className="space-y-6 pb-10"
       >
+        {/* 🟢 NEW: Premium Layout Accent Header Integration Block */}
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-            <Activity className="w-6 h-6 text-green-500" />
-            Your Nutrition Analytics
-          </h3>
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-7 bg-green-500 rounded-full" />
+            <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+              Your Nutrition Analytics
+            </h3>
+          </div>
         </div>
 
-        {loading && (
-          <div className="flex justify-center items-center py-20">
-            <Loader />
-          </div>
-        )}
+        {loading && <Loader inline />}
 
         {!loading && dietPlans.length === 0 && (
           <motion.div
@@ -222,7 +214,9 @@ export default function Analytics() {
               scales: {
                 x: {
                   grid: {
-                    color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                    color: isDark
+                      ? "rgba(63, 63, 70, 0.3)"
+                      : "rgba(229, 231, 235, 0.5)",
                   },
                   ticks: {
                     color: isDark ? "#a1a1aa" : "#4b5563",
@@ -230,7 +224,9 @@ export default function Analytics() {
                 },
                 y: {
                   grid: {
-                    color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                    color: isDark
+                      ? "rgba(63, 63, 70, 0.3)"
+                      : "rgba(229, 231, 235, 0.5)",
                   },
                   ticks: {
                     color: isDark ? "#a1a1aa" : "#4b5563",
@@ -304,12 +300,10 @@ export default function Analytics() {
               (num) => calculateDayTotals(num).total_calories,
             );
 
-            // 1. Doughnut Chart: Macronutrient Balance
             const macroData = {
               labels: ["Protein (g)", "Fat (g)", "Carbs (g)"],
               datasets: [
                 {
-                  // USE THE ANIMATED VARIABLE HERE:
                   data: animatedMacroData,
                   backgroundColor: ["#ef4444", "#eab308", "#3b82f6"],
                   hoverBackgroundColor: ["#dc2626", "#ca8a04", "#2563eb"],
@@ -319,7 +313,6 @@ export default function Analytics() {
               ],
             };
 
-            // 2. Bar Chart: Actual Intake vs Daily Targets
             const targetVsActualData = {
               labels: ["Calories", "Protein", "Fat", "Carbs"],
               datasets: [
@@ -348,7 +341,6 @@ export default function Analytics() {
               ],
             };
 
-            // 3. Line Chart: Overall Caloric Trend
             const trendDataChart = {
               labels: allDayNumbers.map((num) => `Day ${num}`),
               datasets: [
@@ -389,7 +381,9 @@ export default function Analytics() {
               >
                 {/* Plan Header (Clickable) */}
                 <motion.div
-                  whileHover={{ backgroundColor: isDark ? "#121b14" : "#f9fafb" }}
+                  whileHover={{
+                    backgroundColor: isDark ? "#121b14" : "#f9fafb",
+                  }}
                   onClick={() => togglePlan(plan._id)}
                   className="flex items-center justify-between p-6 cursor-pointer"
                 >
@@ -446,7 +440,6 @@ export default function Analytics() {
                         </div>
 
                         {/* Analytics Charts Grid */}
-                        {/* the key change here is "min-w-0" to prevent grid blowout! */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 w-full">
                           {/* Macro Balance container isolated */}
                           <div className="bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/10 rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-transparent flex flex-col w-full min-w-0">
@@ -454,9 +447,8 @@ export default function Analytics() {
                               Macro Balance - Day {selectedDayNumber}
                             </h4>
                             <div className="relative w-full h-[250px] flex items-center justify-center">
-                              {/* Change Doughnut to Pie, and remove cutout */}
                               <Pie
-                                key={`pie-${selectedDayNumber}-${isDark}`} // Add isDark key to redraw cleanly
+                                key={`pie-${selectedDayNumber}-${isDark}`}
                                 data={macroData}
                                 options={pieChartOptions}
                               />
@@ -471,7 +463,7 @@ export default function Analytics() {
                             </h4>
                             <div className="relative w-full h-[250px]">
                               <Bar
-                                key={`bar-${selectedDayNumber}-${isDark}`} // Add isDark key to redraw cleanly
+                                key={`bar-${selectedDayNumber}-${isDark}`}
                                 data={targetVsActualData}
                                 options={chartOptions}
                               />
@@ -484,12 +476,11 @@ export default function Analytics() {
                               <TrendingUp className="w-5 h-5 text-green-500" />{" "}
                               Meal Plan Caloric Trend
                             </h4>
-                            {/* Inner container forced to be at least 800px wide if there's more than 7 days */}
                             <div
                               className={`relative h-[300px] ${allDayNumbers.length > 7 ? "min-w-[800px]" : "w-full"}`}
                             >
                               <Line
-                                key={`line-${isDark}`} // Add isDark key to redraw cleanly
+                                key={`line-${isDark}`}
                                 data={trendDataChart}
                                 options={{
                                   ...chartOptions,
@@ -499,7 +490,9 @@ export default function Analytics() {
                                       beginAtZero: true,
                                       suggestedMax: targetCals + 500,
                                       grid: {
-                                        color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                                        color: isDark
+                                          ? "rgba(63, 63, 70, 0.3)"
+                                          : "rgba(229, 231, 235, 0.5)",
                                       },
                                       ticks: {
                                         color: isDark ? "#a1a1aa" : "#4b5563",
@@ -507,7 +500,9 @@ export default function Analytics() {
                                     },
                                     x: {
                                       grid: {
-                                        color: isDark ? "rgba(63, 63, 70, 0.3)" : "rgba(229, 231, 235, 0.5)",
+                                        color: isDark
+                                          ? "rgba(63, 63, 70, 0.3)"
+                                          : "rgba(229, 231, 235, 0.5)",
                                       },
                                       ticks: {
                                         color: isDark ? "#a1a1aa" : "#4b5563",

@@ -5,6 +5,7 @@ import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; // 🟢 NEW: Imported Toastify engine
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
@@ -20,37 +21,58 @@ export default function Login() {
   // Form State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); // 🟢 Tracks checkbox state
+  const [rememberMe, setRememberMe] = useState(false);
 
   const { getCurrentUser } = useContext(userDataContext);
   const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
+
+  // 🟢 READ: Hydrate input values out of localStorage during initial layout mount stage
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedRemember = localStorage.getItem("rememberMe") === "true";
+    if (savedRemember && savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!EMAIL_REGEX.test(email)) {
-      alert("Please enter a valid email address.");
+      toast.warn("Please enter a valid email address.");
       return;
     }
 
     setLoading(true);
     try {
-      // 🟢 Sent the rememberMe boolean value down to the backend
       await axios.post(
         serverUrl + "/api/auth/login",
         { email, password, rememberMe },
         { withCredentials: true },
       );
+
+      // 🟢 WRITE: Store configuration preferences natively inside browser instance
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.setItem("rememberMe", "false");
+      }
+
       await getCurrentUser();
+      toast.success("Login successful! Welcome back to NutriCare.");
+
       setTimeout(() => {
         navigate("/");
         setLoading(false);
       }, 200);
     } catch (error) {
       console.error("Error logging in:", error);
-      alert(
+      toast.error(
         "Login failed: " + (error.response?.data?.message || error.message),
       );
       setLoading(false);
@@ -80,7 +102,6 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen w-screen overflow-hidden">
-      {/* Blurred fullscreen background */}
       <div className="absolute inset-0 -z-10">
         <div
           className="absolute inset-0 bg-center bg-cover scale-105 blur-md"
@@ -89,9 +110,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
 
-      {/* Centered card container */}
       <div className="relative mx-auto my-8 md:my-12 w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 grid-rows-1 ring-1 ring-black/5 dark:ring-white/10">
-        {/* Left panel */}
         <div
           className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#5aa87f] to-[#7fbe9a] dark:from-[#1b3f27] dark:to-[#2e5f3f] rounded-l-3xl p-8 md:p-10 transform transition-transform ${speedClass} ease-out ${leftPhase}`}
         >
@@ -110,7 +129,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Right panel */}
         <div
           className={`bg-white/95 dark:bg-[#0c130d]/95 text-gray-800 dark:text-zinc-100 backdrop-blur-sm p-6 md:p-10 transform transition-transform rounded-r-3xl ${speedClass} ease-out ${rightPhase}`}
         >
@@ -138,11 +156,9 @@ export default function Login() {
           <h1 className="text-2xl md:text-4xl font-extrabold text-[#2e3a34] dark:text-green-400 mb-6">
             Log In to Your Account
           </h1>
-
           {loading && <Loader />}
 
           <form className="space-y-5 max-w-md" onSubmit={handleLogin}>
-            {/* Email Field */}
             <div className="flex flex-col gap-1 w-full">
               <input
                 type="email"
@@ -158,12 +174,11 @@ export default function Login() {
               </p>
             </div>
 
-            {/* Password Field */}
             <div className="flex flex-col gap-1 w-full">
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter password John@1234"
+                  placeholder="Enter password Jack@1234"
                   className="w-full rounded-full border border-[#e3e6df] dark:border-green-800/40 bg-white dark:bg-zinc-900/60 px-5 py-3 outline-none focus:ring-2 focus:ring-[#7fbe9a]/40 dark:focus:ring-green-800/40 text-gray-950 dark:text-white"
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}
@@ -193,13 +208,12 @@ export default function Login() {
               Log In
             </button>
 
-            {/* Remember Me Label Section */}
             <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1 cursor-pointer select-none">
               <input
                 type="checkbox"
                 className="mt-1 accent-[#7fbe9a]"
                 checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)} // 🟢 Hooked up event handler
+                onChange={(e) => setRememberMe(e.target.checked)}
               />
               <span>Remember Me</span>
               <span className="text-sm text-[#6b7280] dark:text-zinc-400 ml-auto cursor-pointer">

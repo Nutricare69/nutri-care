@@ -1,6 +1,6 @@
 import express from 'express';
 import { createOrder, verifyPayment } from '../controllers/payments.controller.js';
-import { isAuth } from '../middleware/isAuth.js';
+import { isAuth } from '../middleware/auth.middleware.js';
 
 const paymentRouter = express.Router();
 

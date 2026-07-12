@@ -1,6 +1,6 @@
 import express from 'express';
 import { login, logOut, signUp, updatePassword } from '../controllers/auth.controller.js';
-import { isAuth } from '../middleware/isAuth.js'; // Ensure the import path matches your directory setup
+import { isAuth } from '../middleware/auth.middleware.js';
 
 const authRouter = express.Router();
 

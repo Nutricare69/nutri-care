@@ -8,7 +8,6 @@ import Analytics from "./Analytics.jsx";
 import Community from "./Community.jsx";
 import NgoSupport from "./NGOSupport.jsx";
 
-
 export default function App() {
   return (
     <>
@@ -24,9 +23,10 @@ export default function App() {
           <Route path="community" element={<Community />} />
           <Route path="ngo" element={<NgoSupport />} />
           <Route path="settings" element={<Settings />} />
-      
         </Route>
       </Routes>
+
+  
     </>
   );
 }

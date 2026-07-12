@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom"; // 🟢 UPDATED: Imported useLocation to monitor active routes
+import { motion, AnimatePresence } from "framer-motion";
 import nutriCareLogo from "../assets/nutricareLogo.jpg";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { userDataContext } from "../context/UserContext";
+import { userDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContextProvider";
 import { useTheme } from "./theme.js";
@@ -10,6 +10,7 @@ import { Sun, Moon } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation(); // 🟢 NEW: Track active route paths dynamically
   const { userData, setUserData } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -98,17 +99,15 @@ export default function Navbar() {
     },
   };
 
-  // REMOVED JavaScript color configuration options to eliminate theme conflict bugs
   const linkHoverVariants = {
     hover: {
-      scale: 1.05,
+      scale: 1.02,
       transition: {
         duration: 0.2,
       },
     },
   };
 
-  // Linked directly to parent hover actions for premium performance behavior
   const underlineVariants = {
     hidden: { width: "0%" },
     hover: { width: "100%", transition: { duration: 0.25, ease: "easeInOut" } },
@@ -168,27 +167,47 @@ export default function Navbar() {
           { label: "About", path: "/about" },
           { label: "How It Works", path: "/how-it-works" },
           { label: "Contact", path: "/contact" },
-        ].map((link, index) => (
-          <motion.span
-            key={link.label}
-            className="text-base lg:text-lg xl:text-xl 2xl:text-2xl text-gray-600 dark:text-zinc-300 hover:text-black dark:hover:text-white cursor-pointer relative pb-1 block transition-colors duration-200"
-            onClick={() => navigate(link.path)}
-            custom={index}
-            initial="hidden"
-            animate="visible"
-            variants={navLinksVariants}
-            whileHover="hover"
-          >
-            <motion.span className="block" variants={linkHoverVariants}>
-              {link.label}
-            </motion.span>
-            <motion.div
-              className="absolute bottom-0 left-0 h-0.5 bg-green-500"
-              variants={underlineVariants}
+        ].map((link, index) => {
+          // 🟢 NEW: Match current location against mapped paths to toggle active styles
+          const isActive = location.pathname === link.path;
+
+          return (
+            <motion.span
+              key={link.label}
+              className={`text-base lg:text-lg xl:text-xl 2xl:text-2xl cursor-pointer relative pb-2 block transition-colors duration-200 ${
+                isActive
+                  ? "text-green-500 font-extrabold dark:text-green-400"
+                  : "text-gray-600 dark:text-zinc-300 hover:text-black dark:hover:text-white font-medium"
+              }`}
+              onClick={() => navigate(link.path)}
+              custom={index}
               initial="hidden"
-            />
-          </motion.span>
-        ))}
+              animate="visible"
+              variants={navLinksVariants}
+              whileHover="hover"
+            >
+              <motion.span className="block" variants={linkHoverVariants}>
+                {link.label}
+              </motion.span>
+
+              {/* Original Hover Underline element */}
+              <motion.div
+                className="absolute bottom-1.5 left-0 h-0.5 bg-green-500/40"
+                variants={underlineVariants}
+                initial="hidden"
+              />
+
+              {/* 🟢 NEW: Premium layout dot. Smoothly slides across the navbar using spring physics! */}
+              {isActive && (
+                <motion.div
+                  layoutId="navActiveDot"
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+            </motion.span>
+          );
+        })}
       </div>
 
       {/** Navbar Buttons / User Profile */}
@@ -268,24 +287,26 @@ export default function Navbar() {
             </motion.div>
 
             {/* Dropdown Menu */}
-            {showDropdown && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-lg shadow-lg overflow-hidden z-300"
-              >
-                <motion.button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 dark:text-zinc-300 hover:bg-rose-50 dark:hover:bg-rose-950/35 hover:text-rose-600 dark:hover:text-rose-400 transition duration-200 cursor-pointer"
-                  whileHover={{ x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#0c130d] dark:border dark:border-green-950/20 rounded-lg shadow-lg overflow-hidden z-300"
                 >
-                  Logout
-                </motion.button>
-              </motion.div>
-            )}
+                  <motion.button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-3 text-left text-sm md:text-base text-gray-700 dark:text-zinc-300 hover:bg-rose-50 dark:hover:bg-rose-950/35 hover:text-rose-600 dark:hover:text-rose-400 transition duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Logout
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </div>

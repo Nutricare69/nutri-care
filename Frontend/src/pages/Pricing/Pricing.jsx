@@ -1,18 +1,46 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, X, ArrowLeft } from "lucide-react";
+import { CheckCircle2, X, ArrowLeft, Coins, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
-
 import axios from "axios";
 
 export default function Pricing() {
-  const { userData } = useContext(userDataContext);
+  const { userData, nutriPoints, fetchWalletBalance } =
+    useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
   const navigate = useNavigate();
 
-  // Standard dynamically load Razorpay script
+  // Local state metrics to handle pricing previews
+  const basePrice = 399;
+  const [discountValue, setDiscountValue] = useState(0);
+  const [checkoutPrice, setCheckoutPrice] = useState(399);
+
+  // Frontend client-side preview calculations mirroring backend parameters
+  useEffect(() => {
+    if (nutriPoints > 0) {
+      let calcDiscount = 0;
+      if (nutriPoints < 200) calcDiscount = nutriPoints * 0.1;
+      else if (nutriPoints >= 200 && nutriPoints < 500)
+        calcDiscount = nutriPoints * 0.15;
+      else calcDiscount = nutriPoints * 0.25;
+
+      const roundedDiscount = Math.round(calcDiscount);
+      const maximumAllowedCap = Math.round(basePrice * 0.5); // 50% max allowed cap rule
+      const finalAppliedDeduction = Math.min(
+        roundedDiscount,
+        maximumAllowedCap,
+      );
+
+      setDiscountValue(finalAppliedDeduction);
+      setCheckoutPrice(basePrice - finalAppliedDeduction);
+    } else {
+      setDiscountValue(0);
+      setCheckoutPrice(basePrice);
+    }
+  }, [nutriPoints]);
+
   const loadRazorpayCore = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -31,17 +59,14 @@ export default function Pricing() {
     }
 
     try {
-      // We assume hitting '/api/payment/create-order' works as created previously
       const orderRes = await axios.post(
         `${serverUrl}/api/payment/create-order`,
-        {
-          planId: "6a31560f040f93760704d896", //  Should give the  actual plan ID
-        },
+        { planId: "6a31560f040f93760704d896" },
         { withCredentials: true },
       );
 
       const options = {
-        key: orderRes.data.razorpayKeyId, // Replace if fetching via API isn't built yet
+        key: orderRes.data.razorpayKeyId,
         amount: orderRes.data.amount,
         currency: orderRes.data.currency,
         name: "NutriCare",
@@ -50,7 +75,6 @@ export default function Pricing() {
         image:
           "https://res.cloudinary.com/ddkgrqekv/image/upload/v1780849496/nutricareLogo_nlzjrj.jpg",
         handler: async function (response) {
-          // Verify with Backend
           const verifyData = {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -60,12 +84,10 @@ export default function Pricing() {
           await axios.post(
             `${serverUrl}/api/payment/verify-payment`,
             verifyData,
-            {
-              withCredentials: true,
-            },
+            { withCredentials: true },
           );
 
-          // Redirect on success
+          await fetchWalletBalance(); // Re-fetch balance to update wallet view on success
           navigate("/payment-success");
         },
         prefill: {
@@ -85,11 +107,8 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#eaf5ee] to-[#f4faf7] flex items-center justify-center p-6 relative">
-      {/* Stylized, fully functional Top-Left Back Button */}
       <motion.div
         className="top-6 left-6 absolute z-10"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -106,9 +125,9 @@ export default function Pricing() {
           <motion.h1
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-5xl font-black text-yellow-400 mb-4 tracking-tight"
+            className="text-5xl font-black text-green-600 mb-4 tracking-tight"
           >
-            Choose Your <span className="text-green-600">Plan</span>
+            Choose Your Plan
           </motion.h1>
           <motion.p
             initial={{ y: -20, opacity: 0 }}
@@ -121,118 +140,175 @@ export default function Pricing() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-10 justify-center items-stretch">
-          {/* Free Plan Card */}
+          {/* Free Plan Card Option */}
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            whileHover={{ y: -5 }}
-            className="flex-1 bg-white p-8 rounded-3xl shadow-lg border-t-4 border-gray-300"
+            className="flex-1 bg-white p-8 rounded-3xl shadow-lg border-t-4 border-gray-300 flex flex-col justify-between"
           >
-            <h3 className="text-2xl font-bold text-gray-800">Free Plan</h3>
-            <p className="text-gray-500 mt-2">Perfect to get started</p>
-            <div className="my-6 text-4xl font-extrabold text-gray-800">
-              ₹0{" "}
-              <span className="text-lg font-normal text-gray-500">
-                / forever
-              </span>
-            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800">Free Plan</h3>
+              <p className="text-gray-500 mt-2">Perfect to get started</p>
+              <div className="my-6 text-4xl font-extrabold text-gray-800">
+                ₹0{" "}
+                <span className="text-lg font-normal text-gray-500">
+                  / forever
+                </span>
+              </div>
 
-            <ul className="space-y-4 mb-8">
-              <li className="flex gap-3 text-gray-600">
-                <CheckCircle2 className="text-green-500" /> Basic Diet Logging
-              </li>
-              <li className="flex gap-3 text-gray-600">
-                <CheckCircle2 className="text-green-500" /> Community Access
-              </li>
-              <li className="flex gap-3 text-gray-600">
-                <CheckCircle2 className="text-green-500" />
-                <span>
-                  Upto{" "}
-                  <strong className="font-bold text-shadow-gray-500">5</strong>{" "}
-                  AI Personalized Meal Plans per Month
-                </span>
-              </li>
-              <li className="flex gap-3 text-gray-600">
-                <CheckCircle2 className="text-green-500" />
-                <span>
-                  Weekly Health Reports until{" "}
-                  <strong className="font-bold text-shadow-gray-500">5</strong>
-                  th plan
-                </span>
-              </li>
-              <li className="flex gap-3 text-gray-500 line-through">
-                <X className="text-red-500" />
-                No Unlimited Access
-              </li>
-              <li className="flex gap-3 text-gray-500 line-through">
-                <X className="text-red-500" />
-                <span>
-                  Diet Plan Generation Up to{" "}
-                  <strong className="font-bold text-shadow-gray-500">7</strong>{" "}
-                  days
-                </span>
-              </li>
-            </ul>
+              {/* Updated Free Tier Features list matrix block */}
+              <ul className="space-y-4 mb-8">
+                <li className="flex gap-3 text-gray-600">
+                  <CheckCircle2 className="text-green-500 shrink-0" /> Basic
+                  Diet Logging
+                </li>
+                <li className="flex gap-3 text-gray-600">
+                  <CheckCircle2 className="text-green-500 shrink-0" /> Community
+                  Access
+                </li>
+                <li className="flex gap-3 text-gray-600">
+                  <CheckCircle2 className="text-green-500 shrink-0" />
+                  <span>
+                    Upto{" "}
+                    <strong className="font-bold text-shadow-gray-500">
+                      5
+                    </strong>{" "}
+                    AI Personalized Meal Plans per Month
+                  </span>
+                </li>
+                <li className="flex gap-3 text-gray-600">
+                  <CheckCircle2 className="text-green-500 shrink-0" />
+                  <span>
+                    Weekly Health Reports until{" "}
+                    <strong className="font-bold text-shadow-gray-500">
+                      5
+                    </strong>
+                    th plan
+                  </span>
+                </li>
+                <li className="flex gap-3 text-gray-500">
+                  <CheckCircle2 className="text-green-500 shrink-0" />
+                  <span>
+                    Diet Plan Generation Up to{" "}
+                    <strong className="font-bold text-shadow-gray-500">
+                      7
+                    </strong>{" "}
+                    days
+                  </span>
+                </li>
+                <li className="flex gap-3 text-gray-500 line-through">
+                  <X className="text-red-500 shrink-0" /> No Unlimited Access
+                </li>
+                <li className="flex gap-3 text-gray-500 line-through">
+                  <X className="text-red-500 shrink-0" />
+                  <span>
+                    No Diet Plan Generation Up to{" "}
+                    <strong className="font-bold text-shadow-gray-500">
+                      14
+                    </strong>{" "}
+                    days
+                  </span>
+                </li>
+              </ul>
+            </div>
 
             <button
               onClick={() => navigate("/dashboard")}
-              className="w-full py-4 rounded-xl font-bold transition-all bg-gray-100 text-gray-800 hover:bg-gray-200 cursor-pointer"
+              className="w-full py-4 rounded-xl font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 cursor-pointer"
             >
               Current Active Plan
             </button>
           </motion.div>
 
-          {/* Premium Plan Card */}
+          {/* Premium Plan Card Option */}
           <motion.div
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            whileHover={{ y: -5, scale: 1.02 }}
-            className="flex-1 bg-linear-to-br from-green-500 to-green-600 p-8 rounded-3xl shadow-xl border-t-4 border-yellow-400 text-white relative overflow-hidden"
+            className="flex-1 bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-3xl shadow-xl border-t-4 border-yellow-400 text-white relative overflow-hidden flex flex-col justify-between"
           >
             <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-bold px-4 py-1 rounded-bl-xl text-sm shadow-md">
               RECOMMENDED
             </div>
-            <h3 className="text-2xl font-bold">Premium</h3>
-            <p className="text-green-100 mt-2">Unlimited Access for 30 Days</p>
-            <div className="my-6 text-4xl font-extrabold">
-              ₹399{" "}
-              <span className="text-lg font-normal text-green-200">
-                / 30 days
-              </span>
+            <div>
+              <h3 className="text-2xl font-bold">Premium Plan</h3>
+              <p className="text-green-100 mt-2">
+                Unlimited Access for 30 Days
+              </p>
+
+              {/* Context-aware dynamic price calculation layout */}
+              <div className="my-6 space-y-1">
+                {discountValue > 0 ? (
+                  <>
+                    <div className="text-xs font-bold uppercase tracking-wider text-yellow-300 bg-white/10 px-2.5 py-1 rounded-md w-max flex items-center gap-1">
+                      <Tag className="w-3 h-3" /> Point Discount Applied
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black text-white">
+                        ₹{checkoutPrice}
+                      </span>
+                      <span className="text-sm font-medium text-green-200 line-through">
+                        ₹{basePrice}
+                      </span>
+                      <span className="text-xs font-bold text-yellow-300">
+                        Save ₹{discountValue}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-4xl font-extrabold">
+                    ₹{basePrice}{" "}
+                    <span className="text-lg font-normal text-green-200">
+                      / 30 days
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Updated Premium Tier Features list matrix block */}
+              <ul className="space-y-4 mb-8">
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" /> Advanced
+                  Diet Logging
+                </li>
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" />{" "}
+                  Community Access
+                </li>
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" /> AI
+                  Personalized Meal Plans
+                </li>
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" /> Weekly
+                  Health Reports
+                </li>
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" />{" "}
+                  Unlimited Access
+                </li>
+                <li className="flex gap-3 text-green-50">
+                  <CheckCircle2 className="text-yellow-400 shrink-0" />
+                  <span>
+                    Diet Plan Generation Up to{" "}
+                    <strong className="font-bold text-yellow-400">2</strong>{" "}
+                    Weeks
+                  </span>
+                </li>
+              </ul>
+
+              {/* Wallet Summary Checklist Banner Notification Box */}
+              {nutriPoints > 0 && (
+                <div className="mb-6 p-3.5 bg-black/10 border border-white/10 rounded-2xl flex items-center gap-2.5 text-xs text-green-50 font-medium">
+                  <Coins className="w-4 h-4 text-yellow-400 shrink-0" />
+                  Using {nutriPoints} tokens clears your balance to zero upon
+                  checking out.
+                </div>
+              )}
             </div>
-
-            <ul className="space-y-4 mb-8">
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" /> Advanced Diet
-                Logging
-              </li>
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" /> Community Access
-              </li>
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" /> AI Personalized
-                Meal Plans
-              </li>
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" /> Weekly Health
-                Reports
-              </li>
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" /> Unlimited Access
-              </li>
-
-              <li className="flex gap-3 text-green-50">
-                <CheckCircle2 className="text-yellow-400" />
-                <span>
-                  Diet Plan Generation Up to{" "}
-                  <strong className="font-bold text-yellow-400">2</strong> Weeks
-                </span>
-              </li>
-            </ul>
 
             <button
               onClick={handlePremiumUpgrade}
-              className="w-full py-4 rounded-xl font-bold transition-all bg-yellow-400 text-yellow-900 hover:bg-yellow-300 shadow-lg cursor-pointer"
+              className="w-full py-4 rounded-xl font-bold bg-yellow-400 text-yellow-900 hover:bg-yellow-300 shadow-lg cursor-pointer"
             >
               {userData?.isPremium ? "Extend Plan" : "Upgrade to Premium"}
             </button>

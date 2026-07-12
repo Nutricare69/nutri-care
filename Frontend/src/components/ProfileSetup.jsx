@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
+import { toast } from "react-toastify"; // 🟢 NEW: Integrated Toastify engine
 import { userDataContext } from "../context/UserContext.jsx";
 import { authDataContext } from "../context/AuthContextProvider.jsx";
 import { useTheme } from "./theme.js";
@@ -7,7 +8,6 @@ import { useTheme } from "./theme.js";
 export default function ProfileSetup() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const { getCurrentUser } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
@@ -19,30 +19,30 @@ export default function ProfileSetup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!dateOfBirth) {
-      setError("Please select your date of birth");
+      toast.warn("Please select your date of birth to continue."); // 🟢 NEW: Input validation toast
       return;
     }
 
     try {
       setLoading(true);
-      setError("");
 
       // Update this endpoint to match your user backend route
       await axios.post(
         `${serverUrl}/api/user/complete-profile`,
-        {
-          dateOfBirth,
-        },
+        { dateOfBirth },
         { withCredentials: true },
       );
+
+      toast.success("Profile setup completed successfully! Welcome aboard."); // 🟢 NEW: Success notification
 
       // Refresh user context so the modal disappears and app updates
       await getCurrentUser();
     } catch (err) {
       console.error(err);
-      setError(
+      // 🟢 FIXED: Swapped inline alert layout for an error toast alert
+      toast.error(
         err.response?.data?.message ||
-          "Failed to update profile. Please try again.",
+          "Failed to update profile. Please verify your connection and try again.",
       );
     } finally {
       setTimeout(() => {
@@ -66,7 +66,9 @@ export default function ProfileSetup() {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-amber-400"></div>
 
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">Welcome!</h2>
+          <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+            Welcome!
+          </h2>
           <p className="text-gray-500 dark:text-zinc-400 text-sm md:text-base">
             Let's personalize your experience. When is your birthday?
           </p>
@@ -88,17 +90,11 @@ export default function ProfileSetup() {
                 value={dateOfBirth}
                 onChange={(e) => {
                   setDateOfBirth(e.target.value);
-                  setError("");
                 }}
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all date-input cursor-pointer"
                 required
               />
             </div>
-            {error && (
-              <p className="text-red-500 text-xs font-medium ml-1 mt-1">
-                {error}
-              </p>
-            )}
           </div>
 
           <button

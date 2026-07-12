@@ -1,9 +1,15 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Plan from './models/PaymentModel/plan.model.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import Plan from '../models/PaymentModel/plan.model.js';
+
+// Resolve directory roots cleanly for local environmental configurations
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const seedPlan = async () => {
   try {

@@ -8,12 +8,18 @@ import {
   Heart,
   Settings,
   X,
+  Sun,
+  Moon,
+  ChevronLeft,
+  ChevronRight,
+  Coins,
 } from "lucide-react";
 import { userDataContext } from "../../context/UserContext";
 import NutriCareLogo from "../../assets/nutricareLogo.jpg";
 import Loader from "../../components/Loader";
 import ProfileSetup from "../../components/ProfileSetup";
 import { useTheme } from "../../components/theme.js";
+import EarningCoinPopup from "../../components/coin/EarningCoinPopup.jsx";
 
 export default function Dashboard() {
   const {
@@ -21,7 +27,13 @@ export default function Dashboard() {
     hasPromptedPremium,
     setHasPromptedPremium,
     getCurrentUser,
+    nutriPoints,
+    coinAnimation,
+    setCoinAnimation,
   } = useContext(userDataContext);
+
+  // 🟢 Destructured toggleTheme from your existing theme custom hook
+  const { isDark, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
   const navigate = useNavigate();
@@ -38,7 +50,7 @@ export default function Dashboard() {
     ) {
       timer = setTimeout(() => {
         setShowPremiumPrompt(true);
-        setHasPromptedPremium(true); // Persists globally as 'true' across sub-section changes
+        setHasPromptedPremium(true);
       }, 3000);
     }
 
@@ -81,6 +93,24 @@ export default function Dashboard() {
     },
   ];
 
+  // 🟢 Horizontal Navigation Logic: Find the active index position to cycle pages smoothly
+  const currentActiveIndex = menuItems.findIndex(
+    (item) =>
+      item.path === location.pathname ||
+      (location.pathname === "/dashboard/" && item.path === "/dashboard"),
+  );
+
+  const handlePrevSection = () => {
+    const prevIndex =
+      (currentActiveIndex - 1 + menuItems.length) % menuItems.length;
+    navigate(menuItems[prevIndex].path);
+  };
+
+  const handleNextSection = () => {
+    const nextIndex = (currentActiveIndex + 1) % menuItems.length;
+    navigate(menuItems[nextIndex].path);
+  };
+
   // Helper to determine the active header title
   const getActiveLabel = () => {
     const currentItem = menuItems.find(
@@ -91,13 +121,12 @@ export default function Dashboard() {
     return currentItem ? currentItem.label : "Dashboard";
   };
 
-  //useEffect for loading
+  // useEffect for loading
   useEffect(() => {
     setLoading(false);
   }, [location.pathname]);
 
   return (
-    // Outer div stays fixed to screen size, hides its own overflow
     <div className="h-screen w-full bg-[#A6D4AC]/40 dark:bg-[#060a07] flex overflow-hidden transition-colors duration-300">
       {userData && !userData.profileCompleted && <ProfileSetup />}
 
@@ -136,9 +165,8 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02, x: 5 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => {
-                  if (location.pathname != item.path) {
+                  if (location.pathname !== item.path) {
                     navigate(item.path);
-                    setLoading(true);
                   }
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
@@ -172,35 +200,88 @@ export default function Dashboard() {
         </div>
       </motion.aside>
 
-      {/* Main Layout Wrapper - This div handles the scrollbars */}
+      {/* Main Layout Wrapper */}
       <div className="flex-1 overflow-auto relative">
-        {/* Inner Wrapper - This forces both Header and Main to share the same expanded width */}
         <div className="flex flex-col min-w-max min-h-full">
-          {/* Top Header - stretches fully across the expanded scroll area */}
+          {/* Top Header */}
           <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300"
+            className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300 "
           >
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                {getActiveLabel()}
-              </h2>
-              <div className="text-lg text-gray-500 dark:text-zinc-400 flex gap-2">
-                Welcome back,{" "}
-                <div className="font-bold text-gray-800 dark:text-zinc-200">
-                  {userData?.name?.split(" ")[0] || "User"}!
+            {/* Left Header Title Cluster with Chevron Navigation Controls */}
+            <div className="flex items-center gap-6">
+              {/* 🟢 NEW: Horizontal Sub-section Quick Swapping Button Triggers */}
+              <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-900/50 p-1.5 rounded-xl border border-gray-100 dark:border-zinc-800/40">
+                <button
+                  type="button"
+                  onClick={handlePrevSection}
+                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400  hover:text-green-500 dark:hover:text-green-400  rounded-lg cursor-pointer transition-colors shadow-xs hover:border-gray-200/40  "
+                  title="Previous Section"
+                >
+                  <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextSection}
+                  className="p-1.5 hover:bg-white dark:hover:bg-zinc-800 text-gray-400  hover:text-green-500 dark:hover:text-green-400  rounded-lg cursor-pointer transition-colors shadow-xs hover:border-gray-200/40  "
+                  title="Next Section"
+                >
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+              </div>
+
+              {/* 🟢 ENHANCED TYPOGRAPHY: Styled with tighter letter tracking and premium weight contrasts */}
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                  {getActiveLabel()}
+                </h2>
+                <div className="text-xs sm:text-sm font-medium text-gray-400 dark:text-zinc-500 flex items-center gap-1 mt-0.5">
+                  Welcome back,{" "}
+                  <span className="font-extrabold text-gray-700 dark:text-zinc-300">
+                    {userData?.name?.split(" ")[0] || "User"}!
+                  </span>
                 </div>
               </div>
             </div>
 
+            {/* Right Action Cluster Row Container */}
             <motion.div
               initial={{ x: 150, opacity: 1, scale: 0.8 }}
               animate={{ x: 0, opacity: 0.8, scale: 1 }}
               whileHover={{ opacity: 1, scale: 1.05 }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-3.5"
             >
-              {/* Free / Premium Badge - Reduced padding and text size */}
+              {/* 🟢 NEW: Nutri Points Live Wallet Display Meter Indicator */}
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                onClick={() => navigate("/pricing")}
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-xl font-bold text-sm cursor-pointer transition-colors shadow-xs"
+                title="Your Nutri Points Wallet balance. Click to redeem for Premium discounts!"
+              >
+                <Coins
+                  className="w-4 h-4 animate-spin"
+                  style={{ animationDuration: "6s" }}
+                />
+                <span>{nutriPoints} pts</span>
+              </motion.div>
+              {/* 🟢 NEW: Theme Switch Toggle Button */}
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={toggleTheme}
+                type="button"
+                className="p-2.5 bg-gray-50 dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 border border-gray-200/60 dark:border-zinc-800 rounded-xl cursor-pointer transition-all shadow-xs"
+                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {isDark ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
+              </motion.button>
+
+              {/* Free / Premium Badge */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 onClick={() => !userData?.isPremium && navigate("/pricing")}
@@ -215,23 +296,20 @@ export default function Dashboard() {
                   : "Free Plan - Upgrade"}
               </motion.div>
 
-              {/* Logo - Size reduced cleanly from h-25 w-30 down to h-12 w-14 */}
+              {/* Logo */}
               <img
                 src={NutriCareLogo}
                 alt="NutriCare Logo"
-                className="rounded-full h-12 w-14 object-cover object-center"
+                className="rounded-full h-12 w-14 object-cover object-center border border-gray-100 dark:border-zinc-800/80 shadow-xs"
               />
             </motion.div>
           </motion.header>
 
           {/* Dynamic Nested Page Rendering */}
-          {loading ? (
-            <Loader />
-          ) : (
-            <main className="p-8 flex-1">
-              <Outlet />
-            </main>
-          )}
+
+          <main className="p-8 flex-1">
+            <Outlet />
+          </main>
         </div>
       </div>
 
@@ -282,6 +360,11 @@ export default function Dashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* 🟢 NEW: Mount your point claim coin popup layout securely here */}
+      <EarningCoinPopup
+        animationState={coinAnimation}
+        onClose={() => setCoinAnimation({ show: false, points: 0 })}
+      />
     </div>
   );
 }

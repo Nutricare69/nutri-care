@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext, useState } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import HomeBGImage from "../assets/homePageBackground.jpeg";
@@ -10,7 +10,6 @@ import Loader from "./Loader.jsx";
 export default function Hero() {
   const navigate = useNavigate();
   const heroRef = useRef(null);
-  const [loading, setLoading] = useState(false);
   const { userData } = useContext(userDataContext);
 
   useEffect(() => {
@@ -65,7 +64,6 @@ export default function Hero() {
   return (
     <>
       {/* Render Loader conditionally at the top level of the component */}
-      {loading && <Loader />}
 
       <div
         ref={heroRef}
@@ -116,13 +114,10 @@ export default function Hero() {
             {userData ? (
               <button
                 onClick={() => {
-                  setLoading(true);
-
                   // Wrap navigate in a small timeout to allow Loader to render,
                   // or just navigate immediately since it's client-side routing
                   setTimeout(() => {
                     navigate("/dashboard");
-                    setLoading(false);
                   }, 200);
                 }}
                 className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
@@ -135,10 +130,9 @@ export default function Hero() {
             ) : (
               <button
                 onClick={() => {
-                  setLoading(true);
                   setTimeout(() => {
                     navigate("/signup");
-                    setLoading(false);
+                    
                   }, 200);
                 }}
                 className="hero-btn bg-green-500 text-white w-full sm:w-auto px-6 sm:px-8 xl:px-10 py-3 xl:py-4 rounded-full min-w-[200px] sm:min-w-[250px] md:min-w-[280px] xl:min-w-[320px] text-sm sm:text-lg xl:text-xl font-bold hover:bg-green-400 transition duration-300 shadow-xl shadow-black/40 cursor-pointer"
