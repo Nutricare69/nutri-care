@@ -53,7 +53,7 @@ export default function Footer() {
 
       {/* FIX: Added mt-auto to strictly push the footer to the bottom of the Flex container in Home.jsx */}
       <motion.div
-        className="mt-auto relative flex flex-col w-full h-auto min-h-[280px] lg:h-70 rounded-t-2xl justify-center mb-0 items-center bg-[#1d2f21]/80 py-8 lg:py-0 pb-16 lg:pb-0"
+        className="mt-auto relative flex flex-col w-full h-auto min-h-[280px] lg:h-70 rounded-t-2xl justify-center mb-0 items-center bg-[#1d2f21]/80 py-8 lg:py-0 pb-20 lg:pb-0"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
@@ -285,24 +285,43 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        {/*Right reserved*/}
+        {/* Right Reserved & Dynamic Developer Attribution */}
         <motion.div
-          className="absolute flex gap-1 bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 sm:gap-2 text-center w-full px-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.7 }}
         >
-          <motion.div
-            className="mt-0.5"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          >
-            <BsCCircle className="text-white " />
-          </motion.div>
-          <p className=" text-sm font-bold  text-white">
-            {new Date().getFullYear()} Nutri-Care AI. All rights reserved.
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-3 text-white text-xs sm:text-sm font-medium">
+            <div className="flex items-center gap-1">
+              <motion.div
+                className="mt-0.5"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <BsCCircle className="text-white text-xs" />
+              </motion.div>
+              <span>
+                {new Date().getFullYear()}{" "}
+                <span className="font-bold text-green-500">Nutri-Care AI</span>.
+                All rights reserved.
+              </span>
+            </div>
+            <span className="hidden md:inline text-gray-500">|</span>
+            <span>
+              Developed by{" "}
+              <a
+                href="https://github.com/Suvajit09"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-yellow-500 hover:text-green-400 underline transition-colors duration-300"
+              >
+                Suvajit Roy
+              </a>{" "}
+              &amp; Contributors
+            </span>
+          </div>
         </motion.div>
       </motion.div>
     </>
