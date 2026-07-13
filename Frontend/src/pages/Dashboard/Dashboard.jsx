@@ -17,8 +17,6 @@ import {
 
 import { userDataContext } from "../../context/UserContext";
 import NutriCareLogo from "../../assets/nutricareLogo.jpg";
-import coinFront from "../../assets/coinFront.png";
-import coinBack from "../../assets/coinBack.png";
 import Loader from "../../components/Loader";
 import ProfileSetup from "../../components/ProfileSetup";
 import { useTheme } from "../../components/theme.js";
@@ -41,6 +39,14 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 🟢 NEW: Mobile sidebar toggle switch tracking
   const navigate = useNavigate();
   const location = useLocation();
+
+  //images of the coin
+
+  const coinFront =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/coinFront_y4qgvs.png";
+
+  const coinBack =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/coinBack_wcnpb3.png";
 
   useEffect(() => {
     let timer;

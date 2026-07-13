@@ -15,11 +15,6 @@ import {
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import ArnabImg from "../../assets/team/ArnabJana.jpg";
-import KaustubhImg from "../../assets/team/kaustubhPaul.jpeg";
-import SuvajitImg from "../../assets/team/SuvajitRoy.jpg";
-import RajaniImg from "../../assets/team/RajaniGiri.jpeg";
-import SambitImg from "../../assets/team/SambitMondal.jpg";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
 import { userDataContext } from "../../context/UserContext"; // 🟢 Added context import
@@ -28,6 +23,18 @@ export default function About() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { userData } = useContext(userDataContext); // 🟢 Consume userData state
+
+  //images of the teams 
+  const ArnabImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/ArnabJana_w1pskb.jpg";
+  const KaustubhImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/kaustubhPaul_zouiuk.jpg";
+  const SuvajitImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/SuvajitRoy_w6rf14.jpg";
+  const RajaniImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/RajaniGiri_rhenms.jpg";
+  const SambitImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/SambitMondal_c4syvs.jpg";
 
   const team = [
     {

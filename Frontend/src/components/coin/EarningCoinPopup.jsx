@@ -1,9 +1,17 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import coinFront from "../../assets/coinFront.png"; // 🟢 Front Side Image
-import coinBack from "../../assets/coinBack.png"; // 🟢 Back Side Image
+
 
 export default function EarningCoinPopup({ animationState, onClose }) {
+  //images of the coin
+
+  const coinFront =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/coinFront_y4qgvs.png";
+
+  const coinBack =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/coinBack_wcnpb3.png";
+
+
   useEffect(() => {
     if (animationState.show) {
       const timeout = setTimeout(() => onClose(), 3500); // Kept 500ms longer so they can admire both sides!

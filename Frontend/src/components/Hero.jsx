@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
-import HomeBGImage from "../assets/homePageBackground.jpeg";
 import { userDataContext } from "../context/UserContext.jsx";
 import Loader from "./Loader.jsx";
 
@@ -9,6 +8,10 @@ export default function Hero() {
   const navigate = useNavigate();
   const heroRef = useRef(null);
   const { userData } = useContext(userDataContext);
+
+  //image
+  const HomeBGImage =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/homePageBackground_ex4fud.jpg";
 
   useEffect(() => {
     let ctx = gsap.context(() => {

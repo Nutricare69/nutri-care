@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import bgUrl from "../../assets/wallpaper login and signup.jpg";
-import leftImg from "../../assets/loginDesign.jpg";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
@@ -37,6 +35,13 @@ export default function SignUp() {
 
   const [loading, setloading] = useState(false);
   const { isDark } = useTheme();
+
+  //image
+
+  const leftImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/loginDesign_leetsx.jpg";
+  const bgUrl =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/wallpaper_login_and_signup_sofnql.jpg";
 
   // 🟢 NEW: Sync changes to sessionStorage automatically
   useEffect(() => {

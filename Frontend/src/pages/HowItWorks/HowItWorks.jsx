@@ -15,11 +15,6 @@ import {
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import profileImg from "../../assets/createYourProfile.jpeg";
-import aiAnalysisVideo from "../../assets/aiAnalysis.mp4";
-import mealPlansImg from "../../assets/getYourMealPlan.jpg";
-import TrackingVideo from "../../assets/track&Evolve.mp4";
-import demoVideo from "../../assets/howItWorks.mp4";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
 import { userDataContext } from "../../context/UserContext";
@@ -29,6 +24,19 @@ export default function HowItWorks() {
   const [isPlaying, setIsPlaying] = useState(false);
   const { isDark } = useTheme();
   const { userData } = useContext(userDataContext);
+  //images and video assessts linkks
+
+  const profileImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/createYourProfile_adtwdv.jpg";
+  const aiAnalysisVideo =
+    "https://res.cloudinary.com/ddkgrqekv/video/upload/aiAnalysis_mmz44g.mp4";
+  const mealPlansImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/getYourMealPlan_gavorc.jpg";
+  const TrackingVideo =
+    "https://res.cloudinary.com/ddkgrqekv/video/upload/track_Evolve_wjwhmf.mp4";
+  const demoVideo =
+    "https://res.cloudinary.com/ddkgrqekv/video/upload/howitWorks_lr9kky.mp4";
+
 
   const handleVideoToggle = () => {
     const video = document.getElementById("demo-video");

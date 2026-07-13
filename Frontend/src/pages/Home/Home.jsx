@@ -10,7 +10,6 @@ import ScienceBacked from "../../assets/svg/Science-Backed.svg";
 import ContinuousLearning from "../../assets/svg/Continuous Learning.svg";
 import HolisticHealth from "../../assets/svg/Holistic Health.svg";
 import CommunityWellness from "../../assets/svg/Community Wellness.svg";
-import ExtraFeatureImage from "../../assets/ExtraFeatureImage.png";
 import { motion } from "framer-motion";
 import { useTheme } from "../../components/theme.js";
 
@@ -33,6 +32,10 @@ export default function Home() {
       },
     },
   };
+
+  //image 
+  const ExtraFeatureImage =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/ExtraFeatureImage_vmxl84.png";
 
   return (
     <>
