@@ -1,3 +1,7 @@
+# Access The Website through here
+
+https://nutri-care-psi.vercel.app/
+
 # Nutri-Care AI 🥗🤖
 
 > **Smart Nutrition. Real Impact.** A comprehensive, full-stack AI ecosystem designed to automate precision meal tracking and deliver customized dietary strategies tailored to individual health metrics and goals.
@@ -220,11 +224,9 @@ Use this template for any additional API route you want to add:
 ## 3. Python AI Backend (nutricare-ai-python)
 
 o Role: Dedicated data microservice engineered explicitly to process dietary logic, parse user biometric constraints, and run predictive AI algorithms that
-  output structural nutrition plans.
+output structural nutrition plans.
 
 ---
-
-
 
 ## ✨ Key Features
 
@@ -236,10 +238,10 @@ o Immersive Interactive States: Leverages smooth stagger animations, spring phys
 
 o Dynamic Dark Theme Ecosystem: Includes a fully integrated night mode toggle ensuring high accessibility across different lighting environments.
 
-
 ---
 
 ## 📂 Repository & Project Structure
+
 The architecture is split into three core modules for clean maintainability:
 
 ```text
@@ -266,9 +268,10 @@ The architecture is split into three core modules for clean maintainability:
 ---
 
 ## ⚙️ Local Setup & Installation
+
 To spin up the entire ecosystem locally for development, clone the repositories and follow these steps in order:
 
-* Prerequisites
+- Prerequisites
   - Node.js (v18+ recommended)
   - React (v19+)
   - Tailwind CSS (v4+)
@@ -278,6 +281,7 @@ To spin up the entire ecosystem locally for development, clone the repositories 
 ---
 
 ## Step 1: Initialize the Core Backend Server
+
 Open a new terminal window, navigate to the central backend server, configure environment variables, install node packages, and start the runtime:
 
 cd nutricare-backend
@@ -289,6 +293,7 @@ The central orchestration server will boot up (typically on http://localhost:808
 ---
 
 ## Step 2: Launch the Frontend Client
+
 Open a third terminal window, navigate to the React application directory, install dependencies, and run the Vite/CRA development bundle:
 
 cd nutricare-frontend
@@ -300,6 +305,7 @@ Open your browser and navigate to http://localhost:5173 (or the terminal specifi
 ---
 
 ## 🗺️ Development Roadmap
+
 [x] Architect decoupled multi-service backend infrastructure.
 
 - [x] Build component-driven React application layout with custom Framer Motion dynamics.
@@ -311,27 +317,22 @@ Open your browser and navigate to http://localhost:5173 (or the terminal specifi
 
 ---
 
-
 ## 👥 Team & Acknowledgments
 
 - Suvajit Roy — Lead Full-Stack Architect & Core Developer
 
-    --> Fully responsible for the end-to-end software development lifecycle, system design patterns, database modeling, and central codebase creation across all frontend and backend services.
+  --> Fully responsible for the end-to-end software development lifecycle, system design patterns, database modeling, and central codebase creation across all frontend and backend services.
 
 - Contributors
 
-    --> Dedicated appreciation to the collaborating developers who assisted with integration testing routines and contributed to implementing the global dark theme UI environment.
+  --> Dedicated appreciation to the collaborating developers who assisted with integration testing routines and contributed to implementing the global dark theme UI environment.
 
 ---
 
 ## 📄 License
+
 Copyright (c) 2026 Suvajit Roy. All Rights Reserved.
 
 This software and all associated configuration files are entirely proprietary and confidential. Unauthorized copying, modification, structural distribution, clone hosting, or reverse engineering of this codebase, via any electronic or physical medium, is strictly prohibited.
 
 Permission is granted solely for viewing the underlying source code for educational review, peer architecture analysis, or portfolio engineering assessment purposes.
-
-
-
-
-
