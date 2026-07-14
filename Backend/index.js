@@ -26,6 +26,7 @@ const corsOptions = {
 app.use(cors(
   corsOptions));
 
+console.log("Allowed Origin is:", process.env.ALLOWED_ORIGIN);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
