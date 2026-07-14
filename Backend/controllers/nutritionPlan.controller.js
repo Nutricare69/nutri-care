@@ -43,8 +43,9 @@ export const generateNutriPlan = async (req, res) => {
       plan_duration_days: req.body.days,
     };
 
+    const PYTHONMODELURL = process.env.PYTHONMODELURL || "http://localhost:8000"; // Fallback to localhost for local dev
     // Hit your optimized Python FastAPI service
-    const mlResponse = await axios.post("http://localhost:8000/api/meal-plans/generate", profileData);
+    const mlResponse = await axios.post(`${PYTHONMODELURL}/api/meal-plans/generate`, profileData);
 
     // Extract metric arrays directly from synchronized FastAPI response adapter
     const { days, user_profile, daily_targets } = mlResponse.data;

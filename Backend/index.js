@@ -19,7 +19,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: 'http://localhost:3002',  
+  origin: 'http://localhost:3002',
   credentials: true,
 }));
 
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
   res.send('Server is running and responding to requests');
 })
 
@@ -38,7 +38,7 @@ app.use('/api/generate', nutriPlanRouter);
 app.use('/api/payment', paymentRouter);
 app.use('/api/challenges', challengeRouter);
 app.use('/api/points', nutriPointsRouter);
-app.listen(port, ()=> {
+app.listen(port, '0.0.0.0', () => {
   connectDB();
   console.log(`Server is running on port ${port}`);
 })
