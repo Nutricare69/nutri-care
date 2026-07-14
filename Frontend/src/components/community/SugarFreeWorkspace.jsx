@@ -88,8 +88,9 @@ export default function SugarFreeWorkspace({ challenge }) {
   }
 
   return (
+    /* FIXED: Removed the max-height and hidden overflow settings so it passes height up to the parent modal container without browser canvas bugs */
     <div className="space-y-6 py-2">
-      {/* 🟢 NEW: DYNAMIC INDIVIDUAL STREAK TRACKER BAR */}
+      {/* NEW: DYNAMIC INDIVIDUAL STREAK TRACKER BAR */}
       <div className="bg-gray-50 dark:bg-zinc-900/40 border dark:border-zinc-800/60 p-5 rounded-2xl space-y-3 max-w-md mx-auto">
         <div className="flex justify-between items-center text-sm font-bold">
           <span className="text-gray-700 dark:text-zinc-300 flex items-center gap-1.5">
@@ -114,7 +115,7 @@ export default function SugarFreeWorkspace({ challenge }) {
         </p>
       </div>
 
-      {/* 🟢 NEW: CONGRATULATIONS BANNER ENGINES */}
+      {/* NEW: CONGRATULATIONS BANNER ENGINES */}
       <AnimatePresence>
         {isChallengeFullyComplete && (
           <motion.div

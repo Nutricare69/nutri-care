@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
-import { Sun, Moon, Monitor, AlertTriangle } from "lucide-react"; // 🟢 UPDATED: Added AlertTriangle
+import { Sun, Moon, Monitor, AlertTriangle } from "lucide-react"; //  UPDATED: Added AlertTriangle
 import { useTheme } from "../../components/theme.js";
 import { authDataContext } from "../../context/AuthContextProvider";
-import { toast } from "react-toastify"; // 🟢 NEW: Imported toast notification engine
+import { toast } from "react-toastify"; //  NEW: Imported toast notification engine
 import axios from "axios";
 
 export default function Settings() {
   const { theme, setTheme, isDark } = useTheme();
   const { serverUrl } = useContext(authDataContext);
-  const [isOfflineView, setIsOfflineView] = useState(!navigator.onLine); // 🟢 NEW: Component connection tracker
+  const [isOfflineView, setIsOfflineView] = useState(!navigator.onLine); //  NEW: Component connection tracker
 
   // Controlled password form state variables
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 🟢 NEW: Monitor live hardware connection changes while user is on the tab
+  //  NEW: Monitor live hardware connection changes while user is on the tab
   useEffect(() => {
     const handleOnline = () => setIsOfflineView(false);
     const handleOffline = () => setIsOfflineView(true);
@@ -44,7 +44,7 @@ export default function Settings() {
     const PASSWORD_REGEX =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    // Client-side validations (🟢 FIXED: Upgraded alerts to matching theme warning toasts)
+    // Client-side validations ( FIXED: Upgraded alerts to matching theme warning toasts)
     if (!PASSWORD_REGEX.test(newPassword)) {
       toast.warn(
         "New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.",
@@ -96,7 +96,7 @@ export default function Settings() {
 
       {/* Inner Workspace Wrapper Container */}
       <div className="max-w-7xl mx-auto space-y-6 w-full">
-        {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+        {/* NEW: Local Sub-Page Workspace Offline View Alert Banner */}
         {isOfflineView && (
           <motion.div
             initial={{ opacity: 0, y: -5 }}
@@ -107,9 +107,8 @@ export default function Settings() {
               <AlertTriangle className="w-4 h-4" />
             </div>
             <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
-              Displaying local workspace configurations. Credential
-              modifications and password updates are restricted until internet
-              access scales up.
+              Offline mode active. Connect to the internet to update your
+              password and credentials!
             </div>
           </motion.div>
         )}
@@ -232,7 +231,7 @@ export default function Settings() {
                 whileHover={isOfflineView ? {} : { scale: 1.01 }}
                 whileTap={isOfflineView ? {} : { scale: 0.99 }}
                 type="submit"
-                disabled={isOfflineView} // 🟢 NEW: Disable the button cleanly if offline
+                disabled={isOfflineView} //  NEW: Disable the button cleanly if offline
                 className={`w-full px-6 py-3.5 rounded-xl font-bold text-sm shadow-md transition-all ${
                   isOfflineView
                     ? "bg-zinc-300 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-600 cursor-not-allowed shadow-none"

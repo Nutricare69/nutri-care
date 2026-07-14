@@ -3,11 +3,13 @@ import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // 🟢 NEW: Imported Toastify engine
+import { toast } from "react-toastify"; //  NEW: Imported Toastify engine
 import { userDataContext } from "../../context/UserContext";
 import { authDataContext } from "../../context/AuthContextProvider";
 import Loader from "../../components/Loader";
 import { useTheme } from "../../components/theme.js";
+import { ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const [reveal, setReveal] = useState(false);
@@ -25,13 +27,16 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { isDark } = useTheme();
 
-  //image 
+  //image
 
-  const leftImg = "https://res.cloudinary.com/ddkgrqekv/image/upload/loginDesign_leetsx.jpg";
+  const leftImg =
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/loginDesign_leetsx.jpg";
   const bgUrl =
     "https://res.cloudinary.com/ddkgrqekv/image/upload/wallpaper_login_and_signup_sofnql.jpg";
 
-  // 🟢 READ: Hydrate input values out of localStorage during initial layout mount stage
+
+
+  //  READ: Hydrate input values out of localStorage during initial layout mount stage
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     const savedRemember = localStorage.getItem("rememberMe") === "true";
@@ -45,7 +50,10 @@ export default function Login() {
     e.preventDefault();
 
     const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!EMAIL_REGEX.test(email)) {
+
+    const cleanEmail = email.trim();
+
+    if (!EMAIL_REGEX.test(cleanEmail)) {
       toast.warn("Please enter a valid email address.");
       return;
     }
@@ -58,7 +66,7 @@ export default function Login() {
         { withCredentials: true },
       );
 
-      // 🟢 WRITE: Store configuration preferences natively inside browser instance
+      //  WRITE: Store configuration preferences natively inside browser instance
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
         localStorage.setItem("rememberMe", "true");
@@ -113,6 +121,19 @@ export default function Login() {
         />
         <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
+      {/* Back button */}
+      <motion.div
+        className="top-6 left-6 absolute z-10"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center justify-center p-3.5 bg-white text-green-700 hover:text-white hover:bg-green-600 rounded-2xl shadow-md border border-green-100/50 transition-all duration-200 cursor-pointer group"
+        >
+          <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
+        </button>
+      </motion.div>
 
       <div className="relative mx-auto my-8 md:my-12 w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 grid-rows-1 ring-1 ring-black/5 dark:ring-white/10">
         <div

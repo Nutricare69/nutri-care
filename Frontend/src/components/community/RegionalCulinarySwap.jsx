@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   Send,
   Trophy,
+  ChevronDown, // 🟢 Added for custom dropdown indicators
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -20,7 +21,6 @@ import { userDataContext } from "../../context/UserContext";
 export default function RegionalVegetarianSwapWorkspace({ challenge }) {
   const { serverUrl } = useContext(authDataContext);
 
-  // Centralized context tracking layer with protective structural fallbacks
   const contextValues = useContext(userDataContext) || {};
   const { userData, triggerPointAwardEffect } = contextValues;
 
@@ -43,10 +43,55 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
 
   const [savedRecipeIds, setSavedRecipeIds] = useState([]);
 
+  // 🟢 NEW: Custom UI Dropdown Open Toggles
+  const [isRegionOpen, setIsRegionOpen] = useState(false);
+  const [isStateOpen, setIsStateOpen] = useState(false);
+
+  // 🟢 NEW: References for closing dropdowns when clicking outside
+  const regionRef = useRef(null);
+  const stateRef = useRef(null);
+
+  const regionOptions = [
+    "North",
+    "South",
+    "West",
+    "East",
+    "North East",
+    "Central",
+  ];
+  const stateOptions = [
+    "Assam",
+    "Gujarat",
+    "Maharashtra",
+    "Meghalaya",
+    "Punjab",
+    "Rajasthan",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+  ];
+
   const hasUserContributed = recipes.some(
     (recipe) =>
       recipe.user === userData?._id || recipe.userId === userData?._id,
   );
+
+  // Close dropdowns automatically if clicking anywhere outside the elements
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (regionRef.current && !regionRef.current.contains(event.target)) {
+        setIsRegionOpen(false);
+      }
+      if (stateRef.current && !stateRef.current.contains(event.target)) {
+        setIsStateOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   const fetchRecipesAndBookmarks = async () => {
     try {
@@ -145,7 +190,6 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
         { withCredentials: true },
       );
 
-      // Instantly inject the new contribution into view state lines
       setRecipes((prev) => [response.data, ...prev]);
       setShowShareTray(false);
       setCustomName("");
@@ -155,7 +199,6 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
         `"${recipePayload.name}" successfully published to the community pool!`,
       );
 
-      // 🟢 FIXED: Let the backend decide if this is an authentic first-time claim
       try {
         await axios.post(
           `${serverUrl}/api/points/claim`,
@@ -163,14 +206,12 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
           { withCredentials: true },
         );
 
-        // Match the 600ms transition delay pattern used by your other workspaces
         setTimeout(() => {
           if (typeof triggerPointAwardEffect === "function") {
             triggerPointAwardEffect(100);
           }
         }, 600);
       } catch (claimError) {
-        // Triggers silently if the database logs show the account has already redeemed this reward
         console.log(
           "Points for this culinary milestone have already been claimed previously.",
         );
@@ -218,21 +259,21 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center p-12 text-xs text-gray-400 font-bold">
+      <div className="flex justify-center p-12 text-xs text-gray-400 font-bold animate-pulse">
         Syncing Shared Recipe Pools...
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
       {/* Persistent Milestone Achievement Banner */}
       <AnimatePresence>
         {hasUserContributed && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-2xl flex items-center gap-3 max-w-xl mx-auto"
+            className="p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-2xl flex items-center gap-3 max-w-xl mx-auto "
           >
             <div className="p-2 bg-green-500 text-white rounded-xl shadow-sm shrink-0">
               <Trophy className="w-5 h-5" />
@@ -274,7 +315,7 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border border-dashed border-green-300 dark:border-green-800/40 p-5 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/20 space-y-4"
+            className="overflow-visible border border-dashed border-green-300 dark:border-green-800/40 p-5 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/20 space-y-4"
           >
             {/* Tab Controls */}
             <div className="flex gap-2 p-1 bg-gray-200/60 dark:bg-zinc-800/80 rounded-xl max-w-xs">
@@ -348,7 +389,10 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
 
             {/* TAB CONTENT B: HANDMADE INPUT FORM */}
             {activeTab === "manual" && (
-              <form onSubmit={handleFormSubmit} className="space-y-4 max-w-xl">
+              <form
+                onSubmit={handleFormSubmit}
+                className="space-y-4 max-w-xl overflow-visible"
+              >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 uppercase">
@@ -376,46 +420,108 @@ export default function RegionalVegetarianSwapWorkspace({ challenge }) {
                     />
                   </div>
 
-                  <div className="space-y-1">
+                  {/* 🟢 THEME FIXED: Custom Origin Region Dropdown */}
+                  <div className="space-y-1 relative" ref={regionRef}>
                     <label className="text-[10px] font-bold text-gray-400 uppercase">
                       Origin Region
                     </label>
-                    <select
-                      value={customRegion}
-                      onChange={(e) => setCustomRegion(e.target.value)}
-                      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 text-sm font-medium rounded-xl focus:outline-none focus:border-green-400 text-gray-800 dark:text-zinc-100 cursor-pointer"
+                    <button
+                      type="button"
+                      onClick={() => setIsRegionOpen(!isRegionOpen)}
+                      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 text-sm font-medium rounded-xl flex items-center justify-between text-gray-800 dark:text-zinc-100 focus:outline-none focus:border-green-400 transition-all cursor-pointer"
                     >
-                      <option value="North">North India</option>
-                      <option value="South">South India</option>
-                      <option value="West">West India</option>
-                      <option value="East">East India</option>
-                      <option value="North East">North-East India</option>
-                      <option value="Central">Central India</option>
-                    </select>
+                      <span>
+                        {customRegion
+                          ? `${customRegion} India`
+                          : "Select Region"}
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isRegionOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {isRegionOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        >
+                          {regionOptions.map((region) => (
+                            <button
+                              key={region}
+                              type="button"
+                              onClick={() => {
+                                setCustomRegion(region);
+                                setIsRegionOpen(false);
+                              }}
+                              className={`w-full px-4 py-2 text-left text-sm flex items-center justify-between transition-colors cursor-pointer ${
+                                customRegion === region
+                                  ? "bg-green-500 text-white font-bold"
+                                  : "text-gray-700 dark:text-zinc-300 hover:bg-green-50 dark:hover:bg-green-950/40 hover:text-green-600 dark:hover:text-green-400"
+                              }`}
+                            >
+                              <span>{region} India</span>
+                              {customRegion === region && (
+                                <Check className="w-4 h-4" />
+                              )}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
-                  <div className="space-y-1">
+                  {/* 🟢 THEME FIXED: Custom Origin State Dropdown */}
+                  <div className="space-y-1 relative" ref={stateRef}>
                     <label className="text-[10px] font-bold text-gray-400 uppercase">
                       Origin State
                     </label>
-                    <select
-                      value={customState}
-                      onChange={(e) => setCustomState(e.target.value)}
-                      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 text-sm font-medium rounded-xl focus:outline-none focus:border-green-400 text-gray-800 dark:text-zinc-100 cursor-pointer"
+                    <button
+                      type="button"
+                      onClick={() => setIsStateOpen(!isStateOpen)}
+                      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 text-sm font-medium rounded-xl flex items-center justify-between text-gray-800 dark:text-zinc-100 focus:outline-none focus:border-green-400 transition-all cursor-pointer"
                     >
-                      <option value="Assam">Assam</option>
-                      <option value="Gujarat">Gujarat</option>
-                      <option value="Maharashtra">Maharashtra</option>
-                      <option value="Meghalaya">Meghalaya</option>
-                      <option value="Punjab">Punjab</option>
-                      <option value="Rajasthan">Rajasthan</option>
-                      <option value="Tamil Nadu">Tamil Nadu</option>
-                      <option value="Telangana">Telangana</option>
-                      <option value="Tripura">Tripura</option>
-                      <option value="Uttar Pradesh">Uttar Pradesh</option>
-                      <option value="Uttarakhand">Uttarakhand</option>
-                      <option value="West Bengal">West Bengal</option>
-                    </select>
+                      <span>{customState || "Select State"}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isStateOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {isStateOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-xl shadow-xl z-50 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        >
+                          {stateOptions.map((state) => (
+                            <button
+                              key={state}
+                              type="button"
+                              onClick={() => {
+                                setCustomState(state);
+                                setIsStateOpen(false);
+                              }}
+                              className={`w-full px-4 py-2 text-left text-sm flex items-center justify-between transition-colors cursor-pointer ${
+                                customState === state
+                                  ? "bg-green-500 text-white font-bold"
+                                  : "text-gray-700 dark:text-zinc-300 hover:bg-green-50 dark:hover:bg-green-950/40 hover:text-green-600 dark:hover:text-green-400"
+                              }`}
+                            >
+                              <span>{state}</span>
+                              {customState === state && (
+                                <Check className="w-4 h-4" />
+                              )}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
 

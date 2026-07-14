@@ -12,7 +12,7 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
-  Menu, // 🟢 NEW: Hamburger menu icon asset import
+  Menu, //  NEW: Hamburger menu icon asset import
 } from "lucide-react";
 
 import { userDataContext } from "../../context/UserContext";
@@ -36,7 +36,7 @@ export default function Dashboard() {
   const { isDark, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 🟢 NEW: Mobile sidebar toggle switch tracking
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); //  NEW: Mobile sidebar toggle switch tracking
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -132,7 +132,7 @@ export default function Dashboard() {
     <div className="h-screen w-full bg-[#A6D4AC]/40 dark:bg-[#060a07] flex overflow-hidden transition-colors duration-300 relative">
       {userData && !userData.profileCompleted && <ProfileSetup />}
 
-      {/* 🟢 NEW: Adaptive Dimming Backdrop overlay mask on mobile screens */}
+      {/*  NEW: Adaptive Dimming Backdrop overlay mask on mobile screens */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -165,7 +165,7 @@ export default function Dashboard() {
             <span className="text-yellow-500">Care</span>
           </h1>
 
-          {/* 🟢 NEW: Mobile close interaction button indicator */}
+          {/*  NEW: Mobile close interaction button indicator */}
           <button
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
@@ -192,7 +192,7 @@ export default function Dashboard() {
                   if (location.pathname !== item.path) {
                     navigate(item.path);
                   }
-                  setIsSidebarOpen(false); // 🟢 NEW: Drop tray view upon section changes
+                  setIsSidebarOpen(false); //  NEW: Drop tray view upon section changes
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
@@ -235,7 +235,7 @@ export default function Dashboard() {
             className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300"
           >
             <div className="flex items-center gap-2 sm:gap-6 min-w-0">
-              {/* 🟢 NEW: Floating Hamburger Action Toggle Button. Only visible on mobile/tablets */}
+              {/*  NEW: Floating Hamburger Action Toggle Button. Only visible on mobile/tablets */}
               <button
                 type="button"
                 onClick={() => setIsSidebarOpen(true)}

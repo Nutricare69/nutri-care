@@ -1,27 +1,27 @@
-import React, { useState, useContext } from "react"; // 🟢 UPDATED: Imported useContext
+import React, { useState, useContext } from "react"; //  UPDATED: Imported useContext
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { userDataContext } from "../../context/UserContext"; // 🟢 NEW: Imported your global user context layer
+import { userDataContext } from "../../context/UserContext"; //  NEW: Imported your global user context layer
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // 🟢 NEW: Extract the context hydrators to update state parameters instantly
+  //  NEW: Extract the context hydrators to update state parameters instantly
   const { getCurrentUser, fetchWalletBalance } = useContext(userDataContext);
 
   const handleGoToDashboard = async () => {
     setLoading(true); // Turn loader on
 
     try {
-      // 🟢 1. Re-fetch the fresh account snapshot containing the active premium flag
+      //  1. Re-fetch the fresh account snapshot containing the active premium flag
       if (typeof getCurrentUser === "function") {
         await getCurrentUser();
       }
 
-      // 🟢 2. Refresh points balances to clear deductions used at checkout cleanly
+      //  2. Refresh points balances to clear deductions used at checkout cleanly
       if (typeof fetchWalletBalance === "function") {
         await fetchWalletBalance();
       }

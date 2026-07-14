@@ -8,7 +8,7 @@ import {
   Trophy,
   ArrowRight,
   X,
-  AlertTriangle, // 🟢 NEW: Warning icon for offline states
+  AlertTriangle, // NEW: Warning icon for offline states
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -33,10 +33,10 @@ export default function Community() {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
-  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Active component connection tracker
+  const [isOfflineView, setIsOfflineView] = useState(false); // NEW: Active component connection tracker
 
   const fetchChallenges = async () => {
-    // 🟢 NEW: Offline Interceptor Layer
+    // NEW: Offline Interceptor Layer
     if (!navigator.onLine) {
       const localChallenges = localStorage.getItem(
         "nutricare_cached_challenges",
@@ -84,7 +84,7 @@ export default function Community() {
   const handleToggleChallenge = async (id, e) => {
     e.stopPropagation();
 
-    // 🟢 NEW: Block network alterations if user tries to update server logs while offline
+    // NEW: Block network alterations if user tries to update server logs while offline
     if (!navigator.onLine) {
       toast.error(
         "Network connection down. Joining or leaving challenges requires an active internet connection.",
@@ -204,7 +204,7 @@ export default function Community() {
         </p>
       </div>
 
-      {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+      {/* NEW: Local Sub-Page Workspace Offline View Alert Banner */}
       {isOfflineView && !loading && (
         <motion.div
           initial={{ opacity: 0, y: -5 }}
@@ -215,8 +215,8 @@ export default function Community() {
             <AlertTriangle className="w-4 h-4" />
           </div>
           <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
-            Displaying last synced wellness metrics. Participating or leaving
-            community challenges is restricted until internet access scales up.
+            Offline mode active. Connect to the internet to join or update
+            challenges!
           </div>
         </motion.div>
       )}
@@ -325,7 +325,8 @@ export default function Community() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-[#0c130d] rounded-3xl p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-transparent dark:border-green-950/30"
+              /* FIXED: Attached Webkit scroller suppression selectors onto this container to safely intercept the parent modal track */
+              className="bg-white dark:bg-[#0c130d] rounded-3xl p-6 md:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-transparent dark:border-green-950/30 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-green-950/20 pb-4 mb-6">
                 <div>

@@ -17,49 +17,54 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../components/theme.js";
-import { userDataContext } from "../../context/UserContext"; // 🟢 Added context import
+import { userDataContext } from "../../context/UserContext"; 
 
 export default function About() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
-  const { userData } = useContext(userDataContext); // 🟢 Consume userData state
+  const { userData } = useContext(userDataContext); //  
 
   //images of the teams 
   const ArnabImg =
-    "https://res.cloudinary.com/ddkgrqekv/image/upload/ArnabJana_w1pskb.jpg";
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/ARNAB_JANA_WEBSITE_htebod.png";
   const KaustubhImg =
-    "https://res.cloudinary.com/ddkgrqekv/image/upload/kaustubhPaul_zouiuk.jpg";
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/KAUSTUBH_PAUL_WEBSITE_l3mbnp.png";
   const SuvajitImg =
-    "https://res.cloudinary.com/ddkgrqekv/image/upload/SuvajitRoy_w6rf14.jpg";
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/SUVAJIT_ROY_WEBSITE_zoegoy.png";
   const RajaniImg =
-    "https://res.cloudinary.com/ddkgrqekv/image/upload/RajaniGiri_rhenms.jpg";
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/RAJANI_GIRI_WEBSITE_m5zixb.png";
   const SambitImg =
-    "https://res.cloudinary.com/ddkgrqekv/image/upload/SambitMondal_c4syvs.jpg";
+    "https://res.cloudinary.com/ddkgrqekv/image/upload/v1784007741/SAMBIT_MONDAL_WEBSITE_vdrwov.png";
 
   const team = [
     {
       name: "Arnab Jana",
-      role: "Project Lead, ML Model Developer ",
+      role: "Project Lead ",
+      desc: "ML Model Development, Dataset Creation, Research, and Project Documentation",
       image: ArnabImg,
     },
     {
       name: "Kaustubh Paul",
-      role: " Management Lead, Project Planning, Coordinator, FullStack",
+      role: "Idea & Planning Lead",
+      desc: "Project Ideation, System Architecture Design, and Quality Assurance (QA) Testing",
       image: KaustubhImg,
     },
     {
       name: "Suvajit Roy",
-      role: "Technical Lead, Full Stack & ML Integration ",
+      role: "Technical Head",
+      desc: "Frontend and Backend Integration, along with ML Model Integration and Performance Improvements",
       image: SuvajitImg,
     },
     {
       name: "Rajani Giri",
-      role: "Designing Lead, UI/UX Design Generation",
+      role: "Designer & Frontend Assistant",
+      desc: "Designing and Frontend Development Assistance",
       image: RajaniImg,
     },
     {
       name: "Sambit Mondal",
-      role: "Documentation Lead & UI/UX Designer",
+      role: "Documentation, Research & Design",
+      desc: "Documentation, Research, and Design Support",
       image: SambitImg,
     },
   ];
@@ -496,7 +501,7 @@ export default function About() {
                     transition={{ duration: 0.3 }}
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-80 object-cover"
+                    className="w-full h-90 object-cover"
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200 dark:from-green-950 dark:to-green-900"><Users class="w-20 h-20 text-green-500" /></div>`;
@@ -504,12 +509,17 @@ export default function About() {
                   />
                 </div>
                 <div className="p-6 text-center">
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">
+                  <h3 className="text-xl font-bold mb-1 text-gray-800 dark:text-white">
                     {member.name}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-zinc-400 font-semibold">
+                  <p className="text-lg text-gray-600 dark:text-zinc-400 font-semibold">
                     {member.role}
                   </p>
+                  {member.desc && (
+                    <p className="text-sm text-gray-500 dark:text-zinc-400 mt-2">
+                      {member.desc}
+                    </p>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -560,7 +570,7 @@ export default function About() {
               NutriCare's personalized nutrition plans
             </motion.p>
 
-            {/* 🟢 Dynamic Authentication Button Layer */}
+            {/*  Dynamic Authentication Button Layer */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}

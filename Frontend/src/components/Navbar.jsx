@@ -6,7 +6,7 @@ import { userDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContextProvider";
 import { useTheme } from "./theme.js";
-import { Sun, Moon, Menu, X } from "lucide-react"; // 🟢 UPDATED: Imported Menu icon
+import { Sun, Moon, Menu, X } from "lucide-react"; //  
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function Navbar() {
   const { userData, setUserData } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 🟢 NEW: Mobile menu drawer open state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // NEW: Mobile menu drawer open state
   const dropdownRef = useRef(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -322,7 +322,7 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* 🟢 NEW: Hamburger Toggle Icon Trigger (Only visible on tablets and mobile layouts) */}
+          {/*  NEW: Hamburger Toggle Icon Trigger (Only visible on tablets and mobile layouts) */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -335,7 +335,7 @@ export default function Navbar() {
         </div>
       </motion.div>
 
-      {/* 🟢 NEW: Full Screen Mobile Nav Drawer Overlay Navigation System */}
+      {/*  NEW: Full Screen Mobile Nav Drawer Overlay Navigation System */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div

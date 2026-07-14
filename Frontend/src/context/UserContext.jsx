@@ -38,7 +38,7 @@ export default function UserContext({ children }) {
   };
 
   const getCurrentUser = async () => {
-    // 🟢 FIXED: If the device has no network connection on refresh, skip the call entirely!
+    //  FIXED: If the device has no network connection on refresh, skip the call entirely!
     // This stops the app from getting stuck waiting for an Axios request timeout.
     if (!navigator.onLine) {
       setLoading(false);
@@ -49,6 +49,7 @@ export default function UserContext({ children }) {
       const result = await axios.get(serverUrl + "/api/user/currentuser", {
         withCredentials: true,
       });
+      console.log(result);
       if (result.data) {
         const user = result.data;
         setUserData(user);
@@ -78,7 +79,7 @@ export default function UserContext({ children }) {
         setUserData(null);
         setIsQuotaCapped(false);
         setRemainingDays(0);
-        // 🟢 NEW: If backend responds but returns empty data, wipe the orphan local flag
+        //  NEW: If backend responds but returns empty data, wipe the orphan local flag
         localStorage.removeItem("nutricare_has_session");
       }
     } catch (error) {
@@ -86,7 +87,7 @@ export default function UserContext({ children }) {
       setIsQuotaCapped(false);
       setRemainingDays(0);
 
-      // 🟢 NEW: Smart Session Cleansing Firewall
+      //  NEW: Smart Session Cleansing Firewall
       // If the server explicitly responds with a 401 or 403 status code, it means the user is online
       // but their temporary session cookie has expired or been deleted. Wipe the flag instantly!
       // If there is NO error.response, it means they are simply offline, so we leave the flag alone.

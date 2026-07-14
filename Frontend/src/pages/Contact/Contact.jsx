@@ -2,8 +2,6 @@ import React, { useId, useState, useContext } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-// import contactHeroVideo from "../../assets/contactHeroVideo.mp4";
-// import contactUsvideo from "../../assets/contactUsvideo.mp4";
 import { FaHouse } from "react-icons/fa6";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";

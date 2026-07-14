@@ -31,7 +31,7 @@ export default function DietPlans() {
   const [expandedPlan, setExpandedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingPlans, setFetchingPlans] = useState(true);
-  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Component connection tracker
+  const [isOfflineView, setIsOfflineView] = useState(false); // NEW: Component connection tracker
 
   // Community Bookmarks States
   const [savedCommunityMeals, setSavedCommunityMeals] = useState([]);
@@ -54,7 +54,7 @@ export default function DietPlans() {
 
   // Interceptor function checking the context flags when the button is clicked
   const handleOpenCreateModal = () => {
-    // 🟢 NEW: Stop users from attempting complex ML generations while internet lines are broken
+    // NEW: Stop users from attempting complex ML generations while internet lines are broken
     if (!navigator.onLine) {
       toast.error(
         "Network connection down. AI Generation requires an active internet connection.",
@@ -132,6 +132,7 @@ export default function DietPlans() {
       return;
     }
 
+    // FIXED: Changed manual 'loading(true)' call variables syntax back to state dispatch hooks
     setLoading(true);
 
     const ft = parseFloat(formData.feet) || 0;
@@ -203,7 +204,7 @@ export default function DietPlans() {
   };
 
   const fetchDietPlans = async () => {
-    // 🟢 NEW: Offline Interceptor Layer for Diet Plans array tracking
+    // NEW: Offline Interceptor Layer for Diet Plans array tracking
     if (!navigator.onLine) {
       const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
       setDietPlans(localPlans ? JSON.parse(localPlans) : []);
@@ -236,7 +237,7 @@ export default function DietPlans() {
   };
 
   const fetchSavedCommunityMeals = async () => {
-    // 🟢 NEW: Offline Interceptor Layer for Bookmark Cookbooks
+    // NEW: Offline Interceptor Layer for Bookmark Cookbooks
     if (!navigator.onLine) {
       const localBookmarks = localStorage.getItem(
         "nutricare_cached_saved_meals",
@@ -326,7 +327,7 @@ export default function DietPlans() {
             </div>
           </div>
 
-          {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+          {/*NEW: Local Sub-Page Workspace Offline View Alert Banner */}
           {isOfflineView && (
             <motion.div
               initial={{ opacity: 0, y: -5 }}
@@ -337,8 +338,8 @@ export default function DietPlans() {
                 <AlertTriangle className="w-4 h-4" />
               </div>
               <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                Displaying last synced backup data records. New profile
-                calibrations are restricted until internet access scales up.
+                Offline mode active. Connect to the internet to update your
+                profile settings!
               </div>
             </motion.div>
           )}
@@ -453,7 +454,7 @@ export default function DietPlans() {
                         exit={{ height: 0, opacity: 0 }}
                         className="border-t border-gray-200 dark:border-green-950/20"
                       >
-                        <div className="p-6 space-y-4 bg-gray-50/50 dark:bg-[#0f1d13]/60">
+                        <div className="p-6 space-y-6 bg-gray-50/50 dark:bg-[#0f1d13]/60">
                           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                             <div className="bg-white dark:bg-[#0c130d] p-4 rounded-xl shadow-xs">
                               <p className="text-sm text-zinc-700 dark:text-zinc-400 mb-1">
@@ -686,6 +687,13 @@ export default function DietPlans() {
                                 </div>
                               </div>
                             ))}
+                          </div>
+
+                          {/* Disclaimer node locked here at the bottom of the expanded layout context */}
+                          <div className="pt-4 border-t border-gray-200/60 dark:border-zinc-800/50 text-center">
+                            <span className="text-[11px] font-semibold tracking-wide text-gray-400 dark:text-zinc-500 uppercase select-none">
+                              NutriCare is an AI , it can make mistakes
+                            </span>
                           </div>
                         </div>
                       </motion.div>

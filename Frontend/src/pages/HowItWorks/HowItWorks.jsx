@@ -305,7 +305,7 @@ export default function HowItWorks() {
           {/* Timeline Cards Container */}
           <div className="relative space-y-20 lg:space-y-32 mt-8">
             {/* 
-              🟢 FIXED: Vertical Tracking Backbone Line. 
+               FIXED: Vertical Tracking Backbone Line. 
               Anchored relative to this inner container, it initiates exactly under the subtitle 
               and maps a direct route straight through the center grid row splits.
             */}
@@ -323,7 +323,7 @@ export default function HowItWorks() {
                 } justify-between gap-8 lg:gap-0 items-center relative w-full z-10`}
               >
                 {/* 
-                  🟢 FIXED: Centered Desktop Tracking Node Marker.
+                   FIXED: Centered Desktop Tracking Node Marker.
                   Anchored directly on the center string grid dividing row. Contains floating bounce physics.
                 */}
                 <motion.div

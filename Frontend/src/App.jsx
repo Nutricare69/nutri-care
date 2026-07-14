@@ -13,14 +13,14 @@ import DashApp from "./pages/Dashboard/App.jsx";
 import Pricing from "./pages/Pricing/Pricing.jsx";
 import PaymentSuccess from "./pages/Pricing/PaymentSuccess.jsx";
 import Policy from "./components/privacyPolicy/policy.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx"; // 🟢 IMPORTED: Security Gate Layer
+import ProtectedRoute from "./components/ProtectedRoute.jsx"; //  IMPORTED: Security Gate Layer
 
 function App() {
   return (
     <>
       <ScrollToTop />
       <Routes>
-        {/* 🔓 Unprotected Public Routes */}
+        {/*  Unprotected Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -32,7 +32,7 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/policy" element={<Policy />} />
 
-        {/* 🔒 PROTECTED ROUTE SHIELD LAYER */}
+        {/*  PROTECTED ROUTE SHIELD LAYER */}
         {/* Any path structure matching dashboard parameters must clear the guard first */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard/*" element={<DashApp />} />

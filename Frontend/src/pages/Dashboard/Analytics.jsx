@@ -7,7 +7,7 @@ import {
   CalendarDays,
   ChevronRight,
   ActivitySquare,
-  AlertTriangle, // 🟢 NEW: Warning icon for offline states
+  AlertTriangle, //  NEW: Warning icon for offline states
 } from "lucide-react";
 import axios from "axios";
 import {
@@ -49,7 +49,7 @@ export default function Analytics() {
   const [dietPlans, setDietPlans] = useState([]);
   const [expandedPlan, setExpandedPlan] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isOfflineView, setIsOfflineView] = useState(false); // 🟢 NEW: Active component connection tracker
+  const [isOfflineView, setIsOfflineView] = useState(false); //  NEW: Active component connection tracker
 
   // Track selected day per plan (defaults to 1 when a plan is opened)
   const [selectedDayNumber, setSelectedDayNumber] = useState(1);
@@ -87,7 +87,7 @@ export default function Analytics() {
   };
 
   const fetchDietPlans = async () => {
-    // 🟢 NEW: Offline Interceptor Layer
+    //  NEW: Offline Interceptor Layer
     // Check if network status is down, if so pull immediately from local disk cache storage
     if (!navigator.onLine) {
       const localPlans = localStorage.getItem("nutricare_cached_diet_plans");
@@ -192,7 +192,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        {/* 🟢 NEW: Local Sub-Page Workspace Offline View Alert Banner */}
+        {/*  NEW: Local Sub-Page Workspace Offline View Alert Banner */}
         {isOfflineView && !loading && (
           <motion.div
             initial={{ opacity: 0, y: -5 }}
@@ -203,8 +203,8 @@ export default function Analytics() {
               <AlertTriangle className="w-4 h-4" />
             </div>
             <div className="text-sm font-medium text-amber-700 dark:text-amber-400">
-              Displaying last synced nutrition logs. Real-time metric analytics
-              updates are restricted until internet access scales up.
+              Offline mode active. Connect to the internet to update your live
+              nutrition graphs!
             </div>
           </motion.div>
         )}

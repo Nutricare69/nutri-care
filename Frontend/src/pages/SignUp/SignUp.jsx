@@ -3,11 +3,13 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import nutriCareLogo from "../../assets/nutricareLogo.jpg";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import axios from "axios";
-import { toast } from "react-toastify"; // 🟢 NEW: Imported Toastify engine
+import { toast } from "react-toastify"; //  NEW: Imported Toastify engine
 import { authDataContext } from "../../context/AuthContextProvider";
 import { userDataContext } from "../../context/UserContext"; // 🟢 NEW: Imported user context layer
 import Loader from "../../components/Loader";
 import { useTheme } from "../../components/theme.js";
+import { ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -16,9 +18,9 @@ export default function SignUp() {
   const [settle, setSettle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { serverUrl } = useContext(authDataContext);
-  const { getCurrentUser } = useContext(userDataContext); // 🟢 NEW: Extract user fetcher from context
+  const { getCurrentUser } = useContext(userDataContext); //  NEW: Extract user fetcher from context
 
-  // 🟢 NEW: Initialize fields from sessionStorage to keep data safe when reading policies
+  // NEW: Initialize fields from sessionStorage to keep data safe when reading policies
   const [name, setName] = useState(sessionStorage.getItem("signup_name") || "");
   const [email, setEmail] = useState(
     sessionStorage.getItem("signup_email") || "",
@@ -43,7 +45,9 @@ export default function SignUp() {
   const bgUrl =
     "https://res.cloudinary.com/ddkgrqekv/image/upload/wallpaper_login_and_signup_sofnql.jpg";
 
-  // 🟢 NEW: Sync changes to sessionStorage automatically
+
+
+  //  NEW: Sync changes to sessionStorage automatically
   useEffect(() => {
     sessionStorage.setItem("signup_name", name);
     sessionStorage.setItem("signup_email", email);
@@ -52,7 +56,7 @@ export default function SignUp() {
     sessionStorage.setItem("signup_agree", agreeToTerms);
   }, [name, email, password, confirmPassword, agreeToTerms]);
 
-  // 🟢 NEW: Wipes the temporary storage completely upon successful signup
+  //  NEW: Wipes the temporary storage completely upon successful signup
   const clearCacheForm = () => {
     sessionStorage.removeItem("signup_name");
     sessionStorage.removeItem("signup_email");
@@ -64,19 +68,21 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    const NAME_REGEX = /^[A-Za-z\s]{2,}$/;
+    const NAME_REGEX = /^[A-Za-z]{2,}(?:\s[A-Za-z]+)*$/;
     const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const PASSWORD_REGEX =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    // 🟢 FIXED: Swapped out all blocking alert popups for clean warning toasts
-    if (!NAME_REGEX.test(name)) {
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
+
+    if (!NAME_REGEX.test(cleanName)) {
       toast.warn(
         "Please enter a valid name (at least 2 letters, no special characters).",
       );
       return;
     }
-    if (!EMAIL_REGEX.test(email)) {
+    if (!EMAIL_REGEX.test(cleanEmail)) {
       toast.warn("Please enter a valid email address.");
       return;
     }
@@ -99,17 +105,17 @@ export default function SignUp() {
         { withCredentials: true },
       );
 
-      // 🟢 NEW: Wipes form memory cache instantly so fields are empty next time
+      //  NEW: Wipes form memory cache instantly so fields are empty next time
       clearCacheForm();
 
       localStorage.setItem("nutricare_has_session", "true");
 
-      // 🟢 NEW: Hydrates user state variables globally right now to avoid needing a hard refresh
+      //  NEW: Hydrates user state variables globally right now to avoid needing a hard refresh
       if (typeof getCurrentUser === "function") {
         await getCurrentUser();
       }
 
-      // 🟢 NEW: Fire success toast configuration right before changing screen location states
+      //  NEW: Fire success toast configuration right before changing screen location states
       toast.success("Account created successfully! Welcome to NutriCare.");
 
       setTimeout(() => {
@@ -118,7 +124,7 @@ export default function SignUp() {
       }, 200);
     } catch (error) {
       console.error("Error signing up:", error);
-      // 🟢 FIXED: Replaced standard alert string compilation with an error toast alert
+      //  FIXED: Replaced standard alert string compilation with an error toast alert
       toast.error(
         "Signup failed: " + (error.response?.data?.message || error.message),
       );
@@ -161,7 +167,19 @@ export default function SignUp() {
         />
         <div className="absolute inset-0 bg-black/10 dark:bg-black/40" />
       </div>
-
+      {/* Back button */}
+      <motion.div
+        className="top-6 left-6 absolute z-10"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center justify-center p-3.5 bg-white text-green-700 hover:text-white hover:bg-green-600 rounded-2xl shadow-md border border-green-100/50 transition-all duration-200 cursor-pointer group"
+        >
+          <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
+        </button>
+      </motion.div>
       {/* Centered card container */}
       <div className="mx-auto my-8 md:my-12 w-[95vw] max-w-5xl h-auto min-h-[620px] rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 ring-1 ring-black/5 dark:ring-white/10">
         {/* Left panel */}
@@ -297,7 +315,7 @@ export default function SignUp() {
               Sign Up
             </button>
 
-            {/* 🟢 FIXED: Linked input target check states to control state persistence values cleanly */}
+            {/*  FIXED: Linked input target check states to control state persistence values cleanly */}
             <label className="flex items-start gap-3 text-sm text-[#444] dark:text-zinc-300 pt-1 select-none">
               <input
                 type="checkbox"
