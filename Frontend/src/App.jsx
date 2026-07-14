@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Home from "./pages/Home/Home.jsx";
 import Login from "./pages/Login/Login.jsx";
-import SignUp from "./pages/Signup/SignUp.jsx";
+import SignUp from "./pages/SignUp/SignUp.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
 import HowItWorks from "./pages/HowItWorks/HowItWorks.jsx";
 import About from "./pages/About/About.jsx";
