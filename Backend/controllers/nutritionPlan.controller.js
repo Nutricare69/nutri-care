@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import axios from 'axios';
 import NutriPlan from '../models/nutritionPlan.model.js';
 import User from '../models/user.model.js';
 import { calculateAge } from '../utils/calculateAge.js';
+
 
 export const generateNutriPlan = async (req, res) => {
   try {
