@@ -40,7 +40,7 @@ export const signUp = async (req, res) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: "None",
     });
 
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
     // If rememberMe is false, omitting maxAge turns this into a transient "Session Cookie"
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: "None",
     };
 
