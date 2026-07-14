@@ -17,11 +17,14 @@ import cors from 'cors';
 const port = process.env.PORT || 5000;
 const app = express();
 
-
-app.use(cors({
-  origin: 'http://localhost:3002',
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGIN || "http://localhost:3000",
   credentials: true,
-}));
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(
+  corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
