@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -12,7 +12,7 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
-  Menu, //  NEW: Hamburger menu icon asset import
+  Menu, // Hamburger menu icon asset import
 } from "lucide-react";
 
 import { userDataContext } from "../../context/UserContext";
@@ -36,11 +36,18 @@ export default function Dashboard() {
   const { isDark, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); //  NEW: Mobile sidebar toggle switch tracking
+
+  // FIXED: Defaulting sidebar to true on desktop laptop profiles while tracking open toggle behaviors uniformly
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
-  //images of the coin
+  // Set mobile side-effects dynamically based on frame width metrics upon boot
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
 
   const coinFront =
     "https://res.cloudinary.com/ddkgrqekv/image/upload/coinFront_y4qgvs.png";
@@ -131,8 +138,7 @@ export default function Dashboard() {
   return (
     <div className="h-screen w-full bg-[#A6D4AC]/40 dark:bg-[#060a07] flex overflow-hidden transition-colors duration-300 relative">
       {userData && !userData.profileCompleted && <ProfileSetup />}
-
-      {/*  NEW: Adaptive Dimming Backdrop overlay mask on mobile screens */}
+      {/* Adaptive Dimming Backdrop overlay mask on mobile screens */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -144,11 +150,12 @@ export default function Dashboard() {
           />
         )}
       </AnimatePresence>
-
-      {/* Sidebar - Stays fixed on desktop, transforms to a slide-out drawer layout on mobile/tablets */}
+      {/* FIXED: Reconfigured slide translations to seamlessly toggle sidebar bounds across laptops and small devices */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 w-64 bg-white dark:bg-[#0c130d] shadow-xl flex flex-col z-50 md:z-20 flex-shrink-0 border-r border-transparent dark:border-green-950/10 transition-transform duration-300 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        className={`fixed md:static inset-y-0 left-0 w-64 bg-white dark:bg-[#0c130d] shadow-xl flex flex-col z-50 md:z-20 flex-shrink-0 border-r border-transparent dark:border-green-950/10 transition-all duration-300 ${
+          isSidebarOpen
+            ? "translate-x-0 w-64 opacity-100"
+            : "-translate-x-full md:translate-x-0 md:w-0 md:opacity-0 overflow-hidden"
         }`}
       >
         {/* Sidebar Brand Header */}
@@ -158,17 +165,17 @@ export default function Dashboard() {
             onClick={() => {
               navigate("/");
               setLoading(true);
-              setIsSidebarOpen(false); // Close mobile tray on click
+              if (window.innerWidth < 768) setIsSidebarOpen(false);
             }}
           >
             <span className="text-green-500">Nutri</span>
             <span className="text-yellow-500">Care</span>
           </h1>
 
-          {/*  NEW: Mobile close interaction button indicator */}
+          {/* Close interaction button indicator */}
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -192,9 +199,9 @@ export default function Dashboard() {
                   if (location.pathname !== item.path) {
                     navigate(item.path);
                   }
-                  setIsSidebarOpen(false); //  NEW: Drop tray view upon section changes
+                  if (window.innerWidth < 768) setIsSidebarOpen(false); // Only drop automatically if sitting on phone views
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer ${
                   isActive
                     ? "bg-green-500 text-white shadow-lg"
                     : "bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:bg-zinc-800/80 dark:hover:text-white"
@@ -224,7 +231,6 @@ export default function Dashboard() {
           </div>
         </div>
       </aside>
-
       {/* Main Layout Wrapper */}
       <div className="flex-1 overflow-auto relative">
         <div className="flex flex-col min-w-0 md:min-w-max min-h-full">
@@ -235,12 +241,12 @@ export default function Dashboard() {
             className="bg-white dark:bg-[#0c130d] shadow-md dark:shadow-black/20 px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-10 w-full border-b border-transparent dark:border-green-950/20 transition-colors duration-300"
           >
             <div className="flex items-center gap-2 sm:gap-6 min-w-0">
-              {/*  NEW: Floating Hamburger Action Toggle Button. Only visible on mobile/tablets */}
+              {/* FIXED: Removed the 'md:hidden' utility class modifier so this hamburger action trigger displays beautifully across laptop views as well */}
               <button
                 type="button"
-                onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2 text-gray-500 hover:text-green-500 dark:text-zinc-400 dark:hover:text-green-400 hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl border border-gray-100 dark:border-zinc-800/40 cursor-pointer transition-colors shrink-0"
-                title="Open Sidebar"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 text-gray-500 hover:text-green-500 dark:text-zinc-400 dark:hover:text-green-400 hover:bg-gray-50 dark:hover:bg-zinc-900 rounded-xl border border-gray-100 dark:border-zinc-800/40 cursor-pointer transition-colors shrink-0"
+                title="Toggle Sidebar Layout"
               >
                 <Menu className="w-5 h-5 stroke-[2.5]" />
               </button>
@@ -390,7 +396,6 @@ export default function Dashboard() {
           </main>
         </div>
       </div>
-
       {/* PREMIUM UPGRADE POPUP */}
       <AnimatePresence>
         {showPremiumPrompt && (
@@ -403,7 +408,7 @@ export default function Dashboard() {
           >
             <button
               onClick={() => setShowPremiumPrompt(false)}
-              className="absolute top-3 right-3 text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
+              className="absolute top-3 right-3 text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -424,13 +429,13 @@ export default function Dashboard() {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/pricing")}
-                className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-4 rounded-xl shadow transition-colors flex-1 text-sm"
+                className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-4 rounded-xl shadow transition-colors flex-1 text-sm cursor-pointer"
               >
                 View Plans
               </button>
               <button
                 onClick={() => setShowPremiumPrompt(false)}
-                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-600 dark:text-zinc-300 font-semibold py-2 px-4 rounded-xl transition-colors text-sm"
+                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-600 dark:text-zinc-300 font-semibold py-2 px-4 rounded-xl transition-colors text-sm cursor-pointer"
               >
                 Maybe Later
               </button>
@@ -438,7 +443,6 @@ export default function Dashboard() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <EarningCoinPopup
         animationState={coinAnimation}
         onClose={() => setCoinAnimation({ show: false, points: 0 })}
