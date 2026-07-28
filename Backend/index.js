@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first')
 import express from 'express';
 import connectDB from './config/db.js';
 import authRouter from './routes/auth.route.js';
@@ -8,8 +10,7 @@ import nutriPlanRouter from './routes/nutritionPlan.route.js';
 import paymentRouter from './routes/payment.routes.js';
 import challengeRouter from './routes/challenge.routes.js';
 import nutriPointsRouter from './routes/nutriPoints.routes.js';
-import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first')
+
 
 
 import cookieParser from 'cookie-parser';
