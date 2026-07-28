@@ -8,10 +8,13 @@ import nutriPlanRouter from './routes/nutritionPlan.route.js';
 import paymentRouter from './routes/payment.routes.js';
 import challengeRouter from './routes/challenge.routes.js';
 import nutriPointsRouter from './routes/nutriPoints.routes.js';
+import dns from 'dns';
 
 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+
+dns.setDefaultResultOrder('ipv4first')
 
 
 const port = process.env.PORT || 5000;
