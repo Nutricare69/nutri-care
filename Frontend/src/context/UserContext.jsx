@@ -49,7 +49,6 @@ export default function UserContext({ children }) {
       const result = await axios.get(serverUrl + "/api/user/currentuser", {
         withCredentials: true,
       });
-      console.log(result);
       if (result.data) {
         const user = result.data;
         setUserData(user);
