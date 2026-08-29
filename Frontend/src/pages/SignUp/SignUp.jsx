@@ -69,9 +69,10 @@ export default function SignUp() {
     e.preventDefault();
 
     const NAME_REGEX = /^[A-Za-z]{2,}(?:\s[A-Za-z]+)*$/;
-    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const PASSWORD_REGEX =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^])[A-Za-z\d@$!%*?&^]{8,}$/;
 
     const cleanName = name.trim();
     const cleanEmail = email.trim();
