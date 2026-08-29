@@ -4,7 +4,7 @@ import generateToken from '../config/token.js';
 
 // Regex Constants
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&^]{8,}$/;
 const NAME_REGEX = /^[A-Za-z\s]{2,}$/;
 
 export const signUp = async (req, res) => {
