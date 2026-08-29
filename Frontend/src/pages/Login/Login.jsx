@@ -49,7 +49,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const cleanEmail = email.trim();
 
